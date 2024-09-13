@@ -1,0 +1,53 @@
+/* VER USUARIO MODAL */
+
+.contenedor_ver_usuario{
+    display: flex;
+    align-items: center;
+}
+
+.contenedor_ver_usuario .imagen_usuario{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.contenedor_ver_usuario .ver_usuario_info{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin-left: 20px;
+    align-items: start;
+    font-family: Nunito;
+}   
+
+
+.contenedor_ver_usuario .ver_usuario_info p{
+    margin: 0;
+}
+
+.contenedor_ver_usuario .ver_usuario_info .ver_usuario_nombre{
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.contenedor_ver_usuario .ver_usuario_info .ver_usuario_rol{
+    font-size: 14px;
+}
+
+.contenedor_ver_usuario .ver_usuario_datos{
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+
+@media screen and (max-width: 601px) {
+    .contenedor_ver_usuario{
+        flex-direction: column;
+    }
+
+    .contenedor_ver_usuario .ver_usuario_info{
+        margin-top: 10px;
+        align-items: center;
+    }
+
+}

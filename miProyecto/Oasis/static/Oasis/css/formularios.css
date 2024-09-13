@@ -1,0 +1,125 @@
+.modal-header .tituloFormulario {
+    font-family: Nunito;
+    color: #aa46fc;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    margin-bottom: 0%;
+    margin-left: 2%;
+}
+
+.modal-header .tituloFormulario::before,
+.tituloFormulario::after {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    left: 0px;
+    background-color: #aa46fc;
+}
+
+.modal-header .tituloFormulario::before {
+    width: 18px;
+    height: 18px;
+    background-color: #aa46fc;
+}
+
+.modal-header .tituloFormulario::after {
+    width: 18px;
+    height: 18px;
+    animation: pulse 1s linear infinite;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    padding: 10px;
+    position: relative;
+}
+
+.flex {
+    display: flex;
+    gap: 6px;
+}
+
+.formulario label {
+    position: relative;
+    width: 100%;
+}
+
+.formulario label .input {
+    width: 100%;
+    padding: 10px 10px 20px 10px;
+    outline: 0;
+    border: 1px solid rgba(105, 105, 105, 0.397);
+    border-radius: 10px;
+    -webkit-appearance: none; /* Safari */
+    -moz-appearance: none; /* Firefox */
+    appearance: none; /* Otros navegadores */
+}
+
+.formulario label .input + span {
+    position: absolute;
+    left: 10px;
+    top: 15px;
+    color: grey;
+    font-size: 0.9em;
+    cursor: text;
+    transition: 0.3s ease;
+}
+
+.formulario label .input:placeholder-shown + span {
+    top: 15px;
+    font-size: 0.9em;
+}
+
+.formulario label .input:focus + span,
+.formulario label .input:valid + span {
+    top: 35px;
+    font-size: 0.7em;
+    font-weight: 600;
+}
+
+.formulario label .input:valid + span {
+    color: green;
+}
+
+.select {
+    background-color: white;
+    padding-right: 30px;
+}
+
+.select-label .input + span {
+    top: 15px;
+    font-size: 0.9em;
+}
+
+.select-label .input:focus + span,
+.select-label .input:valid + span {
+    top: 35px;
+    font-size: 0.7em;
+    font-weight: 600;
+}
+
+.file-input span {
+    color: green;
+    font-size: 0.9em;
+    margin-left: 5px;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(0.9);
+        opacity: 1;
+    }
+    to {
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}

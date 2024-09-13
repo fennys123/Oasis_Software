@@ -1,0 +1,118 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+{{data}}
+
+{% block titulo %}Eventos{% endblock %}
+
+
+{% block contenedor %}
+  <div class="radio-inputs">
+    <label class="radio">
+      <a href="{% url 'Eventos' %}">
+        <input type="radio" name="radio" checked=""/>
+        <span class="name">Inicio</span>
+      </a>
+    </label>
+  </div>
+
+  <div class="detalle-evento">
+    <img src="{{ evento.foto.url }}" alt="{{ evento.nombre }}">
+    <div class="info-evento">
+        <div class="cabecera">
+            <div>
+                <p class="titulo-evento">{{ evento.nombre }}</p>
+                <p>{{ evento.fecha }} a las {{ evento.hora_incio }} pm</p>
+            </div>
+        </div>
+        <div class="body">
+            <p><b>Descripción</b></p>
+            <p>{{ evento.descripcion }}</p>
+        </div>
+        <div class="body">
+            <p><b>Aforo</b></p>
+            <p>{{ evento.aforo }}</p>
+        </div>
+        <div class="body">
+          <p><b>Entradas disponibles</b></p>
+          {% if evento.entradas %}
+            <td data-label="Entradas Disponibles"><a href="{% url 'eveEntradas' evento.id %}" style="text-decoration: none;">{{ evento.entradas_disponibles }}</a></td>
+          {% else %}
+            <td data-label="Entradas Disponibles">No existen entradas</td>
+          {% endif %}
+        </div>
+        <div class="body">
+          <p><b>Precio entrada general</b></p>
+          <p>$ {{ evento.precio_entrada|intcomma }}</p>
+        </div>
+        <div class="body">
+          <p><b>Precio entrada general vip</b></p>
+          <p>$ {{ evento.precio_vip|intcomma }}</p>
+        </div>
+        <div class="botones">
+            {% if evento.reservas %}
+              <a href="{% url 'eveReserva' evento.id%}" type="button" class="btn btn-primary">Reservas</a>
+            {% endif %}
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarEvento{{ evento.id }}"><i class="bi bi-pencil"></i></button>
+            <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarEvento' evento.id %}')"><i class="bi bi-x-lg"></i></a>
+        </div>
+    </div>
+</div>
+
+
+  <div class="modal fade" id="editarEvento{{ evento.id }}" tabindex="-1" role="dialog" aria-labelledby="editarEventoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="tituloFormulario">Editar evento</p>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="formulario" action="{% url 'actualizarEvento' evento.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label>
+                      <input required="true" type="text" class="input" name="nombre" value="{{ evento.nombre }}">
+                      <span>Nombre</span>
+                    </label>
+                    <div class="flex">
+                        <label>
+                            <input required="true" type="date" class="input" name="fecha" value="{{ evento.fecha|date:'Y-m-d' }}">
+                            <span>Fecha</span>
+                        </label>
+                        <label>
+                            <input required="true" type="time" class="input" name="hora_incio" value="{{ evento.hora_incio }}">
+                            <span>Hora inicio</span>
+                        </label>
+                    </div> 
+                    <div class="flex">
+                      <label>
+                          <input required="true" type="number" class="input" name="entrada_general" value="{{ evento.precio_entrada }}">
+                          <span>Precio general</span>
+                      </label>
+                      <label>
+                          <input required="true" type="number" class="input" name="entrada_vip" value="{{ evento.precio_vip }}">
+                          <span>Precio VIP</span>
+                      </label>
+                    </div> 
+                    <label>
+                      <input required="true" type="number" class="input" name="aforo" value="{{ evento.aforo }}">
+                      <span>Aforo</span>
+                    </label>  
+                    <label>
+                        <input required="true" type="text" class="input" name="descripcion" value="{{ evento.descripcion }}">
+                        <span>Descripción</span>
+                    </label>
+                    <div class="mb-3 mt-2 file-input">
+                      <span>Flyer</span>
+                      <input class="form-control" type="file" id="formFile" name="foto_nueva">
+                    </div>
+                  <button class="btn btn-success mb-2 mt-2" type="submit">Editar Evento</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+
+{% endblock %}

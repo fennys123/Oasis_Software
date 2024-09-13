@@ -1,0 +1,85 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Reservas{% endblock %}
+
+{% block contenedor %}
+    <div class="radio-inputs">
+        <label class="radio">
+        <a href="{% url 'Eventos' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Inicio</span>
+        </a>
+        </label>
+    </div>
+    <h1>Reservas {{ evento }}</h1>
+    <div class="Contenido">
+        <div class="conteos">
+            <p>Todos (<span> {{ reservas|length }} </span>)</p>
+        </div>
+    </div>
+    <div id="contenedorTabla">
+        <table class="table">
+          <thead class="thead-light">
+            <tr>
+              <th>Mesa</th>
+              <th>Usuario</th>
+              <th>Evento</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in reservas %}
+              <tr>
+                <td data-label="Mesa">{{ r.mesa.nombre }}</td>
+                <td data-label="Usuario">{{ r.usuario.nombre }}</td>
+                <td data-label="Evento">{{ r.evento.nombre }}</td>
+                <td data-label="Fecha">{{ r.evento.fecha }}</td>
+                <td data-label="Acciones">
+                  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#verReserva{{ r.id }}"><i class="bi bi-info-circle"></i></button>
+                  <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminar_reserva' r.id %}')"><i class="bi bi-x-lg"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+
+        {% for r in reservas %}
+            <div class="modal fade" id="verReserva{{ r.id }}" tabindex="-1" role="dialog" aria-labelledby="verReservaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p class="tituloFormulario">Ver reserva</p>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-center">
+                            <img src="{{ r.evento.foto.url }}" alt="{{ r.evento.nombre }}" class="rounded" width="50%">
+                        </div>
+                        <div class="d-flex flex-column justify-content-center align-items-center mt-3">
+                            <p class="m-0"><strong>{{ r.evento.nombre }}</strong></p>
+                            <p class="text-12">{{ r.evento.fecha }}</p>
+                            <p class="m-0"><strong>Info de la reserva</strong></p>
+                            <p class="text-12 m-0">Usuario: {{ r.usuario.nombre }}</p>
+                            <p class="text-12 m-0">Correo: {{ r.usuario.email }}</p>
+                            <p class="text-12 m-0">CC: {{ r.usuario.cedula }}</p>
+                            <p class="text-12 m-0">Fecha de compra: {{ r.fecha_compra }}</p>
+                            <p class="text-12 m-0">Total pagado: $ {{ r.total|intcomma }}</p>
+                            <br>
+                            <p class="m-0"><strong>{{ r.mesa.nombre }} x {{ r.mesa.capacidad }} personas</strong></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success w-100" data-dismiss="modal">Llegada al bar</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+{% endblock %}

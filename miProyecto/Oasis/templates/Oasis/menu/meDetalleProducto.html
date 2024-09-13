@@ -1,0 +1,36 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Menu{% endblock %}
+
+
+{% block contenedor %}
+    <div class="radio-inputs">
+        <label class="radio">
+        <a href="{% url 'Menu' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Inicio</span>
+        </a>
+        </label>
+    </div>
+    <div class="detalle-producto">
+        <img src="{{ producto.foto.url }}" alt="{{ producto.nombre }}">
+        <div class="info-producto">
+            <div class="cabecera">
+                <div>
+                    <p class="titulo-producto">{{ producto.nombre }}</p>
+                    <p>{{ producto.categoria }}</p>
+                </div>
+                <p class="precio">${{ producto.precio|intcomma }} </p>
+            </div>
+            <div class="descripcion">
+                <p><b>Descripción</b></p>
+                <p>{{ producto.descripcion }}</p>
+            </div>
+            <div class="boton">
+                <a type="button" class="btn btn-primary" href="{% url 'invDetalleProducto' producto.id %}">Ir a inventario <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

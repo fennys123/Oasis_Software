@@ -1,0 +1,52 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Pedido{% endblock %}
+
+{% block contenedor %}
+<div class="contenedor">
+    <h1 style="margin-top: 0.5em; font-family: Nunito; font-weight: 700; color: #fc4664;">{{ mesa.nombre }}</h1>
+    <div class="search">
+        <input type="text" id="myInput" placeholder="Buscar productos...">
+        <button id="searchButton" type="submit">Buscar</button>
+    </div>
+    <div class="row">
+        <div class="col-md-6 productos">
+            {% for i in productos %}
+                <div class="pedido-item">
+                    <img src="{{ i.foto.url }}" class="card-img-top rounded" alt="Producto" width="200px"> 
+                    <p style="font-family: Nunito;">{{ i.nombre }}</p>
+                    <p style="color: red; font-family: Nunito">{{ i.precio|intcomma }}</p>
+                    <form class="input-group">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" id="id_{{ i.id }}" value="{{ i.id }}">
+                        <input type="number" name="cantidad" id="cantidad_{{ i.id }}" class="form-control" placeholder="Cantidad" min="1" value="1" size="3">
+                        <br>
+                        <button type="button" onclick="add_carrito(`{% url 'carrito_add' %}`, {{ i.id }});" class="btn btn-primary">Agregar</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-6">
+            <form method="post" action="{% url 'crear_pedido_usuario' mesa.id %}">
+                {% csrf_token %}
+                  <div class="pedido-resumen">
+                      <h2 style="font-family: Nunito; font-weight: 700;">Pedido en Curso</h2>
+                      <div class="order-items">
+                          <div id="respuesta_carrito">
+                          </div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="comentarios" class="form-label">Comentario</label>
+                        <input type="text" name="comentario" id="comentarios" class="form-control" placeholder="Ingresa un comentario">
+                      </div>
+                      <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-success btn-lg pedidoListo">Enviar Pedido</button>
+                      </div>
+                  </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

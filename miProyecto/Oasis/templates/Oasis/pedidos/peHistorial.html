@@ -1,0 +1,122 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Historial de Pedidos{% endblock %}
+
+
+{% block contenedor %}
+<div class="radio-inputs many">
+  <label class="radio">
+    <a href="{% url 'peInicio' %}">
+      <input type="radio" name="radio" />
+      <span class="name">Inicio</span>
+    </a>
+  </label>
+  <label class="radio">
+    <a href="{% url 'peHistorial' %}">
+      <input type="radio" name="radio" checked=""/>
+      <span class="name">Historial de Pedidos</span>
+    </a>
+  </label>
+  <label class="radio">
+    <a href="{% url 'peGestionMesas' %}">
+      <input type="radio" name="radio"/>
+      <span class="name">Gestión de Mesas</span>
+    </a>
+  </label>
+</div>
+
+
+<h1>Historial de Pedidos</h1>
+<div class="Contenido">
+    <div class="conteos">
+    <p>Todos (<span>{{ detalles_pedidos|length }}</span>)</p>
+    </div>
+    <div class="search">
+        <input type="text" id="myInput" placeholder="Buscar pedidos...">
+        <button id="searchButton" type="submit">Buscar</button>
+    </div>
+</div>
+
+<div id="contenedorTabla" style="margin-top: 2%;">
+  <table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th>Mesa</th>
+        <th>Usuario</th>
+        <th>Total</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in detalles_pedidos %}
+        <tr>
+          <td data-label="Mesa">{{ p.pedido.mesa.nombre }}</td>
+          {% if p.pedido.usuario.rol == 3 %}
+            <td data-label="Usuario">💁‍♂️ {{ p.pedido.usuario.nombre }}</td>
+          {% else %}
+            <td data-label="Usuario">{{ p.pedido.usuario }}</td>
+          {% endif %}
+          <td data-label="Total">${{ p.pedido.total|intcomma }}</td>
+          <td data-label="Acciones">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#detalleModal{{ p.pedido.id }}"><i class="bi bi-info-circle"></i></button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% for detalle_pedido in detalles_pedidos %}
+    <div class="modal fade invoice-modal" id="detalleModal{{ detalle_pedido.pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="detalleModalLabel{{ detalle_pedido.pedido.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <p class="tituloFormulario">Detalles del pedido</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+                <div class="modal-body mb-2">
+                    <div class="logoFactura">
+                      <img src="{% static 'Oasis/img/logoOasisNegro.png' %}" alt="logoOasisNegro" width="150px">
+                      <button type="button" class="btn btn-primary"><i class="bi bi-printer"></i></button>
+                    </div>
+                    <p class="datosFactura">ID: {{ detalle_pedido.pedido.id }}</p>
+                    <p class="datosFactura">{{ detalle_pedido.pedido.mesa.nombre }}</p>
+                    <p class="datosFactura">{{ detalle_pedido.pedido.fecha }}</p>
+                    {% if detalle_pedido.pedido.usuario.rol == 3 %}
+                      <p class="datosFactura">Mesero: {{ detalle_pedido.pedido.usuario }} | CC: {{ detalle_pedido.pedido.usuario.cedula }}</p>
+                    {% else %}
+                      <p class="datosFactura">Cliente: {{ detalle_pedido.pedido.usuario }} | CC: {{ detalle_pedido.pedido.usuario.cedula }}</p>
+                    {% endif %}
+                    <br>
+
+                    <div id="contenedorTabla">
+                      <table class="tableFactura"> 
+                        <tbody>
+                          {% for detalle in detalle_pedido.detalles %}
+                            <tr>
+                              <td data-label="Cantidad">x{{ detalle.cantidad }}</td>
+                              <td data-label="Producto">{{ detalle.producto }}</td>
+                              <td data-label="Subtotal" style="text-align: end">${{ detalle.subtotal|intcomma }}</td>
+                            </tr>
+                            <tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    <h6 style="text-align: end; margin-top: 0.5em;"><strong>Total: ${{ detalle_pedido.pedido.total|intcomma }}</strong></h6>
+                </div>
+                <!-- Añadimos los picos aquí -->
+                <div class="picos-container">
+                    {% for i in "1234567890123456789012" %}
+                        <span class="pico"></span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

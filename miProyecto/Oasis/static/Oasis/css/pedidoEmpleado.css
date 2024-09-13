@@ -1,0 +1,313 @@
+    .contenedor {
+      margin-top: 5px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .contenedor h1 {
+      font-size: 30px;
+      margin-bottom: 15px;
+  }
+
+  .contenedor .search{
+      display: flex;
+      justify-content: end;
+      margin-bottom: 2%;
+  }
+
+  .contenedor-pedido{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .pedido{
+    width: 47%;
+  }
+  .content-productos{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+  }
+  .content-productos .categorias{
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-color: #ccc #f5f5f5;
+    scrollbar-width: thin;
+  }
+
+  .content-productos .categorias a{
+    text-decoration: none;
+  }
+  .content-productos .categorias p{
+    padding: 4px 10px;
+    background-color: rgb(235, 233, 233);
+    border-radius: 10px;
+    color: #333;
+  }
+
+  .content-productos .categorias .categorias__active{
+    background-color: #333;
+    color: #fff;
+  }
+
+  .productos{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-height: auto;
+  }
+  
+  .pedido-item {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+      width: 180px;
+      height: 280px;
+      background-color: #fff;
+      text-align: center;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pedido-item img {
+      max-width: 100%;
+      height: 100px;
+  }
+  
+  .pedido-item h3 {
+      margin-top: 10px;
+  }
+  
+  .pedido-item p {
+      font-size: 14px;
+  }
+
+  .pedido-item .precio{
+    color: red;
+  }
+
+
+  
+  .pedido-resumen {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pedido-resumen h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+  }
+  
+  .total {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+  }
+  
+  .pedidoListo {
+      margin-top: 20px;
+      font-size: 20px;
+      width: 100%;
+  }
+
+
+@media screen and (max-width: 1430px) {
+    .contenedor-pedido{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pedido{
+        width: 100%;
+    }
+
+    .content-productos{
+        padding-top: 30px;
+        width: 100%;
+    }
+
+    .content-productos .categorias{
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+
+@media screen and (max-width: 502px) {
+    .content-productos{
+        padding-top: 30px;
+        width: 100%;
+    }
+
+    .productos{
+        justify-content: center;
+    }
+
+    .content-productos .categorias{
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@media screen and (max-width: 883px) {
+    .carrito .item-carrito{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .carrito .item-carrito .total-carrito{
+        text-align: end;
+    }
+}
+
+@media screen and (max-width: 692px) {
+    .carrito .item-carrito img{
+        display: none;
+    }
+}
+
+
+/* Reutilicé y está es la parte de productos */
+
+        .titulo h1{
+            margin-bottom:0%;
+            margin-right: 2%;
+        }
+        .titulo{
+            display: flex;
+            justify-content: center;
+            align-items:end;
+        }
+        .card {
+            display: flex;
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+            max-width: 300px;
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-content h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .card-content p {
+            margin: 10px 0;
+        }
+
+
+/* Reutilicé y está es la parte de productos */
+        .titulo{
+            margin-bottom: 3%;
+            display: flex;
+            align-items:center;
+        }
+        .foto {
+            width: 27%;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .foto img {
+            width: 100%; 
+            height: 300px; 
+            object-fit: cover;  
+        }
+
+        .foto img:hover{
+            filter: grayscale(100%);
+        }
+
+        .acciones {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        .acciones a {
+            text-decoration: none;
+            color: #333;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .acciones a:hover {
+            background-color: #333;
+            color: #fff;
+        }
+        .escrito{
+            margin-bottom: 2%;
+        } 
+        #verImagen .modal-content{
+            padding: 0%;
+            width: 850px;
+            height: 550px;
+
+        }
+        #verImagen .modal-content img{
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Esta es la interfaz de galeria Inicio */
+
+        .pedido-item3{
+            position: relative;
+            display: block;
+            justify-content: center;
+            background-color: white;
+            border: 1px solid #ccc ;
+            margin-bottom: 20px;
+            margin-top: 5px;
+            width: 450px;
+            height: 370px;
+            text-align: center;
+            transition: filter 0.2s;
+            overflow: hidden
+        }
+        .contenedor-img{
+            border: 1px solid #ccc;
+            width: 420px;
+            height: 265px;
+            margin: 3%;
+        }
+        .pedido-item3 img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .pedido-item3 p {
+            position: absolute;
+            text-align: center;
+            color: black;
+            font-size: 20px;
+            margin: 3%;
+        }
+        .pedido-item3:hover{
+            filter: grayscale(70%);
+        }

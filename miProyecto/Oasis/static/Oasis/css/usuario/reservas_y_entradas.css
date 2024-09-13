@@ -1,0 +1,58 @@
+.contenedorCompraEntrada{
+    display: flex;
+    width: 100%;
+}
+.noDatos{
+    margin-left: 2%; 
+    margin-top: 3%;
+}
+
+.mesa{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    width: 540px;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+    margin-top: 2%;
+    flex-wrap: wrap;
+}
+.mesa__container{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2%;
+}
+.mesa__container__detalles{
+    display: flex;
+    width: 35%;
+    background-color: rgb(201, 200, 200);
+    border-radius: 50%;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-family: "Nunito";
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.informacion_evento{
+    font-family: "Nunito";
+    width:58%; 
+    overflow-wrap: break-word; 
+    word-wrap: break-word;
+    align-items: center;
+}
+
+.mesa__circle{
+    font-family: "Nunito";
+    display: flex;
+    justify-content: center;
+    font-weight: 700;
+    align-items: center;
+    background-color: #f0f0f0;
+    width: 40%;
+    height: 40%;
+    border-radius: 50%;
+}

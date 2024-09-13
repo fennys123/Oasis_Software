@@ -1,0 +1,148 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+{{data}}
+
+{% block titulo %}Entradas{% endblock %}
+
+
+
+{% block contenedor %}
+    <div class="radio-inputs many">
+        <label class="radio">
+        <a href="{% url 'ver_perfil' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Inicio</span> 
+        </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'ver_detalles_pedido_usuario' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Pedidos activos</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'ver_ventas' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Historial de pedidos</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'reservas_usuario' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Reservas</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'entradas_usuario' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Entradas</span>
+            </a>
+        </label>
+    </div>
+    <h1>Información de la reserva</h1>
+
+    <div class="detalle-evento">
+        <img src="{{ reserva.evento.foto.url }}" alt="{{ reserva.evento.nombre }}" >
+        <div class="info-evento">
+            <div class="cabecera">
+                <div>
+                    <p class="titulo-evento">{{ reserva.evento.nombre }}</p>
+                    <p>{{ evento.fecha }}</p>
+                </div>
+                <p class="mesa_nombre">{{ reserva.mesa.nombre }} </p>
+            </div>
+            <div class="body">
+                <p><b>Capacidad de la mesa</b></p>
+                <p>{{ reserva.mesa.capacidad }}</p>
+            </div>
+            <div class="body">
+                <p><b>Fecha de la compra</b></p>
+                <p>{{ reserva.fecha_compra }}</p>
+            </div>
+            <div class="body">
+                <p><b>Total pagado</b></p>
+                <p>${{ reserva.total|intcomma }}</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="seccion_mapa_qr">
+        <div class="info">
+            <p><b>Mapa de la discoteca</b></p>
+            <img src="{% static 'Oasis/img/mesas_white.png' %}" alt="mapa" data-toggle="modal" data-target="#verMapa">
+        </div>
+
+        <div class="info">
+            <p><b>QR</b></p>
+            <img src="{{ reserva.qr_imagen.url }}" alt="qr" data-toggle="modal" data-target="#verQr">
+        </div>
+    </div>
+
+    <div class="seccion_info_importante">
+        <div class="info">
+            <p><b>Instrucciones de llegada</b></p>
+            <p>Al llegar, ¡No hagas fila!, puedes presentar el código QR en la entrada para acceder a tu mesa.</p>
+        </div>
+        <div class="info">
+            <p><b>Recomendaciones para la Noche</b></p>
+            <p>No olvides revisar el menú, disponible directamente desde tu mesa escaneando el código QR.</p>
+        </div>
+        <div class="info">
+            <p><b>Política de Cancelación o Cambio</b></p>
+            <p>Si necesitas cancelar o modificar tu reserva, lo puedes hacer por este medio, en el botón de cancelar reserva. Si vas a cancelar una reserva faltando menos de <b>24 horas</b>, por favor contáctanos a los sigientes números: (+57) 305 277 7073 o (+57) 321 123 4567. Las cancelaciones fuera de este plazo podrían no ser reembolsables.</p>
+        </div>
+        <div class="info">
+            <p><b>Recordatorio de Seguridad</b></p>
+            <p>Por tu seguridad y la de los demás asistentes, por favor respeta la capacidad máxima de la mesa, que es de 8 personas. Mantén tus pertenencias personales en un lugar seguro durante el evento.</p>
+        </div>
+        <div class="info">
+            <p><b>Contacto</b></p>
+            <p>Si tienes alguna duda o inconveniente con tu reserva, no dudes en contactarnos al (+57) 305 277 7073 o (+57) 321 123 4567 o por correo electrónico a reservas@oasisdiscoteca.com. Estamos aquí para ayudarte.</p>
+        </div>
+    </div>
+
+    <button class="btn btn-danger mb-5">Cancelar reserva</button>
+
+
+    <div class="modal fade" id="verMapa" tabindex="-1" role="dialog" aria-labelledby="verMapaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Ver mapa</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div> 
+                <div class="modal-body">
+                    <p>A continuación, puedes ver el mapa de la discoteca con la ubicación exacta de tu mesa reservada, la <b>{{ reserva.mesa.nombre}}</b>.</p>
+                    <div class="modal-contenedor-img">
+                        <img src="{% static 'Oasis/img/mesas_white.png' %}" alt="mapa">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="verQr" tabindex="-1" role="dialog" aria-labelledby="verQrLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Ver código QR</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div> 
+                <div class="modal-body">
+                    <p> El código QR que aparece aquí también será enviado a tu correo electrónico. Este código es necesario para ingresar al evento.</p>
+                    <div class="w-100 d-flex justify-content-center"    >
+                        <img src="{{ reserva.qr_imagen.url }}" alt="qr" width="50%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

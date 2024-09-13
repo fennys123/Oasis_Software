@@ -1,0 +1,231 @@
+.bloqueEvento {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content:flex-start;
+  max-height: auto;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.bloqueEvento a{
+  text-decoration: none;
+}
+
+.bloqueEvento a:hover{
+  text-decoration: none;
+}
+
+.bloqueEvento .evento {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  height: 270px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  color: black;
+  border-radius: 20px;
+}
+
+.bloqueEvento .evento:hover {
+  transform: scale(1.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.bloqueEvento .evento img {
+  width: 100%;
+  height: 100%;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+
+.bloqueEvento .evento .evento-información {
+  padding: 10px;
+}
+
+.bloqueEvento .evento .evento-información .evento-nombre {
+  font-weight: 600;
+  margin: 0;
+}
+
+.bloqueEvento .evento .evento-información .evento-mesa {
+  font-size: 12px;
+  margin: 0;
+}
+
+
+@media screen and (max-width: 851px) {
+  .bloqueEvento{
+    justify-content: center;
+    margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 460px) {
+  .bloqueEvento .evento {
+    width: 100%;
+  }
+}
+
+/* ESTA ES LA PARTE DE RESERVA EVENTO INFO */
+
+
+.detalle-evento{
+    width: 100%;
+    display: flex;
+    border-radius: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  
+  .detalle-evento img{
+    width: 500px;
+    height: 340px;
+    border-radius: 20px;
+  }
+  
+  .detalle-evento .info-evento {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    padding: 0px 0px 0px 40px;
+  }
+  
+  .detalle-evento .info-evento .cabecera {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid gray;
+  }
+  
+  
+  .detalle-evento .info-evento .cabecera .titulo-evento {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+  }
+  
+  .detalle-evento .info-evento .cabecera .mesa_nombre {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 0;
+  }
+
+  .detalle-evento .info-evento .body {
+    width: 100%;
+    border-bottom: 1px solid gray;
+    padding: 10px 0px;
+  }
+  
+  .detalle-evento .info-evento .body p {
+    margin-bottom: 0;
+  }
+  
+
+  .seccion_mapa_qr {
+    display: flex;
+    width: 100%;
+    justify-content: start;
+    gap: 50px;
+    margin-bottom: 50px;
+  }
+
+  .seccion_mapa_qr .info{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .seccion_mapa_qr .info img{
+    width: 300px;
+    height: 250px;
+    cursor: pointer;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    color: black;
+    border-radius: 20px;
+  }
+
+  .seccion_mapa_qr .info img:hover{
+    transform: scale(1.05);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+
+  .seccion_info_importante{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 50px;
+  }
+
+
+  .seccion_info_importante .info{
+    border-bottom: 1px solid gray;
+    padding: 15px 0px;
+  }
+  
+  .seccion_info_importante .info p{
+    margin: 0;
+  }
+
+
+  /*ARREGLANDO LOS BOTONES PARA INVENTARIO*/
+  .detalle-evento .info-evento .botones {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+    justify-content: end;
+  }
+  
+  @media screen and (max-width: 1200px) {
+    .detalle-evento{
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .detalle-evento .info-evento {
+      width: 100%;
+      margin-top: 10px;
+      padding: 0px;
+    }
+  
+    .detalle-evento .info-evento .cabecera {
+      flex-direction: column;
+    }
+  
+    .detalle-evento .info-evento .cabecera {
+      text-align: center;
+    }
+  }
+
+  @media screen and (max-width: 851px) {
+    .seccion_mapa_qr{
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  @media screen and (max-width: 660px) {
+    .detalle-evento img{
+      width: 90%;
+      height: 200px;
+    }
+
+    .seccion_mapa_qr .info img{
+      width: 250px;
+      height: 200px;
+    }
+  }
+  
+  @media screen and (max-width: 430px) {
+    .seccion_mapa_qr .info{
+      width: 100%;
+    }
+    .seccion_mapa_qr .info img{
+      width: 100%;
+    }
+  }
+  

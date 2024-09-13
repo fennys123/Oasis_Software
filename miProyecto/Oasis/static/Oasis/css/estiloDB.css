@@ -1,0 +1,248 @@
+  #contenedorTabla{
+    width: 100%;
+    height: auto;
+    font-size: 14px;
+  }
+
+  /*
+  #tabla, #tabla2{
+      width: 100%;
+      margin: 0%;
+  }
+  #tabla thead tr th, #tabla2 thead tr th{
+    background-color: black;
+      line-height: 2.5em;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+      font-family: Nunito;
+  }
+  #tabla tbody tr td, #tabla2 tbody tr td{
+      line-height: 2.5em;
+      text-align: center;
+      font-family: Nunito;
+      color: #6e6e6e;
+      font-weight: 100;
+  }
+
+  #contenedorTabla{
+      margin-left: 1.3em;
+      padding: 0%;
+  } 
+  */
+
+  /* Estilos de otras paginas*/
+  #botonDropdown{
+    border: 1px solid #c5d7e8;
+  }
+  #informacion{
+      border: 1px solid #c5d7e8;
+      color: #6e6e6e ;
+  }
+  #boton+{
+    margin-top: 5%;
+  }
+  #entregado{
+    background-color: rgba(0, 255, 106, 0.271);
+    text-align: center;
+    vertical-align: middle;
+    font-size: 17px;
+  }
+  #cancelado{
+    background-color: rgba(255, 0, 0, 0.271);
+    text-align: center;
+    vertical-align: middle;
+    font-size: 17px;
+  }
+  input .descripcion{
+    height: 50%;
+  }
+
+
+  
+  .table.dataTable {
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+    border-collapse: collapse !important;
+    border: 1px solid #ccc !important;
+    padding: 0;
+  }
+  
+  .table.dataTable th,
+  .table.dataTable td {
+    border: 1px solid #ddd;
+    padding: .625em;
+  }
+  
+  .table.dataTable th {
+    background-color: #f2f2f2;
+  }
+  
+  .table.dataTable td {
+    background-color: #fff;
+  }
+
+.table.dataTable thead th, .table.dataTable thead td, .table.dataTable tfoot th, .table.dataTable tfoot td {
+  text-align: center !important;
+}
+
+.table {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table tr {
+  background-color: #f8f8f8;
+  padding: .35em;
+}
+
+.table th{
+  padding: .625em;
+}
+
+.table td {
+  padding: .625em;
+  text-align: left;
+}
+
+.table th {
+  font-size: .85em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.tableFactura {
+  font-size: 12px;
+}
+
+@media screen and (max-width: 600px) {
+  .table {
+    border: 0;
+  }
+  
+  .table thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  
+  .table tr {
+    border-bottom: 3px solid #ddd;
+    display: block;
+    margin-bottom: .625em;
+  }
+  
+  .table td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: .8em;
+    text-align: right;
+  }
+  
+  .table td::before {
+    /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .table td:last-child {
+    border-bottom: 0;
+  }
+}
+
+
+
+
+.tableFactura {
+border-collapse: collapse;
+width: 100%;
+table-layout: fixed;
+}
+
+.tableFactura tr {
+background-color: #ffffff;
+padding: .35em;
+}
+
+
+.tableFactura td {
+padding: .2em;
+text-align: left;
+}
+
+
+@media screen and (max-width: 350px) {
+  .tableFactura {
+    border: 0;
+  }
+  
+  .tableFactura thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  
+  .tableFactura tr {
+    border-bottom: 3px solid #ddd;
+    display: block;
+    margin-bottom: .625em;
+  }
+  
+  .tableFactura td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: .8em;
+    text-align: right;
+  }
+  
+  .tableFactura td::before {
+    /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .tableFactura td:last-child {
+    border-bottom: 0;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* general styling */
+body {
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.25;
+}

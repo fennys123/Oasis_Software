@@ -1,0 +1,171 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Mesas{% endblock %}
+
+{% block contenedor %}
+  <div class="radio-inputs">
+    <label class="radio">
+      <a href="{% url 'Mesas' %}">
+        <input type="radio" name="radio" checked="" />
+        <span class="name">Inicio</span>
+      </a>
+    </label>
+  </div>
+  <h1>Mesas</h1>
+  <div class="Contenido">
+      <div class="conteos">
+        <p>Todos (<span> {{ data|length }} </span>)</p>
+      </div>
+      <div class="search">
+        <input placeholder="Buscar mesas..." type="text">
+        <button type="submit">Buscar</button>
+    </div>
+  </div>
+  <div class="Agregar">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarMesa">Agregar Mesa</button>
+  </div>
+  <div id="contenedorTabla">
+    <table class="table">
+      <thead class="thead-light">
+        <tr>
+          <th>Mesa</th>
+          <th>Estado</th>
+          <th>Usuario</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in data %}
+          <tr>
+            <td data-label="Mesa">{{ m.nombre }}</td>
+            <td data-label="Estado">{{ m.estado }}</td>
+            {% if m.usuario %}
+              {% if m.usuario.rol == 3 %}
+                <td data-label="Usuario">Mesero: {{ m.usuario.nombre }}</td>
+              {% else %}
+                <td data-label="Usuario">{{ m.usuario.nombre }}</td>
+              {% endif %}
+            {% else %}
+              <td data-label="Usuario">Sin usuario</td>
+            {% endif %}
+            <td data-label="Acciones">
+              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#verMesa{{ m.id }}"><i class="bi bi-eye-fill"></i></button>
+              <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarMesa{{ m.id }}"><i class="bi bi-pencil"></i></button>
+              <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarMesa' m.id %}')"><i class="bi bi-x-lg"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="modal fade" id="agregarMesa" tabindex="-1" role="dialog" aria-labelledby="agregarMesaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="tituloFormulario">Agregar mesa</p>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="formulario" action="{% url 'crearMesa' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                      <label>
+                          <input required="true" type="text" class="input" name="nombre">
+                          <span>Nombre</span>
+                      </label>
+                      <label>
+                        <input required="true" type="number" class="input" min="4" max="8" size="1" name="capacidad">
+                        <span>Capacidad</span>
+                      </label>
+                    <label>
+                        <input required="true" type="precio" class="input" name="precio">
+                        <span>Precio</span>
+                    </label>  
+                  <button class="btn btn-success mb-2 mt-2" type="submit">Agregar Mesa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+
+  {% for m in data %}
+    <div class="modal fade" id="editarMesa{{ m.id }}" tabindex="-1" role="dialog" aria-labelledby="editarMesaLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <p class="tituloFormulario">Editar mesa</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form class="formulario" action="{% url 'mesaActualizar' m.id %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                        <label>
+                            <input required="true" type="text" class="input" name="nombre" value="{{ m.nombre }}">
+                            <span>Nombre</span>
+                        </label>
+                        <label>
+                          <input required="true" type="number" class="input" min="4" max="8" size="1" name="capacidad" value="{{ m.capacidad }}">
+                          <span>Capacidad</span>
+                        </label>
+                      <label>
+                          <input required="true" type="precio" class="input" name="precio" value="{{ m.precio }}">
+                          <span>Precio</span>
+                      </label>  
+                    <button class="btn btn-success mb-2 mt-2" type="submit">Editar Mesa</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+  {% endfor %}
+
+
+  {% for m in data %}
+    <div class="modal fade" id="verMesa{{ m.id }}" tabindex="-1" role="dialog" aria-labelledby="verMesaLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <p class="tituloFormulario">Ver mesa</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <div class="contenedor_ver_mesa">
+                    <div class="ver_mesa_nombre">
+                      <p>{{ m.nombre }}</p>
+                    </div>
+                    <div class="ver_mesa_info">
+                      <p>Capacidad: {{ m.capacidad }}</p>
+                      <p>Precio: $ {{ m.precio|intcomma }}</p>
+                      {% if m.estado == 'Disponible' %}
+                        <p>Estado pedido: {{ m.estado }}</p>
+                      {% endif %}
+                      {% if m.estado_reserva == 'Reservada' %}
+                        <p>Estado reserva: {{ m.estado_reserva }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="ver_mesa_botones">
+                    {% if m.estado == 'Activa' %}
+                      <a href="{% url 'ver_pedidos_mesa' m.id %}" class="btn btn-primary">Pedidos</a>
+                    {% endif %}
+                    {% if m.estado_reserva == 'Reservada' %}
+                      <a href="{% url 'reservasMesa' m.id %}" class="btn btn-primary">Reservas</a>
+                    {% endif %}
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}  

@@ -1,0 +1,144 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+
+{% block titulo %}Galería{% endblock %}
+
+{% block contenedor %}
+    <div class="radio-inputs">
+        <label class="radio">
+        <a href="{% url 'gaInicio' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Inicio</span>
+        </a>
+        </label>
+    </div>
+    <div class="cabecera-carpeta">
+        <h1>{{ carpeta.nombre }}</h1>
+        <p class="fecha-sm">{{ carpeta.fecha }}</p>
+        <div class="galeria-botones">
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarCarpeta{{ carpeta.id }}"><i class="bi bi-pencil"></i></button>
+            <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarCarpeta' carpeta.id %}')"><i class="bi bi-x-lg"></i></a>
+        </div>    
+    </div>
+    <p class="fecha-lg">{{ carpeta.fecha }}</p>
+    <div class="Agregar">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarFoto">Agregar foto</button>
+    </div>
+    {% if not fotos %}
+        <p>No hay fotos en la carpeta</p>
+    {% endif %}
+
+    <div class="contenedor-fotos">
+        {% for f in fotos %}
+            <div class="contenedor-foto">
+                <img src="{{ f.foto.url }}" alt="{{f.foto}}" data-toggle="modal" data-target="#verImagen{{ f.id }}">
+            </div>
+        {% endfor %}
+    </div>
+    
+
+    <div class="modal fade" id="editarCarpeta{{ carpeta.id }}" tabindex="-1" role="dialog" aria-labelledby="editarCarpetaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="tituloFormulario">Editar carpeta</p>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="formulario" action="{% url 'actualizarCarpeta' carpeta.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <label>
+                            <input required="true" type="text" class="input" name="nombre" value="{{ carpeta.nombre }}">
+                            <span>Nombre</span>
+                        </label>
+                        <label>
+                        <input required="true" type="date" class="input" min="4" max="8" size="1" name="fecha" value="{{ carpeta.fecha|date:'Y-m-d' }}">
+                        <span>Fecha</span>
+                        </label>
+                        <div class="mb-3 mt-2 file-input">
+                        <span>Imagen de portada</span>
+                        <input class="form-control" type="file" id="formFile" name="foto_nueva">
+                        </div>
+                    <button class="btn btn-success mb-2 mt-2" type="submit">Editar Carpeta</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <div class="modal fade" id="agregarFoto" tabindex="-1" role="dialog" aria-labelledby="agregarFotoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Agregar foto</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="formulario" action="{% url 'agregarFoto' carpeta.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="mb-3 mt-2 file-input">
+                                <span>Ingrese la foto</span>
+                                <input class="form-control" type="file" id="formFile" name="foto_nueva">
+                            </div>
+                        <button class="btn btn-success mb-2 mt-2" type="submit">Agregar foto</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+
+    {% for f in fotos %}
+        <div class="modal fade" id="verImagen{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="verImagenLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Ver imagen</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-contenedor-img">
+                    <img src="{{ f.foto.url }}" alt="{{f.foto}}">
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarFoto' f.id %}')">Eliminar foto</a>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal" data-toggle="modal" data-target="#cambiarFoto{{ f.id }}">Cambiar foto</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    {% endfor %}
+
+
+    {% for f in fotos %}
+        <div class="modal fade" id="cambiarFoto{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="cambiarFotoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p class="tituloFormulario">Cambiar foto</p>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="formulario" action="{% url 'cambiarFoto' f.id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                                <div class="mb-3 mt-2 file-input">
+                                    <span>Cambie la foto</span>
+                                    <input class="form-control" type="file" id="formFile" name="foto_nueva">
+                                </div>
+                            <button class="btn btn-success mb-2 mt-2" type="submit">Cambiar la foto</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+
+{% block titulo %}Registro{% endblock %}
+
+{% block contenedor %}
+<section class="contenedorInicio">
+  <div class="imagen">
+    <img src="{% static 'Oasis/img/fondoRegistro4.jpg' %}" alt="Fondo Registro">
+  </div>
+  <div class="contentRegistro">
+    <div class="Registro">
+      <h1>REGISTRO</h1>
+      <div class="formulario d-flex justify-content-center align-items-center">
+        <form class="d-flex flex-column justify-content-center align-items-center" method="POST" action="{% url 'usuario_registro' %}">
+            {% csrf_token %}
+            <div class="group">
+              <input required="true" class="main-input" type="text" name="nombre">
+              <span class="highlight-span"></span>
+              <label class="lebal-email">Nombre</label>
+            </div>
+            <div class="container-1">
+              <div class="group">
+                <input required="true" class="main-input" type="email" name="email">
+                <span class="highlight-span"></span>
+                <label class="lebal-email">Email</label>
+              </div>
+            </div>
+            <div class="container-1">
+              <div class="group">
+                <input required="true" class="main-input" type="text" name="cedula">
+                <span class="highlight-span"></span>
+                <label class="lebal-email">Cedula</label>
+              </div>
+            </div>
+            <div class="container-1">
+              <div class="group">
+                <input required="true" class="main-input" type="password" name="password1">
+                <span class="highlight-span"></span>
+                <label class="lebal-email">Contraseña</label>
+              </div>
+            </div>
+            <div class="container-1">
+              <div class="group">
+                <input required="true" class="main-input" type="password" name="password2">
+                <span class="highlight-span"></span>
+                <label class="lebal-email">Confirmar Contraseña</label>
+              </div>
+            </div>
+            <div class="container-1">
+              <div class="group">
+                <p>Fecha de Nacimiento</p>
+                <input required="true" class="main-input" type="date" name="fechaNacimiento">
+                <span class="highlight-span"></span>
+              </div>
+            </div>
+        </div>
+        <div class="contentbutton">
+          <button type="submit" class="btn-normalpeque">Registrarse</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

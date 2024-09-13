@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oasis - {% block titulo %}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'Oasis/css/botonesDiseño.css' %}">
+  <link rel="stylesheet" href="{% static 'Oasis/css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'Oasis/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'Oasis/css/front_eventos/front_eventos_info.css' %}">
+  <link rel="stylesheet" href="{% static 'Oasis/css/barrasGestiones.css' %}">
+  <link rel="stylesheet" href="{% static 'Oasis/css/pedidoEmpleado.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'Oasis/img/favicon-32x32.png' %}">
+
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+      <div class="container-fluid">
+        <a id="enlace_logo" href="{% url 'index' %}"><img src="{% static 'Oasis/img/logoOasisBlanco.png' %}" alt="logo_oasis"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="navbar-items-responsive">
+            <ul class="navbar-nav d-flex justify-content-around align-items-center mx-auto mb-2 mb-lg-0" id="Opciones">
+              <li class="nav-item">
+                <a class="nav-item opcionesNav" href="{% url 'index' %}" role="button">
+                  INICIO
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-item opcionesNav" href="{% url 'front_productos' %}" role="button">
+                  MENÚ
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="opcionesNav" href="{% url 'front_eventos' %}" role="button">
+                  EVENTOS
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="opcionesNav" href="{% url 'peInicio' %}" role="button">
+                  GALERÍA
+                </a>
+              </li>
+            </ul>
+            <div class="d-flex" id="botones">
+              {% if data %}
+                {% if data.rol == 4 %}
+                  <a href="{% url 'escanear_mesa' %}">
+                    <button class="btn2" type="button">Pedir Ahora</button>
+                  </a>
+                  <div class="dropdown dropstart">
+                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                      <img src="{{ data.foto.url }}" alt="LogoUsuario" width="40px" height="40px" class="rounded-circle">
+                    </button>
+                    <ul class="dropdown-menu cerrar">
+                      <li><a class="dropdown-item" href="{% url 'ver_perfil' %}">Perfil</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="{% url 'logout' %}">Salir</a></li>
+                    </ul>
+                  </div>
+                {% else %}
+                  <a type="button" href="#"><i class="bi bi-cart2 colorLogoCarrito"></i></a>
+                  <div class="dropdown dropstart">
+                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                      <img src="{{ data.foto.url }}" alt="LogoUsuario" width="40px" height="40px" class="rounded-circle">
+                    </button>
+                    <ul class="dropdown-menu cerrar">
+                      {% if data.rol == 1 %}
+                        <li><a class="dropdown-item" href="{% url 'ver_perfil' %}">Administrador</a></li>
+                      {% elif data.rol == 2 %}
+                        <li><a class="dropdown-item" href="{% url 'ver_perfil' %}">Bartender</a></li>
+                      {% elif data.rol == 3 %}
+                        <li><a class="dropdown-item" href="{% url 'ver_perfil' %}">Mesero</a></li>
+                      {% endif %}
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="{% url 'logout' %}">Salir</a></li>
+                    </ul>
+                  </div>
+                {% endif %}
+              {% else %}
+                <button class="btn1" type="button" data-bs-toggle="offcanvas" data-bs-target="#pantallaLogin">Iniciar Sesión</button>
+                <a href="{% url 'escanear_mesa' %}">
+                  <button class="btn2" type="button">Pedir Ahora</button>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+    </nav>
+    
+    <div class="offcanvas offcanvas-end bg-dark" id="pantallaLogin">
+      <div class="offcanvas-header cabecera">
+        <p class="offcanvas-title titulo">Iniciar Sesión</p>
+        <button id="botonCerrar" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+      </div>
+      <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <div class="offcanvas-body text-white cuerpo">
+          <p>Ingresa con tu email y contraseña.</p>
+          <div class="input-container inputEdit1">
+            <input type="text" required="" name="correo">
+            <label for="input" class="label">Escribe tu correo electrónico</label>
+            <div class="underline"></div>
+          </div>
+          <div class="input-container inputEdit2">
+            <input type="password" required="" name="clave">
+            <label for="input" class="label">Escribe tu contraseña</label>
+            <div class="underline"></div>
+          </div>
+          <a class="olvidarContraseña">Olvidé mi contraseña</a>
+          <button type="submit" class="btn-normal">Entrar</button>
+          <p class="p1">¿No tiene una cuenta?</p>
+        </div>
+      </form>
+      <a href="{% url 'registro' %}">
+          <button class="btn-normal2">Registrarse</button>
+      </a>
+    </div>
+  </header>
+  {% if messages %}
+  {% for message in messages %}
+  <div
+    class="alert alert-{% if message.tags and message.tags != 'error' %}{{ message.tags }}{% else %}danger{% endif %} alert-dismissible fade show"
+    role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% block contenedor %}
+  {% endblock %}
+
+
+  <script src="{% static 'Oasis/js/jquery-3.7.1.min.js' %}"></script>
+  <script src="{% static 'Oasis/js/libreria.js' %}"></script>
+  <script src="{% static 'tienda/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'Oasis/js/front_eventos_info.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+
+{% block titulo %}Registro{% endblock %}
+
+{% block contenedor %}
+<section class="contenedorInicio">
+  <div class="imagen">
+    <img src="{% static 'Oasis/img/fondoRegistro4.jpg' %}" alt="Fondo Registro">
+  </div>
+  <div class="d-flex flex-column align-items-center justify-content-center w-50 bg-dark">
+    <p class="text-light fs-5">¡Escanea el QR de tu mesa para registrar tu pedido!</p>
+    <img src="{% static 'Oasis/img/QR.png' %}" alt="Qr" class="w-50">
+    <select class="form-control bg-dark text-light w-50 mt-5" id="mesaSelect">
+        <option value="">Seleccione</option>
+        {% for m in mesas %}
+            {% if m.estado == "Activa" %}
+                <option class="inputMesa" value="{{ m.id }}" disabled>{{ m.nombre }} - (No disponible)</option>
+            {% else %}
+                <option class="inputMesa" value="{{ m.id }}">{{ m.nombre }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <button class="btn btn-comprar w-50 mt-5" id="escaneadaButton" onclick="mesa_escaneada('{% url 'pedidoUsuario' id=0 %}'.replace('0/', ''))">Escaneada</button>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Detalles del Producto{% endblock %}
+
+{% block contenedor %}
+<style>
+    body {
+        background-color: #212529;
+    }
+</style>
+
+<div class="d-flex">
+    <img src="{% static 'Oasis/img/cerveza.png' %}" alt="cerveza" class="d-block w-50" style="height: 300px;">
+    <div class="w-50" style="background-color: black;">
+        <h1 style="color: white; font-family: Camingo; margin-top: 5%;">MENÚ OASIS</h1>
+        <div style="height: 2%; background-color: blueviolet; width: 30%;"></div>
+        <br>
+        <br>
+        <h5 style="color: white; font-family: Quicksand; width: 80%;">Tus celebraciones no serían lo mismo sin licor, por eso tenemos para tí los mejores del mercado, elige el que con tu evento combine mejor.</h5>
+    </div>
+</div>
+<div class="bg-dark text-light w-100 d-flex" style="height:auto; padding: 3%; gap: 32px;">
+
+    <div class="d-flex justify-content-end" style="width: 50%;">
+    <img src="{{ producto.foto.url }}" class="card-img-top" alt="Producto" style="height: 300px; width: 70%; border-radius: 30px;"> 
+    </div>
+
+    <div class="w-50" style="background-color:#212529;">
+        <h3 style="color: white; font-family: Quicksand; margin-top: 5%;"><strong>{{ producto.nombre }}</strong></h3>
+        <h5 style="color: white; font-family: Quicksand; width: 80%;"><strong>Precio:</strong> ${{ producto.precio|intcomma }}</h5>
+        <h5 style="color: white; font-family: Quicksand; width: 80%;"><strong>Categoría:</strong> {{ producto.categoria }}</h5>
+        <br>
+        <h6 style="color: white; font-family: Quicksand; width: 80%;"> {{ producto.descripcion }}</h6>
+    </div>
+</div>
+
+<div class="card-body" style="background-color:#212529;">
+    <form>
+        <input type="hidden" name="id" id="id_{{ producto.id }}" value="{{ producto.id }}">
+        <input type="number" name="cantidad" id="cantidad_{{ producto.id }}" class="form-control bg-dark text-light text-center" min="1" value="1" style="width: 30%; display: block;margin-right: auto; margin-left: 18%;">
+        <br>
+        <button type="button" onclick="add_carrito(`{% url 'carrito_add' %}`, {{ producto.id }});" class="btn" style="background-color: #fc4664; color: white; width: 30%;display: block;margin-right: auto;margin-left: 18%;"><i class="bi bi-cart2"></i> Agregar</button>    
+    </form>
+</div>
+
+{% endblock %}

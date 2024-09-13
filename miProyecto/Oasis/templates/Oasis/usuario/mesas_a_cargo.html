@@ -1,0 +1,51 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+
+{% block titulo %}Gestión de Mesas{% endblock %}
+
+
+{% block contenedor %}
+    <div class="radio-inputs many">
+        <label class="radio">
+            <a href="{% url 'ver_perfil' %}">
+            <input type="radio" name="radio" checked="" />
+            <span class="name">Inicio</span> 
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'ver_ventas' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Historial de Ventas</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'ver_mesas_a_cargo' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Mesas a cargo</span>
+            </a>
+        </label>
+    </div>
+
+  
+  <h1>Mesas a cargo</h1>
+  {% if not mesas %}
+    <p>No tienes mesas a cargo</p>
+  {% else %}
+    <div class="Contenido">
+        <div class="conteos">
+        <p>Todas (<span>{{ mesas|length }}</span>)</p>
+        </div>
+    </div>
+    <div class="mesas">
+        {% for m in mesas %}
+            <div class="tarjetaActiva">
+            <section class="mesaActiva">
+                <h4>{{ m.nombre }}</h4>
+                <p>{{ m.estado }}</p>
+                <a type="button" class="btn btn-primary" href="{% url 'ver_pedidos_mesa' m.id %}">Ver</a>
+            </section>
+            </div>
+        {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

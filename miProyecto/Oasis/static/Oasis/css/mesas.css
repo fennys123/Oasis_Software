@@ -1,0 +1,171 @@
+.mesas {
+    display: flex;
+    justify-content: start;
+    gap: 4em;
+    flex-wrap: wrap;
+    width: 100%;
+    height: auto;
+    margin-top: 2%;
+}
+
+.tarjetaActiva,
+.tarjetaDisponible {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    background-color: white;
+    height: 220px;
+    width: 220px;
+    transition: transform 0.3s ease-in-out;
+    box-sizing: border-box; /* Asegura que el padding y el border se incluyan en el tamaño total */
+}
+
+.tarjetaActiva {
+    border: 3px solid #00FF6A;
+}
+
+.tarjetaDisponible {
+    border: 3px solid rgb(84, 73, 73);
+}
+
+.mesaActiva,
+.mesaDisponible {
+    border: 1px solid #ddd;
+    border-radius: 1rem;
+    padding: 2%;
+    height: 180px;
+    width: 180px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Nunito";
+    box-sizing: border-box; /* Asegura que el padding y el border se incluyan en el tamaño total */
+}
+
+.mesaActiva h4,
+.mesaDisponible h4 {
+    font-weight: 700;
+}
+
+.mesaActiva p,
+.mesaDisponible p {
+    font-size: 14px;
+}
+
+
+@media screen and (max-width: 611px) {
+    .mesas {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2em;
+        margin-top: 2em;
+    }
+}
+
+  .modal_titulo{
+    font-family: "Nunito";
+    font-weight: 700;
+    color: #fc4664;
+  }
+
+  .modal_info{
+    font-family: "Nunito";
+    font-weight: 600;
+  }
+  .modal_info_img{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+
+  .mesa ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+  }
+
+  .mesa ul li {
+      margin: 5px 0;
+  }
+
+  .mesa p:last-child {
+      font-weight: bold;
+      color: #ff0000;
+  }
+
+  .cuentaProductos{
+      width: 100%;
+  }
+
+  #totalModal{
+      text-align: right;
+      margin-right: 4%;
+  }
+
+  #opcionBotones{
+      display: flex;
+      justify-content: space-between;
+      width: 500px;
+  }
+
+
+
+/*ESTA PARTE ES DE mesasInicio.html*/
+
+.contenedor_ver_mesa{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ver_mesa_nombre{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2%;
+    width: 100px;
+    height: 100px;
+    background-color: #d4d4d4;
+    border-radius: 50%;
+}
+
+.ver_mesa_nombre p{
+    font-family: "Nunito";
+    font-weight: 700;
+    margin: 0;
+}
+
+.ver_mesa_info {
+    margin-left: 25px;
+}
+
+.ver_mesa_info p{
+    font-size: 14px;
+    margin: 0;
+}
+
+.ver_mesa_botones{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 376px) {
+    .contenedor_ver_mesa{
+        flex-direction: column;
+    }
+
+    .ver_mesa_info{
+        margin-top: 20px;
+    }
+}

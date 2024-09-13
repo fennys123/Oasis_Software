@@ -1,0 +1,70 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+
+{% block titulo %}Inicio{% endblock %}
+
+
+{% block lateral %}
+  <div class="offcanvas offcanvas-end bg-dark" id="pantallaLogin">
+    <div class="offcanvas-header cabecera">
+      <p class="offcanvas-title titulo">Iniciar Sesión</p>
+      <button id="botonCerrar" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <form action="{% url 'login' %}" method="post">
+      {% csrf_token %}
+      <div class="offcanvas-body text-white cuerpo">
+        <p>Ingresa con tu email y contraseña.</p>
+        <div class="input-container inputEdit1">
+          <input type="text" name="correo">
+          <label for="input" class="label">Escribe tu correo electrónico</label>
+          <div class="underline"></div>
+        </div>
+        <div class="input-container inputEdit2">
+          <input type="password" name="clave">
+          <label for="input" class="label">Escribe tu contraseña</label>
+          <div class="underline"></div>
+        </div>
+        <a class="olvidarContraseña">Olvidé mi contraseña</a>
+        <button type="submit" class="btn-normal">Entrar</button>
+        <p class="p1">¿No tiene una cuenta?</p>
+      </div>
+    </form>
+  </div>
+  <a type="button" class="btn-normal2" href="{% url 'registro' %}">Registrarse</a>
+{% endblock %}
+
+{% block contenedor %}
+<div>
+  <div id="demo" class="carousel slide" data-bs-ride="carousel">
+
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{% static 'Oasis/img/fondo1.jpg' %}" alt="fondo1" class="d-block w-100">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'Oasis/img/fondo5.jpg' %}" alt="fondo5" class="d-block w-100">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'Oasis/img/fondo3.jpg' %}" alt="fondo3" class="d-block w-100">
+      </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
+    </button>
+
+    <div id="frase">
+      <p>- Bienvenidos a Oasis</p>
+      <div id="parrafo">
+        Sumérgete en la noche en nuestro bar único, donde los cócteles cobran vida, la música llena el aire y las
+        risas
+        fluyen sin parar. Únete a nosotros y descubre el epicentro de la diversión nocturna en la ciudad.
+      </div>
+      <button class="btn3" onclick="window.location.href='{% url 'mas_info' %}'">Más información</button>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+

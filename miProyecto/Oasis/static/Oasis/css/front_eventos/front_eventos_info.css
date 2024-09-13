@@ -1,0 +1,163 @@
+.message-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .alert {
+    width: 100%; /* Ancho del mensaje */
+    margin-bottom: 10px; /* Espacio entre mensajes */
+    position: relative; /* Para posicionar el botón de cierre */
+    padding: 10px;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+  }
+
+.BlockReservaEntrada{
+    display: flex;
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    justify-content: space-around;
+    height: auto;
+    padding-bottom: 5%;
+}
+
+.BlockReservaEntrada h4{
+    font-family: Quicksand; 
+    margin-bottom: 3%;
+}
+.contenedorReservas{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.titulosyDescEntradas{
+    text-align: center;
+    margin-bottom: 5%;
+    margin-top: 3%;
+}
+
+.titulosyDescEntradas p{
+    color: #fc4664;
+}
+
+.comprarEntradaTabla{
+    width: 100%;
+}
+.comprarEntradaTabla td{
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.reservarMesaTabla{
+    width: 70%;
+}
+.reservarMesaTabla td{
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+    width: 50%;
+}
+.inputCantidadEntradas{
+    width: 80px;
+}
+#formEntradas{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    height: 100%;
+}
+
+/* BOTONES */
+
+.btn-comprar{
+    background-color: #fc4664; 
+    color: white; 
+    width: 50%;
+}
+
+.btn-comprar:hover{
+    background-color: #fb3958;
+}
+
+.btn-comprar:disabled{
+    background-color: #5c5c5c; 
+    color: white; 
+    width: 50%;
+}
+
+#detalle-general, #detalle-vip{
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+    text-align: center;
+    background-color: #d4d4d4;
+    width: 100%;
+    height: 70px;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+#detalle-general p, #detalle-vip p, #circle-mesa p{
+    margin: 0%;
+}
+
+.detalles{
+    display: flex;
+    width: 100%;
+    height: auto;
+    align-items: center;
+}
+
+#circle-mesa{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    background-color: #d4d4d4;
+    width: 110px;
+    height: 100px;
+    padding: 20px;
+    border-radius: 50%;
+}
+
+#circle-mesa p{
+    margin: 0%;
+}
+
+.info-mesa{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 90%;
+    padding: 0% 5%;
+}
+.info-mesa h5{
+    color: #fc4664;
+    font-family: "Nunito"; 
+    font-weight: bold;
+    text-align: center;
+}
+
+.info-mesa p{
+    font-family: "Nunito";
+}
+.total_reserva{
+    font-family: "Nunito"; 
+    font-weight: bold; 
+    text-align: end; 
+    width: 100%;
+    margin-right: 15%;
+}

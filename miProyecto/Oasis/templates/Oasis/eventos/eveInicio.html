@@ -1,0 +1,191 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{{data}}
+
+{% block titulo %}Eventos{% endblock %}
+
+
+{% block contenedor %}
+  <div class="radio-inputs">
+    <label class="radio">
+      <a href="{% url 'Eventos' %}">
+        <input type="radio" name="radio" checked=""/>
+        <span class="name">Inicio</span>
+      </a>
+    </label>
+  </div>
+    <h1>Eventos</h1>
+    <div class="Contenido">
+        <div class="conteos">
+            <p>Todos (<span>{{ data|length }}</span>)</p>
+        </div>
+        <div class="search">
+            <input id="myInput" placeholder="Buscar eventos..." type="text">
+            <button id="searchButton" type="submit">Buscar</button>
+        </div>
+    </div>
+    <div class="Agregar">
+      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarEvento">Agregar Evento</button>
+    </div>
+    <div id="contenedorTabla">
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>Evento</th>
+            <th>Fecha</th>
+            <th>Aforo</th>
+            <th>Entradas Disponibles</th>
+            <th>Reservas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in data %}
+            <tr>
+              <td data-label="ID">{{ e.id }}</td>
+              <td data-label="Evento">{{ e.nombre }}</td>
+              <td data-label="Fecha">{{ e.fecha }}</td>
+              <td data-label="Aforo">{{ e.aforo }}</td>
+              {% if e.entradas %}
+                <td data-label="Entradas Disponibles"><a href="{% url 'eveEntradas' e.id %}" style="text-decoration: none;">{{ e.entradas_disponibles }}</a></td>
+              {% else %}
+                <td data-label="Entradas Disponibles">No existen entradas</td>
+              {% endif %}
+              
+              {% if e.reservas %}
+                  <td data-label="Reservas"><a href="{% url 'eveReserva' e.id%}" style="text-decoration: none;">Ver reservas</a></td>
+              {% else %}
+                  <td data-label="Reservas">No existen reservas</td>
+              {% endif %}
+              <td data-label="Acciones">
+                <a type="button" class="btn btn-info" href="{% url 'detalleEvento' e.id %}"><i class="bi bi-eye-fill"></i></a>
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarEvento{{ e.id }}"><i class="bi bi-pencil"></i></button>
+                <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarEvento' e.id %}')"><i class="bi bi-x-lg"></i></a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>  
+    </div>
+
+
+
+    <div class="modal fade" id="agregarEvento" tabindex="-1" role="dialog" aria-labelledby="agregarEventoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <p class="tituloFormulario">Agregar evento</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form class="formulario" action="{% url 'crearEvento' %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <label>
+                        <input required="true" type="text" class="input" name="nombre">
+                        <span>Nombre</span>
+                      </label>
+                      <div class="flex">
+                          <label>
+                              <input required="true" type="date" class="input" name="fecha">
+                              <span>Fecha</span>
+                          </label>
+                          <label>
+                              <input required="true" type="time" class="input" name="hora_incio">
+                              <span>Hora inicio</span>
+                          </label>
+                      </div> 
+                      <div class="flex">
+                        <label>
+                            <input required="true" type="number" class="input" name="entrada_general">
+                            <span>Precio general</span>
+                        </label>
+                        <label>
+                            <input required="true" type="number" class="input" name="entrada_vip">
+                            <span>Precio VIP</span>
+                        </label>
+                      </div> 
+                      <label>
+                          <input required="true" type="number" class="input" name="aforo">
+                          <span>Aforo</span>
+                      </label>  
+                      <label>
+                          <input required="true" type="text" class="input" name="descripcion">
+                          <span>Descripción</span>
+                      </label>
+                      <div class="mb-3 mt-2 file-input">
+                        <span>Flyer</span>
+                        <input class="form-control" type="file" id="formFile" name="flyer">
+                      </div>
+                    <button class="btn btn-success mb-2 mt-2" type="submit">Agregar Evento</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+
+
+
+    {% for e in data %}
+      <div class="modal fade" id="editarEvento{{ e.id }}" tabindex="-1" role="dialog" aria-labelledby="editarEventoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Editar evento</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="formulario" action="{% url 'actualizarEvento' e.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label>
+                          <input required="true" type="text" class="input" name="nombre" value="{{ e.nombre }}">
+                          <span>Nombre</span>
+                        </label>
+                        <div class="flex">
+                            <label>
+                                <input required="true" type="date" class="input" name="fecha" value="{{ e.fecha|date:'Y-m-d' }}">
+                                <span>Fecha</span>
+                            </label>
+                            <label>
+                                <input required="true" type="time" class="input" name="hora_incio" value="{{ e.hora_incio }}">
+                                <span>Hora inicio</span>
+                            </label>
+                        </div> 
+                        <div class="flex">
+                          <label>
+                              <input required="true" type="number" class="input" name="entrada_general" value="{{ e.precio_entrada }}">
+                              <span>Precio general</span>
+                          </label>
+                          <label>
+                              <input required="true" type="number" class="input" name="entrada_vip" value="{{ e.precio_vip }}">
+                              <span>Precio VIP</span>
+                          </label>
+                        </div> 
+                        <label>
+                          <input required="true" type="number" class="input" name="aforo" value="{{ e.aforo }}">
+                          <span>Aforo</span>
+                        </label>  
+                        <label>
+                            <input required="true" type="text" class="input" name="descripcion" value="{{ e.descripcion }}">
+                            <span>Descripción</span>
+                        </label>
+                        <div class="mb-3 mt-2 file-input">
+                          <span>Flyer</span>
+                          <input class="form-control" type="file" id="formFile" name="foto_nueva">
+                        </div>
+                      <button class="btn btn-success mb-2 mt-2" type="submit">Editar Evento</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+    {% endfor %}
+    
+
+
+    
+{% endblock %}

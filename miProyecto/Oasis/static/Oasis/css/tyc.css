@@ -1,0 +1,16 @@
+body{
+    padding: 2%;
+}
+.titulo{
+    color: #fc4664;
+    font-family: Nunito;
+    font-size: 3em;
+}
+
+.subtitulo{
+    font-family: Nunito;
+    font-weight: 700;
+}
+.frases{
+    font-family: Nunito;
+}

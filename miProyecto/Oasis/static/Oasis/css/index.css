@@ -1,0 +1,253 @@
+#enlace_logo{
+  width: 231px;
+}
+
+#enlace_logo img{
+  max-width: 100%;
+  height: auto;
+}
+
+
+.colorLogoCarrito{
+  color: white;
+  font-size: 1.5em;
+}
+
+header {
+    height: 4.6em;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: sticky;
+    z-index: 10;
+    transition: background-color 0.3s;
+  }
+
+  .navbar-items-responsive {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .opcionesNav {
+    text-decoration: none;
+    color: rgb(204, 198, 198);
+    font-size: 1em;
+    font-family: Nunito;
+  }
+
+  .opcionesNav:hover{
+    color: #fc4664;
+  }
+
+  
+  .opcionesNav2{
+    text-decoration: none;
+    color: rgb(204, 198, 198);
+    font-size: 1em;
+    font-family: Nunito;
+  }
+
+  .opcionesNav2:hover{
+    color: white;
+  }
+
+  
+  #Opciones{
+    width: 40em;
+  }
+
+  
+  #botones{
+    width: fit-content;
+    gap: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  
+  .navIzquierda{
+    width: 50%;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .botones{
+    width: 31%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .text-12{
+    font-size: 12px;
+  }
+
+  #frase {
+    position: absolute;
+    top: 80%;
+    left: 40%;
+    z-index: 40;
+    color: white;
+    font-size: 7vh;
+    width: 80%;
+    margin-left: 5%;
+    font-family: "Quicksand";
+    margin-top: 0px;
+    transform: translate(-50%, -50%);
+  }
+
+  #frase p{
+    font-style: none;
+    font-family: "Camingo";
+  }
+
+  #frase #parrafo {
+    color: white;
+    font-size: 2.5vh;
+    width: 55%;
+    font-weight: 600;
+    font-family: "Quicksand";
+  }
+
+  #pantallaLogin{
+    width: 600px;
+  }
+
+  #pantallaLogin .titulo {
+    font-size: 40px;
+    color: rgb(252, 70, 100);
+    margin-top: 40px;
+    margin-left: 40px;
+  }
+  #pantallaLogin p {
+    font-size: 16px;
+    margin-left: 40px;
+  }
+  #pantallaLogin .cuerpo {
+    padding: 0%;
+  }
+
+  .cuerpo input{
+    color: white;
+  }
+
+  #pantallaLogin .cabecera {
+    padding: 0%;
+  }
+  #pantallaLogin #botonCerrar{
+    margin-right: 5%;
+  }
+  #demo {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .inputEdit1{
+    margin-top: 50px;
+  }
+
+  .inputEdit2{
+    margin-bottom: 10px;
+  }
+  .cuerpo .olvidarContraseña{
+    margin-left: 398px;
+    color:rgb(252, 70, 100);
+    text-decoration: none;
+  }
+  
+  #pantallaLogin .p1 {
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid white;
+    width: 505px;
+    margin-top: 3%;
+    padding-top: 3%;
+    font-size: 16px;
+    margin-left: 50px;
+  }
+  .carousel-inner {
+    height: 100vh;
+  }
+
+  .carousel-item img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+
+  /*Esta es la parte de REGISTRO*/
+
+
+  .contenedorInicio{
+    display: flex;
+    height: 100vh;
+  }
+  .imagen{
+    width: 70%;
+  }
+  .imagen img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .contentRegistro{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    background-color: #212529;    
+  }
+  .Registro{
+    display: block;
+    width: 500px;
+    height: 700px;
+    background-color: rgb(170, 70, 252);
+    border-radius: 1rem;
+  }
+  .Registro h1{
+    color: white;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    font-family: Quicksand;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .contentbutton{
+    margin-top: 5%;
+  }
+  .contentbutton button{
+    text-align: center;
+  }
+  .formulario{
+    background-color: #f0f0f0;
+    border-radius: 1rem;
+    width: 100%;
+    height: 77%;
+  }
+  input[type="checkbox"] {
+    transform: scale(1.4);
+  }
+  @font-face {
+    font-family: Quicksand;
+    src: url('../fonts/Quicksand_Book.otf') format('woff');
+  }
+
+  @font-face {
+    font-family: Nunito;
+    src: url('../fonts/Nunito-Medium.ttf') format('woff');
+  }
+
+  @font-face {
+    font-family: Camingo;
+    src: url('../fonts/CamingoDos-Pro-Condensed-Regular.otf') format('woff');
+  }
+
+@media screen and (max-width: 992px) {
+  .navbar-items-responsive {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}

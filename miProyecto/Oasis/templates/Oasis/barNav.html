@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oasis - {% block titulo %}...{% endblock %}</title>
+    {% block estilos %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'Oasis/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/estiloDB.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/formularios.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/botonesDiseño.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/barrasGestiones.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/pedidos.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/mesas.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/pedidoEmpleado.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/eventos.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/galeria.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/front_eventos/front_eventos_info.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/usuario/reservas_y_entradas.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/navbarAdmin.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/productos.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/usuario.css' %}">
+    <link rel="stylesheet" href="{% static 'Oasis/css/entradas.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    
+
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'Oasis/img/favicon-32x32.png' %}">
+
+    
+
+</head>
+
+<body>
+    <div class="wrapper collapsar">
+  
+        <div class="top_navbar">
+            <div class="hamburger">
+              <div class="one"></div>
+              <div class="two"></div>
+              <div class="three"></div>
+            </div>
+            <div class="top_menu">
+              <div class="logo">
+                <a href="{% url 'index' %}"><img src="{% static 'Oasis/img/logoOasisNegro.png' %}" alt="logoOasisNegro" width="200px"></a>
+              </div>
+              <ul class="items-barra">
+                <a href="{% url 'ver_perfil' %}">
+                  {% if user.foto %}
+                    <img src="{{ user.foto.url }}" alt="FotoUsuario" width="45px" height="45px" class="rounded-circle">
+                  {% else %}
+                    <img src="{% static 'Oasis/img/logoUser.png' %}" alt="LogoUsuario" width="45px" height="45px">
+                  {% endif %}
+                </a> 
+              </ul>
+            </div>
+          </div>
+          
+          <div class="sidebar">
+            <ul class="items-barra">
+              <li><a href="{% url 'guInicio' %}" {% if url == 'Gestion_Usuarios' or url == 'Usuarios_Bloqueados' %} class="active" {% endif %}>
+                <span class="icon"><i class="fas fa-users"></i></span>
+                <span class="title">Usuarios</span>
+              </a></li>
+              <li><a href="{% url 'Productos' %}" {% if url == 'Gestion_Productos' or url == 'Inv_Detalle_Producto' %} class="active" {% endif %}>
+                <span class="icon"><i class="fas fa-boxes"></i></span>
+                <span class="title">Inventario</span>
+              </a></li>
+              <li><a href="{% url 'Mesas'%}" {% if url == 'Gestion_Mesas' %} class="active" {% endif %}>
+                <span class="icon"><i class="fas fa-chair"></i></span>
+                <span class="title">Mesas</span>
+              </a></li>
+              <li><a href="{% url 'peInicio' %}" {% if url == 'Gestion_Pedidos' or url == 'Mesas' or url == 'Agregar_Pedido' or url == 'Historial_Pedidos' or url == 'ver_pedidos_mesa' %} class="active" {% endif %} >
+                <span class="icon"><i class="fas fa-concierge-bell"></i></span>
+                <span class="title">Pedidos</span>
+              </a></li>
+              <li><a href="{% url 'Eventos' %}" {% if url == 'Gestion_Eventos' or url == 'Reservas' or url == 'Evento_Entradas' %}class="active" {% endif %}>
+                <span class="icon"><i class="fas fa-calendar"></i></span>
+                <span class="title">Eventos</span>
+              </a></li>
+              <li><a href="{% url 'Menu' %}" {% if url == 'Gestion_Menu' or url == 'Productos' or url == 'Me_Detalle_Producto' %} class="active" {% endif %}>
+                <span class="icon"><i class="fas fa-clipboard-list"></i></span>
+                <span class="title">Menú</span>
+              </a></li>
+              <li><a href="{% url 'gaInicio' %}" {% if url == 'Gestion_Galeria' %} class="active" {% endif %}>
+                <span class="icon"><i class="fas fa-images"></i></span>
+                <span class="title">Galería</span>
+              </a></li>
+            </ul>
+            <ul class="items-barra logout">
+              <li><a href="{% url 'ver_perfil' %}" {% if url == 'Perfil' or url == 'ver_detalles_pedido_usuario' or url == 'historial_pedidos' or url == 'reservas' or url == 'reservas_info' or url == 'entradas' or url == 'entradas_info' %} class="active" {% endif %}>
+                <span class="icon"><i class="fas fa-user-circle"></i></span>
+                <span class="title">Mi perfil</span>
+              </a></li>
+            </ul>
+          </div>
+        
+        <div class="main_container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags and message.tags != 'error' %}{{ message.tags }}{% else %}danger{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block contenedor %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script src="{% static 'Oasis/js/libreria.js' %}"></script>
+    <script src="{% static 'Oasis/js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'Oasis/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="{% static 'Oasis/js/navbarAdmin.js' %}"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.7.0.js"></script>-->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            if ($.fn.dataTable.isDataTable('#table')) {
+            $('#table').DataTable().clear().destroy();
+            }
+
+            var table = $('#table').DataTable({
+                ordering: true,
+                searching: false,
+                language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ de _TOTAL_ Entradas",
+                "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ Entradas",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            });
+        });
+
+
+        $('#tabla2').DataTable({
+            ordering: true,
+            order: [[2, 'desc']],
+            searching: false,
+            language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ de _TOTAL_ Entradas",
+                "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ Entradas",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var fechaInput = document.getElementById('exampleFormControlInput1');
+                var fecha = new Date(fechaInput.value);
+        
+                if (!isNaN(fecha.getTime())) {
+                    var fechaFormateada = fecha.getDate() + '/' + (fecha.getMonth() + 1) + '/' + fecha.getFullYear();
+                    fechaInput.value = fechaFormateada;
+                }
+            });
+        </script>
+        
+</body>
+
+</html>

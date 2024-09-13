@@ -1,0 +1,98 @@
+    .tarjetaOrden{
+        display: flex;
+        margin-bottom: 3%;
+    }
+    .listaOrden{
+        width: 30%;
+        height: auto;
+        padding-top: 3%; 
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 0.5rem 0 0 0.5rem;
+    }
+
+    .Orden {
+        height: calc(100% - 60px);
+        border-radius: 0.5rem;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+    }
+
+    #entregando {
+        background-color: #4caf50;
+        height: 40px;
+        color: #fff;
+        border: none;
+    }
+
+    #entregando:hover {
+        background-color: #119905;
+        color: #fff;
+    }
+    .detallesOrden {
+        flex: 1;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 0 0.5rem 0.5rem 0;
+    }
+
+    .detallesOrden .order-items ul {
+        padding: 0;
+    }
+
+    .informacionOrden {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    .informacionOrden h3 span{
+        color: #ff0000;
+    }
+
+    .informacionOrden p{
+        margin-top: 3%;
+    }
+
+    .informacionOrden p span{
+        color: #ff9800;
+        font-size: 17px;
+    }
+
+    .informacionOrden .comentario{
+        margin-top: 3%;
+    }
+    .informacionOrden textarea{
+        width: 100%;
+        border-radius: 1rem;
+        border-color: rgb(192, 192, 192);
+    }
+
+    .productosOrden ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .productosOrden ul li {
+        margin: 5px 0;
+    }
+
+@media screen and (max-width: 670px) {
+    .tarjetaOrden{
+        flex-direction: column;
+        margin-top: 10%;
+    }
+
+    .listaOrden{
+        width: 100%;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .detallesOrden {
+        border-radius: 0 0 0.5rem 0.5rem;
+    }
+}

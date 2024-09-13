@@ -1,0 +1,159 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+{{data}}
+
+{% block titulo %}Productos{% endblock %}
+
+{% block contenedor %}
+  <div class="radio-inputs">
+    <label class="radio">
+      <a href="{% url 'Productos' %}">
+        <input type="radio" name="radio" checked="" />
+        <span class="name">Inicio</span>
+      </a>
+    </label>
+  </div>
+  <h1>Inventario</h1>
+  <div class="Contenido">
+      <div class="conteos">
+      <p>Todos (<span>{{ data|length }}</span>)</p>
+      </div>
+      <div class="search">
+          <input  type="text" id="myInput" placeholder="Buscar productos...">
+          <button id="searchButton" type="submit">Buscar</button>
+      </div>
+  </div>
+  <div class="Agregar">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarProducto">Agregar Producto</button>
+  </div>
+  <div id="contenedorTabla">
+    <table class="table">
+      <thead class="thead-light">
+        <tr>
+          <th>ID</th>
+          <th>Producto</th>
+          <th>Categoria</th>
+          <th>Stock</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in data %}
+          <tr>
+            <td data-label="Nombre">{{ p.id }}</td>
+            <td data-label="Producto">{{ p.nombre }}</td>
+            <td data-label="Categoria">{{ p.categoria }}</td>
+            <td data-label="Stock">{{ p.inventario }}</td>
+            <td data-label="Acciones">
+              <a type="button" class="btn btn-info" href="{% url 'invDetalleProducto' p.id %}"><i class="bi bi-eye-fill"></i></a>
+              <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarProducto{{ p.id }}"><i class="bi bi-pencil"></i></button>
+              <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarProducto' p.id %}')"><i class="bi bi-x-lg"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+    <div class="modal fade" id="agregarProducto" tabindex="-1" role="dialog" aria-labelledby="agregarProductoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <p class="tituloFormulario">Agregar producto</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form class="formulario" action="{% url 'crearProducto' %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <label>
+                          <input required="true" type="text" class="input" name="nombre">
+                          <span>Producto</span>
+                      </label>
+                      <label>
+                          <input required="true" type="text" class="input" name="descripcion">
+                          <span>Descripción</span>
+                      </label>
+                      <label class="select-label">
+                        <select name="categoria" class="input select" required="true">
+                          {% for c in categories %}
+                            <option value="{{ c.id }}">{{ c.nombre }}</option>
+                          {% endfor %}
+                        </select>
+                        <span>Categoría</span>
+                      </label>
+                      <div class="flex">
+                        <label>
+                          <input required="true" type="number" class="input" name="precio">
+                          <span>Precio</span>
+                        </label>
+                        <label>
+                          <input required="true" type="number" class="input" name="inventario">
+                          <span>Inventario</span>
+                        </label>
+                      </div> 
+                      <div class="mb-3 mt-2 file-input">
+                        <span>Imagen del producto</span>
+                        <input class="form-control" type="file" id="formFile" name="foto">
+                      </div>
+                    <button class="btn btn-success mb-2 mt-2" type="submit">Agregar Producto</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+
+
+    {% for p in data %}
+    <div class="modal fade" id="editarProducto{{ p.id }}" tabindex="-1" role="dialog" aria-labelledby="editarProductoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <p class="tituloFormulario">Editar producto</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form class="formulario" action="{% url 'actualizarProducto' p.id %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <label>
+                          <input required="true" type="text" class="input" name="nombre" value="{{ p.nombre }}">
+                          <span>Producto</span>
+                      </label>
+                      <label>
+                          <input required="true" type="text" class="input" name="descripcion" value="{{ p.descripcion }}">
+                          <span>Descripción</span>
+                      </label>
+                      <label class="select-label">
+                        <select name="categoria" class="input select" required="true">
+                          {% for c in categories %}
+                            <option value="{{ c.id }}"  {% if c.id == p.categoria %}selected{% endif %}>{{ c.nombre }}</option>
+                          {% endfor %}
+                        </select>
+                        <span>Categoría</span>
+                      </label>
+                      <div class="flex">
+                        <label>
+                          <input required="true" type="number" class="input" name="precio" value="{{ p.precio }}">
+                          <span>Precio</span>
+                        </label>
+                        <label>
+                          <input required="true" type="number" class="input" name="inventario" value="{{ p.inventario }}">
+                          <span>Inventario</span>
+                        </label>
+                      </div>  
+                      <div class="mb-3 mt-2 file-input">
+                          <span>Imagen del producto</span>
+                          <input class="form-control" type="file" id="formFile" name="foto_nueva" value="{{ p.foto.url }}">
+                      </div>
+                    <button class="btn btn-success mb-2 mt-2" type="submit">Editar Producto</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

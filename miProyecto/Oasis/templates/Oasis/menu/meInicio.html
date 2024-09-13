@@ -1,0 +1,116 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{{data}}
+
+{% block titulo %}Menu{% endblock %}
+
+{% block contenedor %}
+    <div class="radio-inputs">
+        <label class="radio">
+        <a href="{% url 'Menu' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Inicio</span>
+        </a>
+        </label>
+    </div>
+    <h1>Menú</h1>
+    <div class="Contenido">
+        <div class="conteos">
+        <p>Todos (<span>{{ data|length }}</span>)</p>
+        </div>
+        <div class="search">
+            <input  type="text" id="myInput" placeholder="Buscar categoría...">
+            <button id="searchButton" type="submit">Buscar</button>
+        </div>
+    </div>
+    <div class="Agregar">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarCategoria">Agregar Categoria</button>
+    </div>
+    <div class="contenedor-categorias">
+        {% for c in data %}
+            <div class="card-categoria">
+                <img src="{{ c.foto.url }}" alt="categoria" width="100%">
+                <div class="card-categoria__content">
+                    <div>
+                        <p class="card-categoria__title">{{ c.nombre }}</p>
+                    </div>
+                    <div class="card-categoria__botones">
+                        <a type="button" class="btn btn-info" href="{% url 'meProductos' c.id %}"><i class="bi bi-eye-fill"></i></a>
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarCategoria{{ c.id }}"><i class="bi bi-pencil"></i></button>
+                        <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarCategoria' c.id %}')"><i class="bi bi-x-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+
+    <div class="modal fade" id="agregarCategoria" tabindex="-1" role="dialog" aria-labelledby="agregarCategoriaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Agregar categoria</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="formulario" action="{% url 'crearCategoria' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                          <label>
+                              <input required="true" type="text" class="input" name="nombre">
+                              <span>Nombre</span>
+                          </label>
+                          <label>
+                            <input required="true" type="text" class="input" min="4" max="8" size="1" name="descripcion">
+                            <span>Descripción</span>
+                          </label>
+                          <div class="mb-3 mt-2 file-input">
+                            <span>Imagen de portada</span>
+                            <input class="form-control" type="file" id="formFile" name="foto">
+                          </div>
+                      <button class="btn btn-success mb-2 mt-2" type="submit">Agregar Categoria</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+    
+    {% for c in data %}
+      <div class="modal fade" id="editarCategoria{{ c.id }}" tabindex="-1" role="dialog" aria-labelledby="editarCategoriaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Editar categoria</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="formulario" action="{% url 'actualizarCategoria' c.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                          <label>
+                              <input required="true" type="text" class="input" name="nombre" value="{{ c.nombre }}">
+                              <span>Nombre</span>
+                          </label>
+                          <label>
+                            <input required="true" type="text" class="input" min="4" max="8" size="1" name="descripcion" value="{{ c.descripcion }}">
+                            <span>Descripción</span>
+                          </label>
+                          <div class="mb-3 mt-2 file-input">
+                            <span>Imagen de portada</span>
+                            <input class="form-control" type="file" id="formFile" name="foto_nueva" value="{{ c.foto.url }}">
+                          </div>
+                      <button class="btn btn-success mb-2 mt-2" type="submit">Actualizar Categoria</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+    {% endfor %}
+{% endblock %}
+

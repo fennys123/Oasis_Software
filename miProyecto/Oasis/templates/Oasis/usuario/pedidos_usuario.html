@@ -1,0 +1,158 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Mi Perfil{% endblock %}
+
+
+
+
+{% block contenedor %}
+  <div class="radio-inputs many">
+    <label class="radio">
+      <a href="{% url 'ver_perfil' %}">
+        <input type="radio" name="radio" />
+        <span class="name">Inicio</span> 
+      </a>
+    </label>
+    {% if user.rol == 4 %}
+      <label class="radio">
+        <a href="{% url 'ver_detalles_pedido_usuario' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Pedidos activos</span>
+        </a>
+      </label>
+      <label class="radio">
+        <a href="{% url 'ver_ventas' %}">
+          <input type="radio" name="radio" checked=""/>
+          <span class="name">Historial de pedidos</span>
+        </a>
+      </label>
+      <label class="radio">
+        <a href="{% url 'reservas_usuario' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Reservas</span>
+        </a>
+      </label>
+      <label class="radio">
+        <a href="{% url 'entradas_usuario' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Entradas</span>
+        </a>
+      </label>
+    {% else %}
+      <label class="radio">
+          <a href="{% url 'ver_ventas' %}">
+          <input type="radio" name="radio" checked=""/>
+          <span class="name">Historial de Ventas</span>
+          </a>
+      </label>
+      <label class="radio">
+          <a href="{% url 'ver_mesas_a_cargo' %}">
+          <input type="radio" name="radio"/>
+          <span class="name">Mesas a cargo</span>
+          </a>
+      </label>
+    {% endif %}
+  </div>
+
+
+
+    {% if user.rol ==  4 %}
+        <h1>Historial de Pedidos</h1>
+    {% else %}
+        <h1>Historial de Ventas</h1>
+    {% endif %}
+    <div class="Contenido">
+        <div class="conteos">
+            <p>Todos (<span>{{ total_pedidos }}</span>)</p>
+        </div>
+    </div>
+
+    <div id="contenedorTabla">
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th>Mesa</th>
+            {% if user.rol == 4 %}
+              <th>Fecha</th>
+            {% else %}
+              <th>Cliente</th>
+            {% endif %}
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in detalles_pedidos %}
+            <tr>
+              <td data-label="Mesa">{{ p.pedido.mesa.nombre }}</td>
+              {% if user.rol == 4 %}
+                <td data-label="Fecha">{{ p.pedido.fecha }}</td>
+              {% else %}
+                <td data-label="Cliente">{{ p.pedido.usuario.nombre }}</td>
+              {% endif %}
+              <td data-label="Total">${{ p.pedido.total|intcomma }}</td>
+              <td data-label="Acciones">
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#detalleModal{{ p.pedido.id }}"><i class="bi bi-info-circle"></i></button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+
+
+    {% for detalle_pedido in detalles_pedidos %}
+    <div class="modal fade invoice-modal" id="detalleModal{{ detalle_pedido.pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="detalleModalLabel{{ detalle_pedido.pedido.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <p class="tituloFormulario">Detalles del pedido</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+                <div class="modal-body mb-2">
+                    <div class="logoFactura">
+                      <img src="{% static 'Oasis/img/logoOasisNegro.png' %}" alt="logoOasisNegro" width="150px">
+                      <button type="button" class="btn btn-primary"><i class="bi bi-printer"></i></button>
+                    </div>
+                    <p class="datosFactura">ID: {{ detalle_pedido.pedido.id }}</p>
+                    <p class="datosFactura">{{ detalle_pedido.pedido.mesa.nombre }}</p>
+                    <p class="datosFactura">{{ detalle_pedido.pedido.fecha }}</p>
+                    {% if detalle_pedido.pedido.usuario.rol == 3 %}
+                      <p class="datosFactura">Mesero: {{ detalle_pedido.pedido.usuario }} | CC: {{ detalle_pedido.pedido.usuario.cedula }}</p>
+                    {% else %}
+                      <p class="datosFactura">Cliente: {{ detalle_pedido.pedido.usuario }} | CC: {{ detalle_pedido.pedido.usuario.cedula }}</p>
+                    {% endif %}
+                    <br>
+
+                    <div id="contenedorTabla">
+                      <table class="tableFactura"> 
+                        <tbody>
+                          {% for detalle in detalle_pedido.detalles %}
+                            <tr>
+                              <td data-label="Cantidad">x{{ detalle.cantidad }}</td>
+                              <td data-label="Producto">{{ detalle.producto }}</td>
+                              <td data-label="Subtotal" style="text-align: end">${{ detalle.subtotal|intcomma }}</td>
+                            </tr>
+                            <tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    <h6 style="text-align: end; margin-top: 0.5em;"><strong>Total: ${{ detalle_pedido.pedido.total|intcomma }}</strong></h6>
+                </div>
+                <!-- Añadimos los picos aquí -->
+                <div class="picos-container">
+                    {% for i in "1234567890123456789012" %}
+                        <span class="pico"></span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

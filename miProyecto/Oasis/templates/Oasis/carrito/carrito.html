@@ -1,0 +1,26 @@
+{% load humanize %}
+    <h5 style="font-family: Nunito;"><strong>Productos</strong></h5>
+
+    {% if request.session.carrito %}
+    <br>
+        {% for p in request.session.carrito %}
+            <div class="d-flex justify-content-between mb-3 item-carrito">
+                <div class="d-flex justify-content-start gap-3" style="width: 75%; height: 50px;">
+                    <a type="button" href="javascript:carrito_eliminar(`{% url 'carrito_eliminar' p.id %}`)" class="btn-close" style="padding: 3%; font-size: 10px;" aria-label="Close"></a>
+                    <input type="hidden" name="id" id="id_{{ p.id }}" value="{{ p.id }}" />
+                    <input type="number" name="cantidad" id="cantidad_carrito_{{ p.id }}" min="1" class="form-control" value="{{ p.cantidad }}" style="max-width: 70px; min-width: 45px;font-family: Nunito;" onchange="actualizar_totales_carrito(`{% url 'actualizar_totales_carrito' p.id %}`, {{ p.id }});">
+                    <img src="{{ p.foto }}" class="img-fluid rounded-start" style="object-fit: cover; width: 10%; height: 100%;">
+                    <p>{{ p.producto }}</p>
+                </div>
+                <p class="card-text total-carrito">{{ p.subtotal|intcomma }}</p>
+            </div>
+        {% endfor %}
+    <br>
+    <div class="d-flex justify-content-between">
+        <h5><strong>TOTAL</strong></h5>
+        <h5 style="color: red;"><strong>{{ total|intcomma }}</strong></h5>
+    </div>
+    <br>
+    {% else %}
+        <p>No hay productos en el pedido</p>
+    {% endif %}

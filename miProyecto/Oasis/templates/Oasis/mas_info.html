@@ -1,0 +1,51 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+
+{% block titulo %}Más información{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'Oasis/css/styles.css' %}">
+{% endblock %}
+
+{% block contenedor %}
+<div class="mas-informacion-container" style="background-color: #3f464e; padding: 20px; width: 100%;">
+    <h2 style="color: red;">¿Para qué sirve la página?</h2>
+    <p style="color: white;">Oasis es un software que permite agilizar las operaciones de las discotecas, ofreciendo funciones para compra de productos, reserva de eventos y mesas, y más.</p>
+    <h2 style="color: red;">¿Quiénes somos?</h2>
+    <p style="color: white;">Somos un equipo dedicado a mejorar la experiencia nocturna, brindando herramientas que facilitan la gestión de discotecas y la diversión de nuestros usuarios.</p>
+    <h2 style="color: red;">¿Cuales son los objetivos?</h2>
+    <p style="color: white;">Los objetivos de Oasis son:</p>
+    <ul style="color: white;">
+        <li>Mejorar la experiencia de usuario</li>
+        <li>Brindar una mejor experiencia de administración</li>
+        <li>Mejorar la experiencia de administración</li>
+    </ul>
+
+    <h2 style="color: red;">¿Cuales son los beneficios?</h2>
+    <p style="color: white;">Los beneficios de Oasis son:</p>
+    <ul style="color: white;">
+        <li>Mejorar la experiencia de usuario</li>
+        <li>Brindar una mejor experiencia de administración</li>
+        <li>Mejorar la experiencia de administración</li>
+    </ul>
+
+    <h2 style="color: red;">¿Cuales son las imagenes?</h2>
+    <p style="color: white;">Las imagenes de Oasis son:</p>
+
+
+    <div class="imagenes-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;">
+        <img src="{% static 'Oasis/img/viernesOasis.jpg' %}" alt="Imagen 1" class="imagen" style="width: 300px;height: 300px;">
+        <img src="{% static 'Oasis/img/noche_trivia.jpg' %}" alt="Imagen 2" class="imagen" style="width: 300px;height: 300px;">
+        <img src="{% static 'Oasis/img/dia_madre.jpg' %}" alt="Imagen 3" class="imagen" style="width: 300px;height: 300px;">
+        <!-- Añade más imágenes según sea necesario -->
+    </div>
+
+    <h2 style="color: red;">¿Cuales son los planes?</h2>
+    <p style="color: white;">Los planes de Oasis son:</p>
+    <ul style="color: white;">
+        <li>Que les guste la página</li>
+        <li>Que las discotecas prueben nuestra pagina y quieran usarla</li>
+        <li>Que con esta pagina sea de utilidad para agilizar las discotecas en todo el departamento de antioquia</li>
+    </ul>
+</div>
+{% endblock %}

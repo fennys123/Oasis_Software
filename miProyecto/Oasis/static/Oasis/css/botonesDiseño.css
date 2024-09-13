@@ -1,0 +1,386 @@
+/*Este es el FORMULARIO 1, el de inicio de sesión*/
+
+#input{
+    color: white;
+}
+
+#inputEdit2 input{
+    color: white;
+}
+
+.input-container {
+    position: relative;
+    margin: 50px auto;
+    width: 500px;
+  }
+  
+  .input-container input[type="text"] {
+    font-size: 20px;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid white;
+    padding: 5px 0;
+    background-color: transparent;
+    outline: none;
+  }
+  
+  .input-container .label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: white;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .input-container input[type="text"]:focus ~ .label,
+  .input-container input[type="text"]:valid ~ .label {
+    top: -20px;
+    font-size: 16px;
+    color: white;
+  }
+  
+  .input-container .underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: white;
+    transform: scaleX(0);
+    transition: all 0.3s ease;
+  }
+  
+  .input-container input[type="text"]:focus ~ .underline,
+  .input-container input[type="text"]:valid ~ .underline {
+    transform: scaleX(1);
+  }
+
+  .input-container {
+    position: relative;
+    margin: 50px auto;
+    width: 500px;
+  }
+  
+  .input-container input[type="password"]{
+    font-size: 20px;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid white;
+    padding: 5px 0;
+    background-color: transparent;
+    outline: none;
+  }
+  
+  .input-container .label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: white;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .input-container input[type="password"]:focus ~ .label,
+  .input-container input[type="password"]:valid ~ .label {
+    top: -20px;
+    font-size: 16px;
+    color: white;
+  }
+  
+  .input-container .underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: white;
+    transform: scaleX(0);
+    transition: all 0.3s ease;
+  }
+  
+  .input-container input[type="password"]:focus ~ .underline,
+  .input-container input[type="password"]:valid ~ .underline {
+    transform: scaleX(1);
+  }
+
+/*Este es el botón de 'Más información' que esta en la pagina Index*/
+
+.btn3 {
+    width: 40vh;
+    height: 5vh;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-family: Quicksand;
+    font-size: 2.5vh;
+    font-weight: 700;
+    position: relative;
+    transition: all 0.5s;
+    z-index: 1;
+   }
+   
+   .btn3::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1vh;
+    height: 100%;
+    background-color: white;
+    z-index: -1;
+    transition: all 0.5s;
+   }
+   
+   .btn3:hover::before {
+    width: 100%;
+   }
+   
+   .btn3:hover {
+    color: black;
+   }
+   
+   .btn3:active:before {
+    background: #b9b9b9;
+   }
+
+/*Este es el botón de inicio de sesión, el que tiene transición*/
+
+.btn1 {
+    display: inline-block;
+    width: 8em;
+    height: 2.8em;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
+    font-weight: 400;
+    font-family: Nunito;
+    color: white;
+    border: 1px solid #fc4664;
+    cursor: pointer;
+    position: relative;
+    background-color: transparent;
+    text-decoration: none;
+    overflow: hidden;
+    z-index: 1;
+    font-family: inherit;
+}
+
+.btn1::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10em;
+    height: 3em;
+    background-color: rgb(252, 70, 100);
+    color: black !important;
+    transform: translateX(-100%);
+    transition: all .3s;
+    z-index: -1;
+}
+
+.btn1:hover::after {
+    transform: translateX(0);
+}
+
+
+
+/*Este es el botón de inicio de reservar ahora, el que tiene transición*/
+
+.btn2 {
+    width: 10em;
+    height: 2.8em;
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
+    font-weight: 400;
+    font-family: Nunito;
+    color: white;
+    border: 1px solid #aa46fc;
+    cursor: pointer;
+    position: relative;
+    background-color: transparent;
+    text-decoration: none;
+    overflow: hidden;
+    z-index: 1;
+    font-family: inherit;
+    
+}
+
+.btn2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 13em;
+    height: 3em;
+    background-color: rgb(170, 70, 252);
+    transform: translateX(-100%);
+    transition: all .3s;
+    z-index: -1;
+    color: black !important;
+}
+
+.btn2:hover::before {
+    transform: translateX(0);
+}
+
+
+
+/*Este es el botón rosa sin transición*/
+
+.btn-normal{
+  background-color: rgb(252, 70, 100);
+  width: 505px;
+  height: 40px;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 0.1rem;
+  margin-top: 5%;
+  margin-left: 50px;
+}
+
+.btn-normal:hover{
+  background-color: rgb(255, 44, 79);
+}
+
+
+/*Este es el botón violeta sin transición*/
+
+.btn-normal2{
+  background-color: rgb(170, 70, 252);
+  width: 505px;
+  height: 40px;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 0.1rem;
+  margin-left: 50px;
+}
+.btn-normal2:hover{
+  background-color: rgb(140, 0, 255) ;
+}
+
+
+/*Este es el botón rosa pequeñito*/
+
+.btn-normalpeque{
+  background-color: rgb(255, 70, 100);
+  width: 400px;
+  height: 40px;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 0.1rem;
+  margin-left: 50px;
+}
+.btn-normalpeque:hover{
+  background-color: rgb(255, 44, 79) ;
+}
+
+
+
+/*Este es el FORMULARIO 2, el de registro*/
+.group {
+  position: relative;
+}
+
+.form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 120px 40px;
+  padding-top: 60px;
+  padding-bottom: 90px;
+  padding-right: 40px;
+  padding-left: 40px;
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  position: relative;
+}
+
+.container-1 {
+  padding-top: 30px;
+}
+
+.main-input {
+  font-size: 18 px;
+  padding: 10px 10px 10px 5px;
+  display: block;
+  width: 400px;
+  border: none;
+  border-bottom: 1px solid #6c6c6c;
+  background: transparent;
+  color: black;
+}
+
+.main-input:focus {
+  outline: none;
+  border-bottom-color: rgb(255, 44, 79);
+}
+
+.lebal-email {
+  color: #999999;
+  font-size: 20px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 5px;
+  top: 10px;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+
+.main-input:focus ~ .lebal-email,
+.main-input:valid ~ .lebal-email {
+  top: -20px;
+  font-size: 20px;
+  color: rgb(255, 44, 79);
+}
+
+.highlight-span {
+  position: absolute;
+  height: 60%;
+  width: 0px;
+  top: 25%;
+  left: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.main-input:focus ~ .highlight-span {
+  -webkit-animation: input-focus 0.3s ease;
+  animation: input-focus 0.3s ease;
+}
+
+@keyframes input-focus {
+  from {
+    background: rgb(255, 44, 79);
+  }
+
+  to {
+    width: 185px;
+  }
+}
+
+@font-face {
+  font-family: Nunito;
+  src: url('../fonts/Nunito-Medium.ttf') format('woff');
+}
+

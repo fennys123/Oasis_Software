@@ -1,0 +1,164 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Productos{% endblock %}
+
+{% block contenedor %}
+<style>
+    body {
+        background-color: #212529;
+    }
+
+    .filtros {
+        width: 18%;
+        padding-top: 16px;
+        padding-left: 3%;
+    }
+
+    .productos-contenedor {
+        display: flex;
+        flex-wrap: wrap;
+        padding-left: 8%;
+        width: 82%; /* Ajusta el ancho para que se alinee con los filtros */
+    }
+
+    .card {
+        width: 17rem;
+        margin-right: 2%;
+        margin-bottom: 2%;
+        background-color: transparent;
+        color: white;
+        border: none;
+    }
+
+    .card img {
+        width: 100%;
+        height: 230px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="d-flex">
+    <img src="{% static 'Oasis/img/cerveza.png' %}" alt="cerveza" class="d-block w-50" style="height: 300px;">
+    <div class="w-50" style="background-color: black;">
+        <h1 style="color: white; font-family: Camingo; margin-top: 5%;">MENÚ OASIS</h1>
+        <div style="height: 2%; background-color: blueviolet; width: 30%;"></div>
+        <br><br>
+        <h5 style="color: white; font-family: Quicksand; width: 80%;">Tus celebraciones no serían lo mismo sin licor, por eso tenemos para tí los mejores del mercado, elige el que con tu evento combine mejor.</h5>
+    </div>
+</div>
+
+<div class="bg-dark text-light w-100 d-flex" style="height:auto; padding: 2%;">
+    {% if productos %}
+        {% csrf_token %}
+        <div class="filtros">
+            <a href="{% url 'front_productos' %}" class="text-center d-block text-decoration-none" style="color:white; font-family:Nunito; font-size: x-large;padding-top: 4%; padding-bottom: 4%; border-bottom: 1px solid rgb(112, 112, 112);">Ver todos</a>
+            {% for i in categorias %}
+                <a href="{% url 'front_productos' %}?cat={{ i.id }}" class="text-center d-block text-decoration-none" style="color:white; font-family:Nunito; font-size: x-large;padding-top: 4%; padding-bottom: 4%; border-bottom: 1px solid rgb(112, 112, 112);">{{ i.nombre }}</a>
+            {% endfor %}
+        </div>
+
+        <div class="productos-contenedor">
+            {% for i in productos %}
+                <div class="card">
+                    <a href="{% url 'front_productos_info' i.id %}">
+                        <img src="{{ i.foto.url }}" class="card-img-top rounded" alt="Producto"> 
+                    </a>
+                    <div class="card-body">
+                        <h4 class="card-title" style="font-family:Nunito;">$ {{ i.precio|intcomma }}</h4>
+                        <h5 class="card-text" style="font-family: Quicksand;">{{ i.nombre }}</h5>
+                        <form>
+                            <input type="hidden" name="id" id="id_{{ i.id }}" value="{{ i.id }}">
+                            <input type="number" name="cantidad" id="cantidad_{{ i.id }}" class="form-control bg-dark text-light text-center" min="1" value="1" size="3">
+                            <br>
+                            <button type="button" onclick="add_carrito(`{% url 'carrito_add' %}`, {{ i.id }});" class="btn" style="background-color: #fc4664; color: white; width: 100%;"><i class="bi bi-cart2"></i> Agregar</button>
+                        </form>
+                        <br>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="filtros">
+            <a href="{% url 'front_productos' %}" class="text-center d-block text-decoration-none" style="color:white; font-family:Nunito; font-size: x-large;padding-top: 4%; padding-bottom: 4%; border-bottom: 1px solid rgb(112, 112, 112);">Ver todos</a>
+            {% for i in categorias %}
+                <a href="{% url 'front_productos' %}?categorias={{ i.id }}" class="text-center d-block text-decoration-none" style="color:white; font-family:Nunito; font-size: x-large;padding-top: 4%; padding-bottom: 4%; border-bottom: 1px solid rgb(112, 112, 112);">{{ i.nombre }}</a>
+            {% endfor %}
+        </div>
+        <div class="d-flex w-100" style="padding-left: 8%;">
+            <p class="text-light" style="font-family: Nunito;">No hay productos en esta categoría...</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+def front_productos_info(request, id):
+    logueo = request.session.get("logueo", False)
+    user = None
+    if logueo:
+        user = Usuario.objects.get(pk=logueo["id"])
+    categorias = Categoria.objects.all()
+    producto = Producto.objects.get(pk=id)
+
+    contexto = {"data": user, "producto": producto, "categorias": categorias}
+    return render(request, "Oasis/front_productos/front_productos_info.html", contexto)
+
+
+def ver_detalles_usuario(request):
+    logueo = request.session.get("logueo")
+    if logueo is None:
+        return redirect('login')  
+
+    user = Usuario.objects.get(pk=logueo["id"])
+    pedidos = Pedido.objects.filter(usuario=user).order_by('-fecha')
+
+    mesas = Mesa.objects.filter(usuario=user)
+    if mesas.exists():
+        mesa = mesas.first()  
+    else:
+        mesa = None
+
+    detalles_pedidos = []
+    cuenta = 0
+
+    for pedido in pedidos:
+        detalles = DetallePedido.objects.filter(pedido=pedido)
+        subtotal_pedido = 0
+
+        for detalle in detalles:
+            if detalle.estado != detalle.ELIMINADO:
+                subtotal_pedido += detalle.subtotal
+        
+        detalles_pedidos.append({
+            'pedido': pedido,
+            'detalles': detalles,
+        })
+
+        if pedido.estado != 'Cancelado':
+            cuenta += subtotal_pedido
+
+    pedidos_eliminados = pedidos.filter(estado='Cancelado').count()
+    total_pedidos = pedidos.count()
+
+    contexto = {
+        'user': user,
+        'mesa': mesa,
+        'detalles_pedidos': detalles_pedidos,
+        'total_pedidos': total_pedidos,
+        'pedidos_eliminados': pedidos_eliminados,
+        'cuenta': cuenta,
+        'url': 'ver_detalles_pedido_usuario'
+    }
+    return render(request, 'Oasis/usuario/detalles_pedido_usuario.html', contexto)
+
+
+
+#mas_info
+def mas_info(request):
+    return render(request, 'Oasis/mas_info.html')
+
+barnav
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'Oasis/img/favicon-32x32.png' %}">

@@ -1,0 +1,35 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Eventos{% endblock %}
+
+{% block contenedor %}
+    <div class="d-flex">
+        <img src="{% static 'Oasis/img/fiesta.png' %}" alt="cerveza" class="d-block w-50" style="height: 300px">
+        <div class="w-50" style="background-color: black;">
+            <h1 style="color: white; font-family: Camingo; margin-top: 5%;">EVENTOS OASIS</h1>
+            <div style="height: 2%; background-color: blueviolet; width: 30%;"></div>
+            <br>
+            <br>
+            <h5 style="color: white; font-family: Quicksand; width: 80%;">¡Prepárate para la fiesta de tu vida! Explora nuestros próximos eventos en la discoteca y únete a la diversión nocturna. Desde DJs internacionales hasta noches temáticas, cada evento promete una experiencia inigualable. ¡No te lo pierdas!</h5>
+        </div>
+    </div>
+    <div class="bg-dark text-light w-100 d-flex" style="height: auto; padding: 2%;">
+        <div class="d-flex w-100" style="flex-wrap: wrap;">
+            {% for i in eventos %}
+                <div class="bg-transparent text-light" style = "width: 27.3em; margin-right: 3%; border: none;">
+                    <a style="text-decoration: none;" href="{% url 'front_eventos_info' i.id %}">
+                        <img src="{{ i.foto.url }}" class="card-img-top" alt="Evento" style="height: 270px; width: 100%;padding: 16px; border-radius: 30px;"> 
+                        <div class="card-body">
+                            <h5 class="card-text" style="font-family: Quicksand; color: white;"><strong>{{ i.nombre }}</strong></h5>
+                            <h6 class="card-text" style="font-family: Quicksand; color: white;"><strong>Fecha: </strong>{{ i.fecha }}</h6>
+                            <h6 class="card-text" style="font-family: Quicksand; color: white;"><strong>Aforo: </strong>{{ i.aforo }} personas</h6>
+                            <br>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

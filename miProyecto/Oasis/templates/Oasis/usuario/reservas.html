@@ -1,0 +1,65 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{{data}}
+
+{% block titulo %}Entradas{% endblock %}
+
+
+
+{% block contenedor %}
+    <div class="radio-inputs many">
+        <label class="radio">
+        <a href="{% url 'ver_perfil' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Inicio</span> 
+        </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'ver_detalles_pedido_usuario' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Pedidos activos</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'ver_ventas' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Historial de pedidos</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'reservas_usuario' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Reservas</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'entradas_usuario' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Entradas</span>
+            </a>
+        </label>
+    </div>
+    <h1>Reservas</h1>
+    {% if not reservas_info  %}
+        <p>No tienes reservas de mesas para ningún evento.</p>
+    {% else %}
+    <div class="Contenido">
+        <div class="conteos">
+            <p>Todos (<span>{{ reservas_info|length }}</span>)</p>
+        </div>
+    </div>
+        <div class="bloqueEvento">
+            {% for r in reservas_info %}
+                <a href="{% url 'reserva_info' r.reserva.id %}">
+                    <div class="evento">
+                        <img src="{{ r.evento.foto.url }}" alt="{{ r.evento }}">
+                        <div class="evento-información">
+                            <p class="evento-nombre">{{ r.evento.nombre }}</p>
+                            <p class="evento-mesa">{{ r.reserva.mesa.nombre }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

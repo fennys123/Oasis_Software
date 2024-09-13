@@ -1,0 +1,176 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+
+{% block titulo %}Usuarios Bloqueados{% endblock %}
+
+{% block contenedor %}
+    <div class="radio-inputs many">
+        <label class="radio">
+        <a href="{% url 'guInicio' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Inicio</span>
+        </a>
+        </label>
+        <label class="radio">
+        <a href="{% url 'guUsuariosBloqueados' %}">
+            <input type="radio" name="radio" checked="" />
+            <span class="name">Usuarios Bloqueados</span>
+        </a>
+        </label>
+    </div>
+
+    <h1>Usuarios Bloqueados</h1>
+
+    <div class="Contenido">
+        <div class="conteos">
+        <p>Todos (<span>{{ data|length }}</span>)</p>
+        </div>
+        <div class="search">
+            <input placeholder="Buscar usuarios..." type="text">
+            <button type="submit">Buscar</button>
+          </div>
+    </div>
+
+    <div id="contenedorTabla" style="margin-top: 20px;">
+        <table class="table"> <!--id="table" Para agregar el DataTables-->
+          <thead class="thead-light">
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in info_bloqueo %}
+                <tr>
+                    <td data-label="Nombre">{{ i.usuario_bloqueado.nombre }}</td>
+                    <td data-label="Email">{{ i.usuario_bloqueado.email }}</td>
+                    <td data-label="Rol">{{ i.usuario_bloqueado.get_rol_display }}</td>
+                    <td data-label="Acciones">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#detalleBloqueo{{ i.usuario_bloqueado.id }}"><i class="bi bi-info-circle"></i></button>
+                    </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+
+
+    {% for i in info_bloqueo %}
+        <div class="modal fade" id="detalleBloqueo{{ i.usuario_bloqueado.id }}" tabindex="-1" role="dialog" aria-labelledby="detalleBloqueoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p class="tituloFormulario">Detalle bloqueo</p>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Usuario bloqueado</label>
+                            <input type="text" class="form-control" readonly value="{{ i.usuario_bloqueado.nombre }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha" class="form-label">Fecha</label>
+                            <input type="text" class="form-control" readonly value="{{ i.bloqueo.fecha_bloqueo }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="realizado_por" class="form-label">Realizado por</label>
+                            <input type="text" class="form-control" readonly value="{{ i.bloqueo.realizado_por.nombre }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="motivo" class="form-label">Motivo</label>
+                            <textarea type="text" class="form-control" rows="3" readonly>{{ i.bloqueo.motivo }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-success" href="javascript:eliminar('{% url 'guDesbloquearUsuario' i.bloqueo.id %}')">Desbloquear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+
+
+
+    <div class="modal" id="myModal2">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Editar Detalles de Bloqueo</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <form>
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Usuario Bloqueado</label>
+                                <input type="text" class="form-control" placeholder="Cristhian"
+                                    readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Fecha de Bloqueo</label>
+                                <input type="text" class="form-control" placeholder="01/09/23"
+                                    readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Motivo del Bloqueo</label>
+                                <div>
+                                    <button id="botonDropdown" type="button" class="btn bg-transparent dropdown-toggle" data-bs-toggle="dropdown">
+                                        Comportamiento Violento
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Pagos pendientes</a></li>
+                                        <li><a class="dropdown-item" href="#">Consumo excesivo de alcohol</a></li>
+                                        <li><a class="dropdown-item" href="#">Acoso o comportamiento inapropiado</a></li>
+                                        <li><a class="dropdown-item" href="#">Identificación falsa</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Detalles</label>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="textarea" rows="5" cols="60">El cliente ingresó al establecimiento a las 8:00pm, se tomo 3 cócteles y en un acto de xenofobia pateo, golpeo e insulto a otro cliente.</textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Guardar cambios</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal" id="myModal3">
+        <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Eliminar Bloqueo</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <p>Seguro que desea quitar el bloqueo a este usuario?</p>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-success">Confirmar</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+      
+          </div>
+        </div>
+      </div>
+{% endblock %}
+

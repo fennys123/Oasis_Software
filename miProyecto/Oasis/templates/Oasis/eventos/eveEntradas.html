@@ -1,0 +1,123 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+{{data}}
+
+{% block titulo %}Entradas{% endblock %}
+
+{% block contenedor %}
+  <div class="radio-inputs">
+    <label class="radio">
+      <a href="{% url 'Eventos' %}">
+        <input type="radio" name="radio" checked=""/>
+        <span class="name">Inicio</span>
+      </a>
+    </label>
+  </div>
+    <h1>{{ evento.nombre }}</h1>
+    <div class="Contenido">
+        <div class="conteos">
+            <p>Entradas disponibles (<span>{{ evento.entradas_disponibles }}</span>)</p>
+        </div>
+    </div>
+    <div id="contenedorTabla">
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Cantidad entradas</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in entradas %}
+            <tr>
+              <td data-label="Usuario">{{ e.usuario }}</td>
+              <td data-label="Fecha">{{ e.fecha_compra }}</td>
+              <td data-label="Entradas">{{ e.total_entradas|intcomma }}</td>
+              <td data-label="Total">$ {{ e.total|intcomma }}</td>
+              <td data-label="Acciones">
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#verEntrada{{ e.id }}"><i class="bi bi-info-circle"></i></button>
+                <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarEntrada' e.id %}')"><i class="bi bi-x-lg"></i></a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% for e in entradas %}
+      <div class="modal fade" id="verEntrada{{ e.id }}" tabindex="-1" role="dialog" aria-labelledby="verReservaLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <p class="tituloFormulario">Ver entrada</p>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="d-flex justify-content-center">
+                          <img src="{{ evento.foto.url }}" alt="{{ evento.nombre }}" class="rounded" width="50%">
+                      </div>
+                      <div class="d-flex flex-column justify-content-center align-items-center mt-3">
+                          <p class="m-0"><strong>{{ evento.nombre }}</strong></p>
+                          <p class="text-12">{{ evento.fecha }}</p>
+                          <p class="m-0"><strong>Info de la entrada</strong></p>
+                          <p class="text-12 m-0">Usuario: {{ e.usuario.nombre }}</p>
+                          <p class="text-12 m-0">Correo: {{ e.usuario.email }}</p>
+                          <p class="text-12 m-0">CC: {{ e.usuario.cedula }}</p>
+                          <p class="text-12 m-0">Fecha de compra: {{ e.fecha_compra }}</p>
+                          <br>
+
+                          <div id="contenedorTabla">
+                              <table class="table"> 
+                                  <tbody>
+                                      {% if e.entrada_general > 0 and e.entrada_vip <= 0 %}
+                                          <tr>
+                                              <td data-label="Entrada" class="text-12">General</td>
+                                              <td data-label="Cantidad" class="text-12">x{{ e.entrada_general }}</td>
+                                              <td data-label="Subtotal" class="text-12" style="text-align: end">${{ e.subtotal_general|intcomma }}</td>
+                                          </tr>
+                                      {% elif e.entrada_vip > 0 and e.entrada_general <= 0 %}
+                                          <tr>
+                                              <td data-label="Entrada" class="text-12">Vip</td>
+                                              <td data-label="Cantidad" class="text-12">x{{ e.entrada_vip }}</td>
+                                              <td data-label="Subtotal" class="text-12" style="text-align: end">${{ e.subtotal_vip|intcomma }}</td>
+                                          </tr>
+                                      {% elif e.entrada_vip > 0 and e.entrada_general > 0 %}
+                                          <tr>
+                                              <td data-label="Entrada" class="text-12">General</td>
+                                              <td data-label="Cantidad" class="text-12">x{{ e.entrada_general }}</td>
+                                              <td data-label="Subtotal" class="text-12" style="text-align: end">${{ e.subtotal_general|intcomma }}</td>
+                                          </tr>
+                                          <tr>
+                                              <td data-label="Entrada" class="text-12">Vip</td>
+                                              <td data-label="Cantidad" class="text-12">x{{ e.entrada_vip }}</td>
+                                              <td data-label="Subtotal" class="text-12" style="text-align: end">${{ e.subtotal_vip|intcomma }}</td>
+                                          </tr>
+                                      {% endif %}
+                                  </tbody>
+                              </table>
+                          </div>
+                          <small class="d-flex w-100 justify-content-end"><b>Total: ${{ e.total|intcomma }}</b></small>
+
+                          {% if e.total_entradas > 1 %}
+                              <p class="m-0"><strong>{{ e.total_entradas }} entradas compradas</strong></p>
+                          {% else %}
+                              <p class="m-0"><strong>{{ e.total_entradas }} entrada comprada</strong></p>
+                          {% endif %}
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-success w-100" data-dismiss="modal">Escaneada</button>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+    {% endfor %}
+
+{% endblock %}

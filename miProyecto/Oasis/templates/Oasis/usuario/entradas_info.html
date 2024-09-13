@@ -1,0 +1,117 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+{{data}}
+
+{% block titulo %}Entradas{% endblock %}
+
+
+{% block contenedor %}
+    <div class="radio-inputs many">
+        <label class="radio">
+        <a href="{% url 'ver_perfil' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Inicio</span> 
+        </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'ver_detalles_pedido_usuario' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Pedidos activos</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'ver_ventas' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Historial de pedidos</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'reservas_usuario' %}">
+            <input type="radio" name="radio"/>
+            <span class="name">Reservas</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'entradas_usuario' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Entradas</span>
+            </a>
+        </label>
+    </div>
+
+    <h1>Información de la compra</h1>
+
+
+    <div class="detalle-entrada">
+        <img src="{{ evento.foto.url }}" alt="{{ evento.nombre }}" >
+        <div class="info-entrada">
+            <div class="cabecera">
+                <div>
+                    <p class="titulo-evento">{{ evento.nombre }}</p>
+                    <p>{{ evento.fecha }}</p>
+                </div>
+            </div>
+            <div class="body">
+                <p><b>Fecha de la compra</b></p>
+                <p>{{ compra.fecha_compra }}</p>
+            </div>
+            <div class="body">
+                <p><b>Total pagado</b></p>
+                <p>${{ compra.total|intcomma }}</p>
+            </div>
+        </div>
+    </div>
+
+    <p><strong>Total entradas: {{ qr_entradas|length }}</strong></p>
+    <div id="contenedorTabla">
+        <table class="table"> 
+            <tbody>
+                {% for e in qr_entradas %}
+                    <tr>
+                        <td data-label="Entrada">{{ e.tipo_entrada }}</td>
+                        <td data-label="Código QR"><button class="btn btn-primary" data-toggle="modal" data-target="#verQr_{{ e.id }}"><i class="bi bi-qr-code"></i></button></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <div class="seccion_info_importante">
+        <div class="info">
+            <p><b>Instrucciones de llegada</b></p>
+            <p>Al llegar, ¡No hagas fila!, puedes presentar el código QR en la entrada para acceder a tu mesa.</p>
+        </div>
+        <div class="info">
+            <p><b>Recomendaciones para la Noche</b></p>
+            <p>No olvides revisar el menú, disponible directamente desde tu mesa escaneando el código QR.</p>
+        </div>
+        <div class="info">
+            <p><b>Contacto</b></p>
+            <p>Si tienes alguna duda o inconveniente con tu reserva, no dudes en contactarnos al (+57) 305 277 7073 o (+57) 321 123 4567 o por correo electrónico a reservas@oasisdiscoteca.com. Estamos aquí para ayudarte.</p>
+        </div>
+    </div>
+
+    {% for e in qr_entradas %}
+        <div class="modal fade" id="verQr_{{ e.id }}" tabindex="-1" role="dialog" aria-labelledby="verQrLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p class="tituloFormulario">Ver código QR</p>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-body">
+                        <p> El código QR que aparece aquí también será enviado a tu correo electrónico. Este código es necesario para ingresar al evento.</p>
+                        <div class="w-100 d-flex justify-content-center"    >
+                            <img src="{{ e.qr_imagen.url }}" alt="mapa" width="50%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

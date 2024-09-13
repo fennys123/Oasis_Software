@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+body{
+  background: #e1ecf2;
+}
+
+.wrapper .top_navbar{
+  width: 100%;
+  height: 60px;
+  display: flex;
+  position: fixed;
+  top: 0px;
+  z-index: 99;
+}
+
+
+
+.wrapper .top_navbar .top_menu{
+  width: calc(100% - 70px);
+  height: 100%;
+  background: #fff;
+  border-bottom-right-radius: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.wrapper .top_navbar .top_menu .logo{
+  color: #2e4ead;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.wrapper .top_navbar .top_menu ul{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.wrapper .top_navbar .top_menu ul li a{
+  display: block;
+  margin: 0 10px;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  border: 1px solid #aa46fc;
+  border-radius: 50%;
+  color: #aa46fc;
+}
+
+.wrapper .top_navbar .top_menu ul li a:hover{
+  background: #aa46fc;
+  color: #fff;
+}
+
+.wrapper .top_navbar .top_menu ul li a:hover i{
+  color: #fff;
+}
+
+
+.wrapper .sidebar ul li a{
+    display: block;
+    padding: 20px;
+    color: #fff;
+    position: relative;
+    margin-bottom: 1px;
+    color: #fff;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.wrapper .sidebar ul li a:before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: black;
+  display: none;
+}
+
+.wrapper .sidebar ul li a span.icon{
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.wrapper .sidebar ul li a span.title{
+  display: inline-block;
+}
+
+.wrapper .sidebar ul li a:hover,
+.wrapper .sidebar ul li a.active{
+  background: #aa46fc;
+  color: #fff;
+}
+
+.wrapper .sidebar ul li a:hover:before,
+.wrapper .sidebar ul li a.active:before{
+  display: block;
+}
+
+.wrapper .main_container{
+  width: (100% - 200px);
+  margin-top: 70px;
+  margin-left: 200px;
+  padding: 1% 3%;
+  transition: all 0.3s ease;
+}
+
+.wrapper .main_container .item{
+  background: #fff;
+  margin-bottom: 10px;
+  padding: 15px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.wrapper.collapsar .sidebar{
+  width: 70px;
+  height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+.wrapper.collapsar .sidebar ul li a{
+  text-align: center; 
+}
+
+.wrapper.collapsar .sidebar ul li a span.icon{
+  margin: 0;
+}
+
+.wrapper.collapsar .sidebar ul li a span.title{
+  display: none;
+}
+
+.wrapper.collapsar .main_container{
+  width: (100% - 70px);
+  margin-left: 70px;
+}
+
+.wrapper .sidebar .items-barra {
+    margin: 0;
+    padding: 0;
+}
+
+.wrapper .sidebar {
+  width: 200px;
+  height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  top: 60px;
+  background: #c47dfe;
+  transition: all 0.3s ease;
+}
+
+.wrapper .top_navbar .hamburger {
+  width: 70px;
+  height: 60px;
+  background: #c47dfe;
+  padding: 15px 17px;
+  border-top-right-radius: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.wrapper .top_navbar .hamburger div {
+  width: 35px;
+  height: 4px;
+  background: #f8f2fd;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .wrapper .sidebar {
+    width: 100%;
+    height: calc(100% - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 100;
+    transition: left 0.3s ease;
+  }
+
+  .wrapper .main_container {
+    margin-left: 0;
+  }
+
+}
+
+@media (max-width: 430px) {
+  .wrapper.collapsar .sidebar {
+    width: 55px;
+  }
+
+  .wrapper.collapsar .top_navbar .hamburger{
+    width: 55px;
+    padding: 15px 15px;
+  }
+
+  .wrapper.collapsar .top_navbar .hamburger div{
+    width: 25px;
+  }
+
+  .wrapper.collapsar .top_navbar .top_menu{
+    width: 100%;
+  }
+
+  .wrapper .main_container{
+    margin-top: 70px;
+    margin-left: 200px;
+    padding: 16px 16px 16px 16px;
+    transition: all 0.3s ease;
+  }
+
+  .wrapper .top_navbar .hamburger{
+    width: 55px;
+    padding: 15px 15px;
+  }
+
+  .wrapper .top_navbar .hamburger div{
+    width: 25px;
+  }
+
+  .wrapper .top_navbar .top_menu{
+    width: 100%;
+  }
+
+  .wrapper .sidebar {
+    width: 100%;
+  }
+
+  .wrapper.collapsar .main_container{
+    margin-left: 55px;
+  }
+}

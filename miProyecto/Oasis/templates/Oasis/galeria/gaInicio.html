@@ -1,0 +1,82 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{{data}}
+
+{% block titulo %}Galería{% endblock %}
+
+
+
+{% block contenedor %}
+    <div class="radio-inputs">
+        <label class="radio">
+        <a href="{% url 'gaInicio' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Inicio</span>
+        </a>
+        </label>
+    </div>
+    <h1>Galería</h1>
+    <div class="Contenido">
+        <div class="conteos">
+        <p>Todos ({{ data|length }})</p>
+        </div>
+        <div class="search">
+            <input  type="text" id="myInput" placeholder="Buscar productos...">
+            <button id="searchButton" type="submit">Buscar</button>
+        </div>
+    </div>
+    <div class="Agregar">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarCarpeta">Agregar carpeta</button>
+    </div>
+    {% if not data %}
+        <p>No hay carpetas en la galería</p>
+    {% endif %}
+    <div class="contenedor-galeria">
+            {% for c in data %}
+                <a href="{% url 'gaFotos' c.id %}">
+                    <div class="carpeta">
+                        <img src="{{ c.foto.url }}" alt="{{ c.nombre }}">
+                        <div class="galeria-información">
+                            <p class="galeria-nombre">{{ c.nombre }}</p>
+                            <p class="galeria-fecha">{{ c.fecha }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+    </div>
+
+
+
+
+    <div class="modal fade" id="agregarCarpeta" tabindex="-1" role="dialog" aria-labelledby="agregarCarpetaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Agregar carpeta</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="formulario" action="{% url 'crearCarpeta' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                          <label>
+                              <input required="true" type="text" class="input" name="nombre">
+                              <span>Nombre</span>
+                          </label>
+                          <label>
+                            <input required="true" type="date" class="input" min="4" max="8" size="1" name="fecha">
+                            <span>Fecha</span>
+                          </label>
+                          <div class="mb-3 mt-2 file-input">
+                            <span>Imagen de portada</span>
+                            <input class="form-control" type="file" id="formFile" name="foto">
+                          </div>
+                      <button class="btn btn-success mb-2 mt-2" type="submit">Agregar Carpeta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+
+{% endblock %}
