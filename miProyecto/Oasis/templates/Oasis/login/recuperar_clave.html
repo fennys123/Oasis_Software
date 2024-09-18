@@ -1,0 +1,30 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+
+{% block titulo %}Login{% endblock %}
+
+{% block contenedor %}
+<section class="contenedorInicio">
+  <div class="imagen">
+    <img src="{% static 'Oasis/img/fondoRegistro4.jpg' %}" alt="Fondo Registro">
+  </div>
+  <div class="contentRegistro">
+    <div class="Registro">
+      <h1>Recuperar contraseña</h1>
+      <div class="formulario">
+        <form action="{% url 'recuperar_clave' %}" method="post" class="form">
+          {% csrf_token %}
+          <div class="container-1">
+            <div class="group">
+              <input required="true" class="main-input" type="text" name="correo">
+              <span class="highlight-span"></span>
+              <label class="lebal-email">Ingrese su Email</label>
+              <button type="submit" class="btn btn-info">Recuperar...</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+  </div>
+</section>
+{% endblock %}

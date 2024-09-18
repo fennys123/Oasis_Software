@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.urls import reverse
+from urllib.parse import urlencode
+from random import randint
+from tarfile import HeaderError
 
 from django.db.models import F
 from collections import defaultdict
@@ -1704,6 +1707,368 @@ class comprar_entradas_movil(APIView):
         except Exception as e:
             return JsonResponse({'error':f'{e}'}, status=400)
 
+class entradas_usuario_movil(APIView):
+    def get(self, request, id):
+        try:
+            usuario = Usuario.objects.get(pk=id)
+            entradas = CompraEntrada.objects.filter(usuario=usuario)
+
+            if not entradas:
+                return JsonResponse({'entradas': []}, status=200)
+
+
+            entradas_info = []
+            for entrada in entradas:
+                evento = Evento.objects.get(id=entrada.evento.id)
+                entradas_info.append({
+                    'entrada': {
+                        'id': entrada.id,
+                        'entrada_general': entrada.entrada_general,
+                        'entrada_vip': entrada.entrada_vip,
+                        'total': entrada.total,
+                        'fecha_compra': entrada.fecha_compra
+                    },
+                    'evento': {
+                        'id': evento.id,
+                        'nombre': evento.nombre,
+                        'fecha': evento.fecha,
+                        'hora_incio': evento.hora_incio,
+                        'descripcion': evento.descripcion,
+                        'aforo': evento.aforo,
+                        'precio_entrada': evento.precio_entrada,
+                        'precio_vip': evento.precio_vip,
+                        'foto': evento.foto.url
+                    }
+                })
+
+            return JsonResponse({'entradas': entradas_info})
+
+        except Usuario.DoesNotExist:
+            return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
+        except Evento.DoesNotExist:
+            return JsonResponse({'error': 'Evento no encontrado'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': f'Error: {str(e)}'}, status=500)
+
+
+
+class entradas_detalles_usuario_movil(APIView):
+    def get(self, request, user_id, entrada_id):
+
+        try:
+            usuario = Usuario.objects.get(pk=user_id)
+            compra_entrada = CompraEntrada.objects.get(pk=entrada_id, usuario=usuario)
+
+            # Serializar los datos
+            qr_entradas = EntradasQR.objects.filter(compra=compra_entrada.id)
+            evento = Evento.objects.get(pk=compra_entrada.evento.id)
+
+            qr_entradas_serializer = EntradasQRSerializer(qr_entradas, many=True, context={'request': request})
+            evento_serializer = EventoSerializer(evento, context={'request': request})
+            compra_entrada_serializer = CompraEntradaSerializer(compra_entrada, context={'request': request})
+
+            return Response({
+                'qr_entradas': qr_entradas_serializer.data,
+                'evento': evento_serializer.data,
+                'compra_entrada': compra_entrada_serializer.data
+            })
+
+
+        except Exception as e:
+            return JsonResponse({'error': f'Error: {str(e)}'})
+
+class reservar_mesa_movil(APIView):
+    def post(self, request):
+        try:
+            id_usuario = request.data.get('id_usuario')
+            id_evento = request.data.get('id_evento')
+            id_mesa = request.data.get('id_mesa')
+            total = request.data.get('total')
+
+            usuario = Usuario.objects.get(pk=id_usuario)
+            evento = Evento.objects.get(pk=id_evento)
+            mesa = Mesa.objects.get(pk=id_mesa)
+
+
+            if evento.entradas_disponibles >= mesa.capacidad:
+                reserva = Reserva.objects.create(
+                    usuario=usuario, 
+                    evento=evento,  
+                    mesa=mesa,
+                    total=total,
+                )
+                evento.entradas_disponibles -= mesa.capacidad
+
+                if not evento.reservas:
+                    evento.reservas = True
+
+                evento.save()
+                mesa.estado_reserva = 'Reservada'
+                mesa.save()
+
+                # Enviar correo en un hilo separado
+                destinatario = usuario.email
+                mensaje = f"""
+                    <h1 style='color:blue;'>Oasis</h1>
+                    <p>Usted ha reservado la <b>{reserva.mesa.nombre}</b> para el evento <b>{reserva.evento.nombre}</b> en la fecha <b>{reserva.evento.fecha}</b></p>
+                    <p>Este es su código QR para acceder:</p>
+                    <img src="{reserva.qr_imagen.url}" alt="Código QR"/>
+                """
+                EmailThread('Reserva en Oasis', mensaje, [destinatario]).start()
+
+                return JsonResponse({'message':'Reserva hecha con éxito'})
+            else:
+                return JsonResponse({'message':'No hay suficientes entradas disponibles'})
+
+        except Exception as e:
+            return JsonResponse({'error': f'Error: {str(e)}'}, status=500)
+
+class reservas_usuario_movil(APIView):
+    def get(self, request, id):
+        try:
+            usuario = Usuario.objects.get(pk = id)
+            reservas = Reserva.objects.filter(usuario = usuario)
+
+            if not reservas:
+                return JsonResponse({'reservas': []}, status=200)
+
+            reservas_info = []
+            for reserva in reservas:
+                evento = Evento.objects.get(id=reserva.evento.id)
+                reservas_info.append({
+                    'reserva': {
+                        'id': reserva.id,
+                        'mesa': reserva.mesa.nombre,
+                        'total': reserva.total,
+                        'fecha_compra': reserva.fecha_compra
+                    },
+                    'evento': {
+                        'id': evento.id,
+                        'nombre': evento.nombre,
+                        'fecha': evento.fecha,
+                        'foto': evento.foto.url
+                    }
+                })
+            
+            return JsonResponse({'reservas': reservas_info})
+        
+        except Exception as e:
+            return JsonResponse({'error': f'Error: {str(e)}'}, status=500)
+
+class reservas_detalles_usuario_movil(APIView):
+    def get(self, request, user_id, reserva_id):
+
+        try:
+            usuario = Usuario.objects.get(pk=user_id)
+            reserva = Reserva.objects.get(pk=reserva_id, usuario=usuario)
+            evento = Evento.objects.get(pk=reserva.evento.id)
+
+            evento_serializer = EventoSerializer(evento, context={'request': request})
+            reserva_serializer = ReservaSerializer(reserva, context={'request': request})
+
+            return Response({
+                'evento': evento_serializer.data,
+                'reserva': reserva_serializer.data,
+                'mesa': reserva.mesa.nombre,
+                'capacidad_mesa': reserva.mesa.capacidad
+
+            })
+        
+        except Exception as e:
+            return JsonResponse({'error': f'Error: {str(e)}'})
+
+
+
+class realizar_pedido_movil(APIView):
+    def post(self, request):
+        try:
+            id_usuario = request.data.get('id_usuario')
+            codigo_mesa = request.data.get('codigo_mesa')
+            comentario = request.data.get('comentario')
+            total = request.data.get('total')
+            productos_seleccionados = request.data.get('productos_seleccionados')
+            print(productos_seleccionados)
+
+            usuario = Usuario.objects.get(pk=id_usuario)
+            mesa = Mesa.objects.get(codigo_qr=codigo_mesa)
+            
+            
+            pedido = Pedido.objects.create(
+                mesa=mesa, 
+                total=total, 
+                usuario= usuario,
+                comentario=comentario
+            )
+            
+            for p in productos_seleccionados:
+                try:
+                    producto = Producto.objects.get(pk=p['id'])
+                    detalle = DetallePedido.objects.create(
+                        pedido=pedido,
+                        producto=producto,
+                        cantidad=p['cantidad'],
+                        precio=p['precio']
+                    )
+                    producto.inventario -= p['cantidad']
+                    producto.save()
+                    print(f'Detalle del pedido creado: {detalle}')
+                except Exception as e:
+                    print(f'Error al crear detalle del pedido: {e}')
+
+            mesa.estado = mesa.ACTIVA
+            mesa.usuario = usuario
+            mesa.save()
+            
+            return JsonResponse({'message': 'Pedido creado con éxito'})
+
+        except Exception as e:
+            return JsonResponse({'error': f'{e}'})
+
+
+
+class ver_pedido_usuario_movil(APIView):
+    def get(self, request, user_id):
+        try:
+            usuario = Usuario.objects.get(pk=user_id)
+            pedidos = Pedido.objects.filter(usuario=usuario).order_by('-fecha')
+
+            # Verificar si hay pedidos
+            if not pedidos.exists():
+                mesa_serializer_data = None
+                detalles_pedidos = []
+                cuenta = 0
+                total_pedidos = 0
+                pedidos_eliminados = 0
+            else:
+                try:
+                    mesa = Mesa.objects.get(usuario=usuario)
+                    mesa_serializer = MesaSerializer(mesa, context={'request': request})
+                    mesa_serializer_data = mesa_serializer.data
+                except Mesa.DoesNotExist:
+                    mesa_serializer_data = None
+
+                detalles_pedidos = []
+                cuenta = 0
+
+                for pedido in pedidos:
+                    detalles = DetallePedido.objects.filter(pedido=pedido)
+                    detalles_activos_count = detalles.filter(estado='Activo').count()
+                    
+                    pedido_serializer = PedidoSerializer(pedido, context={'request': request})
+                    detalle_serializer = DetallePedidoSerializer(detalles, many=True, context={'request': request})
+                    
+                    detalles_pedidos.append({
+                        'pedido': pedido_serializer.data,
+                        'detalles': detalle_serializer.data,
+                        'detalles_activos_count': detalles_activos_count
+                    })
+
+                    if pedido.estado != 'Cancelado':
+                        for detalle in detalles:
+                            if detalle.estado != "Eliminado":
+                                cuenta += detalle.cantidad * detalle.precio
+
+                pedidos_eliminados = pedidos.filter(estado='Cancelado').count()
+                total_pedidos = pedidos.count()
+
+            return JsonResponse({
+                'total_pedidos': total_pedidos,
+                'pedidos_eliminados': pedidos_eliminados,
+                'mesa': mesa_serializer_data,
+                'detalles_pedidos': detalles_pedidos,
+                'cuenta': cuenta,
+                'hay_pedidos': total_pedidos > 0
+            })
+        except Exception as e:
+            return JsonResponse({'error': f'{e}'})
+
+
+
+class eliminar_pedido_usuario_movil(APIView):
+    def get(self, request, id_pedido):
+        try:
+            pedido = Pedido.objects.get(pk=id_pedido)
+            pedido.estado = pedido.CANCELADO
+            pedido.comentario = ""
+
+            detalles_pedido = DetallePedido.objects.filter(pedido=pedido)
+            for d in detalles_pedido:
+                d.estado = d.ELIMINADO
+                d.motivo_eliminacion = ""
+                d.save()
+
+            pedido.save()
+            return JsonResponse({'message':'Pedido cancelado exitosamente'})
+        except Exception as e:
+            return JsonResponse({'error': f'{e}'})
+
+
+
+class eliminar_producto_pedido_usuario_movil(APIView):
+    def get(self, request, id_detalle):
+        try:
+            detalle = DetallePedido.objects.get(pk=id_detalle)
+            detalle.estado = detalle.ELIMINADO
+            detalle.motivo_eliminacion = ""
+            detalle.save()
+
+            return JsonResponse({'message': 'Producto eliminado exitosamente'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+
+
+
+def crear_pedido_usuario(request, id):
+    try:
+        logueo = request.session.get("logueo", False)
+        user = None
+        if logueo:
+            user = Usuario.objects.get(pk = logueo["id"])
+
+        else:
+            messages.error(request, "Inicia sesión ó registrate para realizar el pedido.")
+            return redirect('pedidoUsuario', id=id)
+        
+        mesa = Mesa.objects.get(pk=id)
+        
+        carrito = request.session.get("carrito", [])
+        if not carrito:
+            messages.error(request, "El pedido está vacío.")
+            return redirect('pedidoEmpleado', id=id)
+        
+        comentario = request.POST.get("comentario", "")
+        
+        pedido = Pedido.objects.create(
+            mesa=mesa, 
+            total=sum(item['subtotal'] for item in carrito), 
+            usuario=user,
+            comentario=comentario
+        )
+        
+        for p in carrito:
+            producto = Producto.objects.get(pk=p['id'])
+            DetallePedido.objects.create(
+                pedido=pedido,
+                producto=producto,
+                cantidad=p['cantidad'],
+                precio=p['precio']
+            )
+            producto.inventario -= p['cantidad']
+            producto.save()
+
+        mesa.estado = mesa.ACTIVA
+        mesa.usuario = user
+        mesa.save()
+        request.session["carrito"] = []
+        request.session["items"] = 0
+        messages.success(request, "Pedido creado con éxito.")
+
+    except Exception as e:
+        messages.error(request, f"Ocurrió un Error: {e}")
+    
+    return redirect('ver_detalles_pedido_usuario')
+
+
 
 def crear_pedido_usuario(request, id):
     try:
@@ -2116,6 +2481,84 @@ def ver_detalles_usuario(request):
         'url': 'ver_detalles_pedido_usuario'
     }
     return render(request, 'Oasis/usuario/detalles_pedido_usuario.html', contexto)
+
+
+
+#RECUPERAR CONTRASEÑA.
+def recuperar_clave(request):
+	if request.method == "POST":
+		correo = request.POST.get("correo")
+		try:
+			q = Usuario.objects.get(email=correo)
+			from random import randint
+			import base64
+			token = base64.b64encode(str(randint(100000, 999999)).encode("ascii")).decode("ascii")
+			print(token)
+			q.token_recuperar = token
+			q.save()
+			# enviar correo de recuperación
+			destinatario = correo
+			mensaje = f"""
+					<h1 style='color:blue;'>OASIS</h1>
+					<p>Usted ha solicitado recuperar su contraseña, haga clic en el link y digite el token.</p>
+					<p>Token: <strong>{token}</strong></p>
+					<a href='http://127.0.0.1:8000/verificar_recuperar/?correo={correo}'>Recuperar...</a>
+					"""
+			try:
+				msg = EmailMessage("Oasis", mensaje, settings.EMAIL_HOST_USER, [destinatario])
+				msg.content_subtype = "html"  # Habilitar contenido html
+				msg.send()
+				messages.success(request, "Correo enviado!!")
+			except HeaderError:
+				messages.error(request, "Encabezado no válido")
+			except Exception as e:
+				messages.error(request, f"Error: {e}")
+			# fin -
+		except Usuario.DoesNotExist:
+			messages.error(request, "No existe el usuario....")
+		return redirect("recuperar_clave")
+	else:
+		return render(request, "Oasis/login/recuperar_clave.html")
+
+
+def verificar_recuperar(request):
+	if request.method == "POST":
+		if request.POST.get("check"):
+			# caso en el que el token es correcto
+			correo = request.POST.get("correo")
+			q = Usuario.objects.get(email=correo)
+
+			c1 = request.POST.get("nueva1")
+			c2 = request.POST.get("nueva2")
+
+			if c1 == c2:
+				# cambiar clave en DB
+				q.password = hash_password(c1)
+				q.token_recuperar = ""
+				q.save()
+				messages.success(request, "Contraseña guardada correctamente!!")
+				return redirect("index")
+			else:
+				messages.info(request, "Las contraseñas nuevas no coinciden...")
+				return redirect("verificar_recuperar")+"/?correo="+correo
+		else:
+			# caso en el que se hace clic en el correo-e para digitar token
+			correo = request.POST.get("correo")
+			token = request.POST.get("token")
+			q = Usuario.objects.get(email=correo)
+			if (q.token_recuperar == token) and q.token_recuperar != "":
+				contexto = {"check": "ok", "correo":correo}
+				return render(request, "Oasis/login/verificar_recuperar.html", contexto)
+			else:
+				messages.error(request, "Token incorrecto")
+				return redirect("verificar_recuperar")  #falta agregar correo como parametro url
+	else:
+		correo = request.GET.get("correo")
+		contexto = {"correo":correo}
+		return render(request, "Oasis/login/verificar_recuperar.html", contexto)
+
+
+
 
 #mas_info
 def mas_info(request):

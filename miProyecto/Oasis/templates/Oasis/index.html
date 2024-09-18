@@ -24,7 +24,7 @@
           <label for="input" class="label">Escribe tu contraseña</label>
           <div class="underline"></div>
         </div>
-        <a class="olvidarContraseña">Olvidé mi contraseña</a>
+        <a class="olvidarContraseña" href="{% url 'recuperar' %}">Olvidé mi contraseña</a>
         <button type="submit" class="btn-normal">Entrar</button>
         <p class="p1">¿No tiene una cuenta?</p>
       </div>
@@ -61,10 +61,9 @@
         risas
         fluyen sin parar. Únete a nosotros y descubre el epicentro de la diversión nocturna en la ciudad.
       </div>
-      <button class="btn3" onclick="window.location.href='{% url 'mas_info' %}'">Más información</button>
+      <button class="btn3">Más información</button>
     </div>
   </div>
 </div>
 </div>
 {% endblock %}
-

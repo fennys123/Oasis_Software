@@ -24,11 +24,20 @@ router.register(r'detalle_venta', views.DetalleVentaViewSet)
 
 
 urlpatterns = [
-    path('api/1.0/', include(router.urls)),
+     path('api/1.0/', include(router.urls)),
     path('api/1.0/token-auth/', views.CustomAuthToken.as_view()),
 	path('api/1.0/api-auth/', include('rest_framework.urls')),
-	path('api/1.0/token_qr/<str:mesa>/<str:email>/', views.token_qr_movil.as_view()),
+	path('api/1.0/token_qr/<str:mesa>/', views.token_qr_movil.as_view()),
     path('api/1.0/comprar_entradas/', views.comprar_entradas_movil.as_view()),
+    path('api/1.0/entradas_usuario/<int:id>/', views.entradas_usuario_movil.as_view()),
+    path('api/1.0/entradas_detalles_usuario/<int:user_id>/<int:entrada_id>/', views.entradas_detalles_usuario_movil.as_view()),
+    path('api/1.0/reservar_mesa/', views.reservar_mesa_movil.as_view()),
+    path('api/1.0/reservas_usuario/<int:id>/', views.reservas_usuario_movil.as_view()),
+    path('api/1.0/reservas_detalles_usuario/<int:user_id>/<int:reserva_id>/', views.reservas_detalles_usuario_movil.as_view()),
+    path('api/1.0/realizar_pedido/', views.realizar_pedido_movil.as_view()),
+    path('api/1.0/pedidos_usuario/<int:user_id>/', views.ver_pedido_usuario_movil.as_view()),
+    path('api/1.0/eliminar_pedido_usuario/<int:id_pedido>/', views.eliminar_pedido_usuario_movil.as_view()),
+    path('api/1.0/eliminar_producto_pedido_usuario/<int:id_detalle>/', views.eliminar_producto_pedido_usuario_movil.as_view()),
 
 
 
@@ -64,6 +73,11 @@ urlpatterns = [
 
     #CAMBIAR CONTRASEÑA
     path('cambiar_clave/', views.cambiar_clave, name="cambiar_clave"),
+
+
+    #RECUPERAR CONTRASEÑA
+    path('recuperar_clave/', views.recuperar_clave, name="recuperar_clave"),
+    path('verificar_recuperar/', views.verificar_recuperar, name="verificar_recuperar"),
 
 
     #USUARIOS
