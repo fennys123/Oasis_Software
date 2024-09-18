@@ -199,6 +199,7 @@ def editar_perfil(request, id):
     return redirect('ver_perfil')
 
 
+
 #CAMBIAR CONTRASEÑA
 
 def cambiar_clave(request):
@@ -252,7 +253,7 @@ def entradas_usuario_info(request, id):
     
     try:
         compra_entrada = CompraEntrada.objects.get(pk=id, usuario=logueo["id"])
-        qr_entradas = entradasQR.objects.filter(compra=compra_entrada.id)
+        qr_entradas = EntradasQR.objects.filter(compra=compra_entrada.id)
 
         evento = Evento.objects.get(pk=compra_entrada.evento.id)
         
@@ -871,7 +872,7 @@ def eliminarEntrada(request, id):
     try:
         entrada = CompraEntrada.objects.get(pk=id)
         entrada.delete()
-        qr_entradas = entradasQR.objects.filter(compra=entrada)
+        qr_entradas = EntradasQR.objects.filter(compra=entrada)
         qr_entradas.delete()
         evento = Evento.objects.get(pk=entrada.evento.id)
         evento.entradas_disponibles = F('entradas_disponibles') + entrada.entrada_general + entrada.entrada_vip
@@ -1246,19 +1247,19 @@ def comprar_entradas(request, id):
 
             if cantidad_general > 0:
                 for _ in range(cantidad_general):
-                    entradasQR.objects.create(
+                    EntradasQR.objects.create(
                         compra= CompraEntrada.objects.get(pk=compra.id),
                         tipo_entrada="General",
                     )
             
             if cantidad_vip > 0:
                 for _ in range(cantidad_vip):
-                    entradasQR.objects.create(
+                    EntradasQR.objects.create(
                         compra= CompraEntrada.objects.get(pk=compra.id),
                         tipo_entrada="VIP",
                     ) 
 
-            qr_entradas = entradasQR.objects.filter(compra=compra.id)
+            qr_entradas = EntradasQR.objects.filter(compra=compra.id)
 
             # Enviar correo en un hilo separado
             destinatario = user.email
@@ -1660,19 +1661,19 @@ class comprar_entradas_movil(APIView):
 
                 if cantidad_general > 0:
                     for _ in range(cantidad_general):
-                        entradasQR.objects.create(
+                        EntradasQR.objects.create(
                             compra= CompraEntrada.objects.get(pk=compra.id),
                             tipo_entrada="General",
                         )
                 
                 if cantidad_vip > 0:
                     for _ in range(cantidad_vip):
-                        entradasQR.objects.create(
+                        EntradasQR.objects.create(
                             compra= CompraEntrada.objects.get(pk=compra.id),
                             tipo_entrada="VIP",
                         ) 
 
-                qr_entradas = entradasQR.objects.filter(compra=compra.id)
+                qr_entradas = EntradasQR.objects.filter(compra=compra.id)
 
                 destinatario = usuario.email
                 mensaje = f"""

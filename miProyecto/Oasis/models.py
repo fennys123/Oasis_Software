@@ -91,7 +91,7 @@ class CompraEntrada(models.Model):
         return f'{self.id}'
 
 
-class entradasQR(models.Model):
+class EntradasQR(models.Model):
     compra = models.ForeignKey(CompraEntrada, on_delete=models.CASCADE, default=None)
     codigo_qr = models.CharField(max_length=100, unique=True)
     qr_imagen = models.ImageField(upload_to='qr_codes/', blank=True, null=True)

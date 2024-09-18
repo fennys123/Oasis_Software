@@ -38,7 +38,7 @@ class CompraEntradaAdmin(admin.ModelAdmin):
     search_fields =['id','usuario','evento','fecha_compra']
     list_editable = ['entrada_general', 'entrada_vip', 'total']
 
-@admin.register(entradasQR)
+@admin.register(EntradasQR)
 class entradasQRAdmin(admin.ModelAdmin):
     list_display = ['id', 'compra', 'codigo_qr', 'qr_imagen', 'estado_qr', 'tipo_entrada']
 

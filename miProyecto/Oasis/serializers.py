@@ -30,6 +30,12 @@ class MesaSerializer(serializers.HyperlinkedModelSerializer):
         model = Mesa
         fields = ['id', 'nombre', 'capacidad', 'precio', 'estado', 'estado_reserva', 'codigo_qr']
 
+class EntradasQRSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = EntradasQR
+        fields = ['id', 'compra', 'codigo_qr', 'qr_imagen', 'estado_qr', 'tipo_entrada']
+
+
 class ReservaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Reserva
