@@ -106,6 +106,13 @@ class EntradasQR(models.Model):
             self.codigo_qr = str(uuid.uuid4())
 
         qr_data = {
+            'tipo': 'entrada',
+            'evento_nombre': self.compra.evento.nombre,
+            'evento_foto': self.compra.evento.foto.url,
+            'evento_fecha': self.compra.evento.fecha.strftime('%Y-%m-%d'),
+            'usuario_nombre': self.compra.usuario.nombre,
+            'usuario_email': self.compra.usuario.email,
+            'usuario_cc': self.compra.usuario.cedula,
             'codigo_entrada': self.codigo_qr,
             'estado_qr': self.estado_qr,
             'tipo_entrada': self.tipo_entrada
@@ -176,6 +183,15 @@ class Reserva(models.Model):
             self.codigo_qr = str(uuid.uuid4())
 
         qr_data = {
+            'tipo': 'reserva',
+            'evento_foto': self.evento.foto.url,
+            'evento_nombre': self.evento.nombre,
+            'evento_fecha': self.evento.fecha.strftime('%Y-%m-%d'),
+            'usuario_nombre': self.usuario.nombre,
+            'usuario_email': self.usuario.email,
+            'usuario_cc': self.usuario.cedula,
+            'nombre_mesa': self.mesa.nombre,
+            'capacidad_mesa': self.mesa.capacidad,
             'codigo_reserva': self.codigo_qr,
             'estado_qr': self.estado_qr
         }

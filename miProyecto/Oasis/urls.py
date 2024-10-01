@@ -24,7 +24,7 @@ router.register(r'detalle_venta', views.DetalleVentaViewSet)
 
 
 urlpatterns = [
-     path('api/1.0/', include(router.urls)),
+    path('api/1.0/', include(router.urls)),
     path('api/1.0/token-auth/', views.CustomAuthToken.as_view()),
 	path('api/1.0/api-auth/', include('rest_framework.urls')),
 	path('api/1.0/token_qr/<str:mesa>/', views.token_qr_movil.as_view()),
@@ -38,7 +38,16 @@ urlpatterns = [
     path('api/1.0/pedidos_usuario/<int:user_id>/', views.ver_pedido_usuario_movil.as_view()),
     path('api/1.0/eliminar_pedido_usuario/<int:id_pedido>/', views.eliminar_pedido_usuario_movil.as_view()),
     path('api/1.0/eliminar_producto_pedido_usuario/<int:id_detalle>/', views.eliminar_producto_pedido_usuario_movil.as_view()),
-
+    path('api/1.0/pagar_pedido_usuario/<int:id_usuario>/<str:codigo_mesa>/', views.pagar_pedido_usuario_movil.as_view()),
+    path('api/1.0/liberar_mesa_usuario/<str:codigo_mesa>/', views.liberar_mesa_usuario_movil.as_view()),
+    path('api/1.0/verificar_pedido_usuario/<int:id_usuario>/', views.verificar_pedido_usuario_movil.as_view()),
+    path('api/1.0/pedidos_mesa/<str:codigo_mesa>/', views.ver_pedido_mesa_movil.as_view()),
+    path('api/1.0/pedidos_mesa_cargo/<int:id_usuario>/', views.ver_mesa_cargo_movil.as_view()),
+    path('api/1.0/reserva_escaneado/<str:codigo_qr>/', views.qr_reserva_escaneado_movil.as_view()),
+    path('api/1.0/entrada_escaneado/<str:codigo_qr>/', views.qr_entrada_escaneado_movil.as_view()),
+    path('api/1.0/categoria_productos/<int:id_categoria>/', views.categoria_productos_movil.as_view()),
+    path('api/1.0/galeria_fotos/<int:id_carpeta>/', views.galeria_fotos_movil.as_view()),
+    path('api/1.0/registrar_usuario/', views.registrar_usuario_movil.as_view()),
 
 
 
@@ -173,6 +182,7 @@ urlpatterns = [
 #   FRONT PRODUCTOS
     path('front_productos/', views.front_productos, name='front_productos'),
     path('front_productos_info/<int:id>/', views.front_productos_info, name='front_productos_info'),
+
 #   FRONT EVENTOS
     path('front_eventos/', views.front_eventos, name='front_eventos'),
     path('front_eventos_info/<int:id>/', views.front_eventos_info, name='front_eventos_info'),

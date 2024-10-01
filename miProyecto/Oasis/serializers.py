@@ -25,16 +25,16 @@ class CompraEntradaSerializer(serializers.HyperlinkedModelSerializer):
         model = CompraEntrada
         fields = ['id', 'usuario', 'evento', 'entrada_general', 'entrada_vip', 'total', 'fecha_compra']
 
-class MesaSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Mesa
-        fields = ['id', 'nombre', 'capacidad', 'precio', 'estado', 'estado_reserva', 'codigo_qr']
-
 class EntradasQRSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = EntradasQR
         fields = ['id', 'compra', 'codigo_qr', 'qr_imagen', 'estado_qr', 'tipo_entrada']
 
+class MesaSerializer(serializers.HyperlinkedModelSerializer):
+    usuario = UsuarioSerializer(read_only=True)
+    class Meta:
+        model = Mesa
+        fields = ['id', 'nombre', 'capacidad', 'precio', 'estado', 'estado_reserva', 'codigo_qr', 'usuario']
 
 class ReservaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -48,6 +48,7 @@ class CategoriaSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'nombre', 'descripcion', 'foto']
 
 class ProductoSerializer(serializers.HyperlinkedModelSerializer):
+    categoria = CategoriaSerializer(read_only=True)
     class Meta:
         model = Producto
         fields = ['id', 'nombre', 'descripcion', 'foto', 'categoria', 'precio']
@@ -58,14 +59,18 @@ class PedidoSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'mesa', 'usuario', 'fecha','comentario', 'estado', 'total']
 
 class DetallePedidoSerializer(serializers.HyperlinkedModelSerializer):
+    producto = ProductoSerializer(read_only=True)
+
+    subtotal = serializers.SerializerMethodField()
+
     class Meta:
         model = DetallePedido
-        fields = ['id', 'pedido', 'producto', 'cantidad', 'precio']
+        fields = ['id', 'pedido', 'producto', 'cantidad', 'precio', 'estado', 'motivo_eliminacion', 'subtotal']
 
-"""class InventarioSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Inventario
-        fields = ['id', 'producto', 'cantidad', 'fecha_caducidad']"""
+    def get_subtotal(self, obj):
+        return obj.cantidad * obj.precio
+
+
 
 class GaleriaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

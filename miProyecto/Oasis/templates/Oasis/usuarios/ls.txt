@@ -1,0 +1,61 @@
+#mas_info
+def mas_info(request):
+    return render(request, 'Oasis/mas_info.html')
+
+def front_productos_info(request, id):
+    logueo = request.session.get("logueo", False)
+    user = None
+    if logueo:
+        user = Usuario.objects.get(pk=logueo["id"])
+    categorias = Categoria.objects.all()
+    producto = Producto.objects.get(pk=id)
+
+    contexto = {"data": user, "producto": producto, "categorias": categorias}
+    return render(request, "Oasis/front_productos/front_productos_info.html", contexto)
+
+def ver_detalles_usuario(request):
+    logueo = request.session.get("logueo")
+    if logueo is None:
+        return redirect('login')  
+
+    user = Usuario.objects.get(pk=logueo["id"])
+    pedidos = Pedido.objects.filter(usuario=user).order_by('-fecha')
+
+    mesas = Mesa.objects.filter(usuario=user)
+    if mesas.exists():
+        mesa = mesas.first()  
+    else:
+        mesa = None
+
+    detalles_pedidos = []
+    cuenta = 0
+
+    for pedido in pedidos:
+        detalles = DetallePedido.objects.filter(pedido=pedido)
+        subtotal_pedido = 0
+
+        for detalle in detalles:
+            if detalle.estado != detalle.ELIMINADO:
+                subtotal_pedido += detalle.subtotal
+        
+        detalles_pedidos.append({
+            'pedido': pedido,
+            'detalles': detalles,
+        })
+
+        if pedido.estado != 'Cancelado':
+            cuenta += subtotal_pedido
+
+    pedidos_eliminados = pedidos.filter(estado='Cancelado').count()
+    total_pedidos = pedidos.count()
+
+    contexto = {
+        'user': user,
+        'mesa': mesa,
+        'detalles_pedidos': detalles_pedidos,
+        'total_pedidos': total_pedidos,
+        'pedidos_eliminados': pedidos_eliminados,
+        'cuenta': cuenta,
+        'url': 'ver_detalles_pedido_usuario'
+    }
+    return render(request, 'Oasis/usuario/detalles_pedido_usuario.html', contexto)
