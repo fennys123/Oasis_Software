@@ -1,6 +1,4 @@
 {% load humanize %}
-    <h5 style="font-family: Nunito;"><strong>Productos</strong></h5>
-
     {% if request.session.carrito %}
     <br>
         {% for p in request.session.carrito %}

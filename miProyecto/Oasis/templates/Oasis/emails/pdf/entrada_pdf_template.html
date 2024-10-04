@@ -1,0 +1,69 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gracias</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f8f8f8; margin: 0; padding: 0;">
+    <div style="width: 100%; max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+        <!-- Encabezado -->
+        <div style="text-align: center; background-color: #f3eaf7; padding: 0; border-radius: 8px 8px 0 0;">
+            <img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-entrada-pdf.png" alt="Confirmación de Entrada" style="width: 100%; max-width: 600px; height: 300px;">
+        </div>
+
+        <!-- Contenido principal -->
+        <div style="padding: 0; color: #333;">
+            <h2 style=" font-size: 16px; text-align: left; color: #5a2c7d; margin-top: 30px; margin-bottom: 10px;">Estimado/a {{ compra.usuario.nombre }},</h2>
+            <p style=" font-size: 16px;">Gracias por elegir Oasis Night Club. A continuación, encontrarás los detalles de tu entrada:</p>
+
+            <!-- Sección de la compra usando tabla -->
+            <table style="width: 100%; background-color: #f3eaf7; border-radius: 20px; padding: 10px; margin: 30px auto;  font-size: 12px;">
+                <tr>
+                    <td style="text-align: center;">
+                        <img src="{{ request.scheme }}://{{ request.get_host }}{{ compra.evento.foto.url }}" alt="{{ compra.evento.nombre }}" width="400px" height="240px" style="border-radius: 8px;">
+                    </td>
+                    <td style="padding-left: 20px;">
+                        <h2 style="margin-top: 30px; padding: 0;">Evento: {{ compra.evento.nombre }}</h2>
+                        <p style="margin: 0; padding: 0;" >Fecha del evento: {{ compra.evento.fecha }}</p>
+                        <p style="margin: 0; padding: 0;" >Usuario: {{ compra.usuario.nombre }}</p>
+                        <p style="margin: 0; padding: 0;" >Email: {{ compra.usuario.email }}</p>
+                        <p style="margin: 0; padding: 0;" >CC: {{ compra.usuario.cedula }}</p>
+                        <p style="margin: 0; padding: 0;" >Total de la compra: ${{ compra.total|intcomma }}</p>
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; background-color: #f3eaf7; border-radius: 20px; padding: 10px; margin: 30px auto;  font-size: 12px;">
+                <tr>
+                    <td style="text-align: center;">
+                        <img src="{{ request.scheme }}://{{ request.get_host }}{{ entrada.qr_imagen.url }}" alt="código QR" width="220px" height="200px" style="border-radius: 8px;">
+                    </td>
+                    <td style="padding-left: 20px;">
+                        <p style="margin-top: 30px; padding: 0;"><strong>Entrada: {{ entrada.tipo_entrada }}</strong></p>
+                        {% if entrada.tipo_entrada == 'General' %}
+                            <p style="margin: 0; padding: 0;">Precio: ${{ compra.evento.precio_entrada|intcomma }}</p>
+                        {% elif entrada.tipo_entrada == 'VIP' %}
+                            <p style="margin: 0; padding: 0;">Precio: ${{ compra.evento.precio_vip|intcomma }}</p>
+                        {% endif %}
+                        <p style="margin: 0; padding: 0;">Este es el QR de tu entrada, debes mostrarlo al momento de ingresar al evento, este será escaneado por nuestros meseros.</p>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Mensaje final -->
+            <p style="font-size: 16px;">Si tienes alguna duda o inconveniente con tu compra, no dudes en contactarnos al (+57) 305 277 7073 o (+57) 321 123 4567 o por correo electrónico a compras@oasisdiscoteca.com. Estamos aquí para ayudarte.</p>
+            <p style="font-size: 16px; margin-bottom: 50px;">Esperamos verte pronto y que disfrutes de una experiencia increíble en Oasis Night Club.</p>
+        </div>
+
+        <!-- Pie de página -->
+        <div style="text-align: center; padding: 0; color: #5a2c7d; font-weight: bold;">
+            <p>Con cariño,</p>
+            <img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/logoOasisNegro.png" alt="Logo_Oasis" width="290px" height="50px">
+        </div>
+    </div>
+</body>
+</html>

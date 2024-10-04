@@ -18,7 +18,7 @@
     font-size: 20px;
     width: 100%;
     border: none;
-    border-bottom: 2px solid white;
+    border-bottom: 2px solid black;
     padding: 5px 0;
     background-color: transparent;
     outline: none;
@@ -28,7 +28,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    color: white;
+    color: black;
     transition: all 0.3s ease;
     pointer-events: none;
   }
@@ -36,8 +36,8 @@
   .input-container input[type="text"]:focus ~ .label,
   .input-container input[type="text"]:valid ~ .label {
     top: -20px;
-    font-size: 16px;
-    color: white;
+    font-size: 12px;
+    color: #fc4664;
   }
   
   .input-container .underline {
@@ -46,7 +46,7 @@
     left: 0;
     height: 2px;
     width: 100%;
-    background-color: white;
+    background-color: black;
     transform: scaleX(0);
     transition: all 0.3s ease;
   }
@@ -66,7 +66,7 @@
     font-size: 20px;
     width: 100%;
     border: none;
-    border-bottom: 2px solid white;
+    border-bottom: 2px solid black;
     padding: 5px 0;
     background-color: transparent;
     outline: none;
@@ -76,7 +76,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    color: white;
+    color: black;
     transition: all 0.3s ease;
     pointer-events: none;
   }
@@ -84,8 +84,8 @@
   .input-container input[type="password"]:focus ~ .label,
   .input-container input[type="password"]:valid ~ .label {
     top: -20px;
-    font-size: 16px;
-    color: white;
+    font-size: 12px;
+    color: #fc4664;
   }
   
   .input-container .underline {
@@ -94,7 +94,7 @@
     left: 0;
     height: 2px;
     width: 100%;
-    background-color: white;
+    background-color: black;
     transform: scaleX(0);
     transition: all 0.3s ease;
   }
@@ -175,7 +175,7 @@
     top: 0;
     width: 10em;
     height: 3em;
-    background-color: rgb(252, 70, 100);
+    background-color: #fc4664;
     color: black !important;
     transform: translateX(-100%);
     transition: all .3s;
@@ -234,7 +234,7 @@
 /*Este es el botón rosa sin transición*/
 
 .btn-normal{
-  background-color: rgb(252, 70, 100);
+  background-color: #fc4664;
   width: 505px;
   height: 40px;
   color: white;
@@ -246,7 +246,7 @@
 }
 
 .btn-normal:hover{
-  background-color: rgb(255, 44, 79);
+  background-color: #ff2c4f;
 }
 
 

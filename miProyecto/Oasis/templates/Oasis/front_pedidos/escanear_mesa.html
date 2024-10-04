@@ -4,24 +4,98 @@
 {% block titulo %}Registro{% endblock %}
 
 {% block contenedor %}
-<section class="contenedorInicio">
-  <div class="imagen">
-    <img src="{% static 'Oasis/img/fondoRegistro4.jpg' %}" alt="Fondo Registro">
+
+<!-- Header Start -->
+<div class="jumbotron jumbotron-fluid bg-jumbotron-pedido" style="margin-bottom: 90px;">
+  <div class="container text-center py-5">
+      <h3 class="text-white display-3 mb-4">Realizar pedido</h3>
+      <div class="d-inline-flex align-items-center text-white">
+          <p class="m-0"><a class="text-white" href="{% url 'index' %}">Inicio</a></p>
+          <i class="far fa-circle px-3"></i>
+          <p class="m-0">Realizar pedido</p>
+      </div>
   </div>
-  <div class="d-flex flex-column align-items-center justify-content-center w-50 bg-dark">
-    <p class="text-light fs-5">¡Escanea el QR de tu mesa para registrar tu pedido!</p>
-    <img src="{% static 'Oasis/img/QR.png' %}" alt="Qr" class="w-50">
-    <select class="form-control bg-dark text-light w-50 mt-5" id="mesaSelect">
-        <option value="">Seleccione</option>
-        {% for m in mesas %}
-            {% if m.estado == "Activa" %}
-                <option class="inputMesa" value="{{ m.id }}" disabled>{{ m.nombre }} - (No disponible)</option>
-            {% else %}
-                <option class="inputMesa" value="{{ m.id }}">{{ m.nombre }}</option>
-            {% endif %}
-        {% endfor %}
-    </select>
-    <button class="btn btn-comprar w-50 mt-5" id="escaneadaButton" onclick="mesa_escaneada('{% url 'pedidoUsuario' id=0 %}'.replace('0/', ''))">Escaneada</button>
+</div>
+<!-- Header End -->
+
+
+<!-- Escaneo Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+      <div class="row mx-0 justify-content-center text-center">
+          <div class="col-lg-6">
+              <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Realizar pedido</h6>
+              <h1 class="mb-5">¡Escanea y disfruta!</h1>
+          </div>
+      </div>
+      <div class="row justify-content-center bg-pedido mx-0">
+          <div class="col-lg-6 py-5">
+              <div class="p-5 my-5 text-center" style="background: rgba(33, 30, 28, 0.7);">
+                  <h4 class="text-white text-center mb-4">¡Escanea el QR de tu mesa para registrar tu pedido!</h4>
+                  <img src="{% static 'Oasis/img/QR.png' %}" alt="Qr" class="w-50">
+                  <div class="d-flex justify-content-center">
+                    <select class="form-control text-dark w-50 mt-5" id="mesaSelect">
+                      <option value="">Seleccione</option>
+                      {% for m in mesas %}
+                          {% if m.estado == "Activa" %}
+                              <option class="inputMesa" value="{{ m.id }}" disabled>{{ m.nombre }} - (No disponible)</option>
+                          {% else %}
+                              <option class="inputMesa" style="color: black;" value="{{ m.id }}">{{ m.nombre }}</option>
+                          {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                <button class="btn btn-primary mt-5" id="escaneadaButton" onclick="mesa_escaneada('{% url 'pedidoUsuario' id=0 %}'.replace('0/', ''))">Escaneada</button>              
+              </div>
+          </div>
+      </div>
   </div>
-</section>
+</div>
+<!-- Escaneo End -->
+
+
+<!-- Footer Start -->
+<div class="footer container-fluid position-relative bg-dark py-5" style="margin-top: 90px;">
+  <div class="container pt-5">
+  <div class="row">
+      <div class="col-lg-6 pr-lg-5 mb-5">
+      <a href="index.html" class="navbar-brand pb-5">
+          <img src="{% static 'Oasis/img/logoOasisBlanco.png' %}" alt="logo_oasis" style="width: 230px;">
+      </a>
+      <p><i class="fa fa-map-marker-alt mr-2"></i>4441 Collins Ave, Miami Beach</p>
+      <p><i class="fa fa-phone-alt mr-2"></i>+57 3052777053</p>
+      <p><i class="fa fa-phone-alt mr-2"></i>+57 321 123 4567</p>
+      <p><i class="fa fa-envelope mr-2"></i>info@oasisdiscoteca.com</p>
+      <div class="d-flex justify-content-start mt-4">
+          <a class="btn btn-lg btn-primary btn-lg-square mr-2" href=""><i class="fab fa-twitter"></i></a>
+          <a class="btn btn-lg btn-primary btn-lg-square mr-2" href=""><i class="fab fa-facebook-f"></i></a>
+          <a class="btn btn-lg btn-primary btn-lg-square mr-2" href=""><i class="fab fa-linkedin-in"></i></a>
+          <a class="btn btn-lg btn-primary btn-lg-square" href=""><i class="fab fa-instagram"></i></a>
+      </div>
+      </div>
+      <div class="col-lg-6 pl-lg-5">
+      <div class="row">
+          <h5 class="text-white text-uppercase mb-4">¡Encuentranos Facilmente!</h5>
+          <div style="min-height: 400px;">
+              <div class="position-relative h-100">
+                  <iframe class="position-absolute w-100 h-100" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3591.567555383074!2d-80.12758281973493!3d25.817837118829257!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88d9b36a38e461a1%3A0xcd4f95ec04ca8e14!2sLIV!5e0!3m2!1ses!2sco!4v1727925666310!5m2!1ses!2sco" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+              </div>
+          </div>
+      </div>
+      </div>
+  </div>
+  </div>
+</div>
+<div class="container-fluid bg-dark text-light border-top py-4"
+  style="border-color: rgba(256, 256, 256, .15) !important;">
+  <div class="container">
+  <div class="row">
+      <div class="col-md-6 text-center text-md-left mb-3 mb-md-0">
+      <p class="m-0 text-white">&copy; <a href="#">OasisNightClub</a>. All Rights Reserved.</p>
+      </div>
+  </div>
+  </div>
+</div>
+<!-- Footer End -->
+
 {% endblock %}

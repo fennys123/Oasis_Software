@@ -36,6 +36,13 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 
 
+#PARA EL PDF
+from xhtml2pdf import pisa
+from django.template.loader import render_to_string
+import os
+import tempfile
+from django.core.files import File
+
 
 
 from rest_framework import viewsets
@@ -71,7 +78,6 @@ class EmailThread(threading.Thread):
             html_message=self.message  # Aquí va el mensaje en HTML
         )
 
-
 def calcular_edad(fecha_nacimiento):
     hoy = datetime.today()
     fecha_nac = datetime.strptime(fecha_nacimiento, '%Y-%m-%d')
@@ -81,8 +87,11 @@ def calcular_edad(fecha_nacimiento):
 
 def index(request):
     logueo = request.session.get("logueo", False)
+    menu = Categoria.objects.all()
+    galeria = Galeria.objects.all()
+    contexto = {'menu': menu, 'galeria': galeria}
     if logueo == False:
-        return render(request, "Oasis/index.html")
+        return render(request, "Oasis/index.html", contexto)
     else:
         return redirect("inicio")
 
@@ -129,7 +138,9 @@ def inicio(request):
         try:
             usuario_id = request.session['logueo']['id']
             usuario = Usuario.objects.get(pk=usuario_id)
-            contexto = {'data': usuario}
+            menu = Categoria.objects.all()
+            galeria = Galeria.objects.all()
+            contexto = {'data': usuario, 'menu': menu, 'galeria':galeria}
             return render(request, "Oasis/index.html", contexto)
         except Usuario.DoesNotExist:
             messages.error(request, "El usuario no existe")
@@ -1194,30 +1205,47 @@ def front_productos(request):
     logueo = request.session.get("logueo", False)
     user = None
     if logueo:
-        user = Usuario.objects.get(pk = logueo["id"])
+        user = Usuario.objects.get(pk=logueo["id"])
+    
     categorias = Categoria.objects.all()
-
     cat = request.GET.get("cat")
-
-    if cat == None:
+    
+    sin_productos = False
+    nombre_categoria = None
+    
+    if cat is None:
         productos = Producto.objects.all()
+        if len(productos) == 0:
+            sin_productos = True
     else:
         c = Categoria.objects.get(pk=cat)
         productos = Producto.objects.filter(categoria=c)
+        nombre_categoria = c.nombre
     
-    contexto = {"data": user,"productos": productos, "categorias": categorias}
+    contexto = {
+        "data": user,
+        "productos": productos,
+        "categorias": categorias,
+        "sin_productos": sin_productos,
+        "nombre_categoria": nombre_categoria,
+        "url": "front_productos"
+    }
+    
     return render(request, "Oasis/front_productos/front_productos.html", contexto)
 
-def front_productos_info(request, id):
+
+
+def front_producto_info(request, id):
     logueo = request.session.get("logueo", False)
     user = None
     if logueo:
         user = Usuario.objects.get(pk=logueo["id"])
-    categorias = Categoria.objects.all()
+
     producto = Producto.objects.get(pk=id)
 
-    contexto = {"data": user, "producto": producto, "categorias": categorias}
-    return render(request, "Oasis/front_productos/front_productos_info.html", contexto)
+    contexto = {"data": user, "producto": producto, "url": "front_producto_info"}
+
+    return render(request, "Oasis/front_productos/front_producto_info.html", contexto)
 
 
 def front_eventos(request):
@@ -1227,7 +1255,7 @@ def front_eventos(request):
         user = Usuario.objects.get(pk = logueo["id"])
     eventos = Evento.objects.all()
 
-    contexto = {"data": user, "eventos": eventos}
+    contexto = {"data": user, "eventos": eventos, "url": "front_eventos"}
     return render(request, "Oasis/front_eventos/front_eventos.html", contexto)
 
 def front_eventos_info(request, id):
@@ -1246,8 +1274,40 @@ def front_eventos_info(request, id):
 
     total_defecto = evento.precio_entrada + evento.precio_vip
 
-    contexto = {"data": user, "evento": evento, "mesas": mesas, "total_defecto": total_defecto, "listMesas": listMesas}
+    contexto = {"data": user, "evento": evento, "mesas": mesas, "total_defecto": total_defecto, "listMesas": listMesas, 'url': 'front_eventos_info'}
     return render(request, "Oasis/front_eventos/front_eventos_info.html", contexto)
+
+
+
+def front_galeria(request):
+    logueo = request.session.get("logueo", False)
+    user = None
+    if logueo:
+        user = Usuario.objects.get(pk = logueo["id"])
+    q = Galeria.objects.all()
+    contexto = {'data' : user, 'galeria': q, 'url': 'front_galeria'}
+    return render(request, "Oasis/front_galeria/front_galeria.html", contexto)
+
+
+def front_fotos(request, id):
+    logueo = request.session.get("logueo", False)
+    user = None
+    if logueo:
+        user = Usuario.objects.get(pk = logueo["id"])
+    q = Galeria.objects.get(pk=id)
+    fotos = Fotos.objects.filter(carpeta = q)
+    contexto = {'data' : user, 'galeria': q,'fotos': fotos, 'url': 'front_fotos'}
+    return render(request, "Oasis/front_galeria/front_fotos.html", contexto)
+
+def generar_pdf_entrada(request, compra, entrada):
+    html_string = render_to_string('Oasis/emails/pdf/entrada_pdf_template.html', {'compra': compra, 'entrada': entrada, 'request': request})
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="entrada_{entrada.id}.pdf"'
+    pisa_status = pisa.CreatePDF(html_string, dest=response)
+    if pisa_status.err:
+        return None
+    return response
+
 
 def comprar_entradas(request, id):
     logueo = request.session.get("logueo", False)
@@ -1301,33 +1361,33 @@ def comprar_entradas(request, id):
 
             qr_entradas = EntradasQR.objects.filter(compra=compra.id)
 
-            # Enviar correo en un hilo separado
             destinatario = user.email
-            mensaje = f"""
-                <h1 style='color:blue;'>Oasis</h1>
-                <p>Usted ha comprado <b>{qr_entradas.count()}</b> {'entradas' if qr_entradas.count() > 1 else 'entrada'} para el evento <b>{compra.evento.nombre}</b> en la fecha <b>{compra.evento.fecha}</b></p>
-                {'<p>Estos son los códigos QR de las entradas:' if qr_entradas.count() > 1 else '<p>Este es el código QR de la entrada:'}
-
-                <table style='border-collapse: collapse; width: 100%;'>
-                    <thead>
-                        <tr>
-                            <th style='border: 1px solid black; padding: 8px;'>Tipo de Entrada</th>
-                            <th style='border: 1px solid black; padding: 8px;'>Código QR</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {''.join(f'''
-                        <tr>
-                            <td style='border: 1px solid black; padding: 8px;'>{e.tipo_entrada}</td>
-                            <td style='border: 1px solid black; padding: 8px;'>
-                                <img src="{e.qr_imagen.url}" alt="Código QR" width="100">
-                            </td>
-                        </tr>''' for e in qr_entradas)}
-                    </tbody>
-                </table>
-            """
+            mensaje_html = render_to_string('Oasis/emails/plantillas/entrada_email_template.html', {
+                'compra': compra,
+                'entradas': qr_entradas,
+                'request': request
+            })
             
-            EmailThread('Compra de entradas en Oasis', mensaje, [destinatario]).start()
+            email = EmailMessage(
+                subject='Compra de entradas en Oasis Night Club',
+                body=mensaje_html,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[destinatario],
+            )
+            email.content_subtype = 'html' 
+
+            # Generar y adjuntar PDFs por cada entrada
+            for entrada in qr_entradas:
+                pdf = generar_pdf_entrada(request, compra, entrada)
+                if pdf:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
+                        temp_pdf.write(pdf.content)
+                        temp_pdf_path = temp_pdf.name
+                    email.attach_file(temp_pdf_path)
+                    os.remove(temp_pdf_path)
+
+            # Enviar el correo
+            email.send()
 
             messages.append({'message_type': 'success', 'message': 'Entradas compradas correctamente'})
         else:
@@ -1336,7 +1396,14 @@ def comprar_entradas(request, id):
     return JsonResponse({'messages': messages})
 
 
-
+def generar_pdf_reserva(request, reserva):
+    html_string = render_to_string('Oasis/emails/pdf/reserva_pdf_template.html', {'reserva': reserva, 'request': request})
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="reserva.pdf"'
+    pisa_status = pisa.CreatePDF(html_string, dest=response)
+    if pisa_status.err:
+        return HttpResponse('Error al generar PDF')
+    return response
 
 def reservar_mesa(request, id):
     logueo = request.session.get("logueo", False)
@@ -1355,6 +1422,7 @@ def reservar_mesa(request, id):
         total = int(data.get("total_general", 0))
 
         if evento.entradas_disponibles >= mesa.capacidad:
+            # Crear la reserva
             reserva = Reserva.objects.create(
                 usuario=user, 
                 evento=evento,  
@@ -1370,22 +1438,43 @@ def reservar_mesa(request, id):
             mesa.estado_reserva = 'Reservada'
             mesa.save()
 
-            # Enviar correo en un hilo separado
-            destinatario = user.email
-            mensaje = f"""
-                <h1 style='color:blue;'>Oasis</h1>
-                <p>Usted ha reservado la <b>{reserva.mesa.nombre}</b> para el evento <b>{reserva.evento.nombre}</b> en la fecha <b>{reserva.evento.fecha}</b></p>
-                <p>Este es su código QR para acceder:</p>
-                <img src="{reserva.qr_imagen.url}" alt="Código QR"/>
-            """
-            EmailThread('Reserva en Oasis', mensaje, [destinatario]).start()
+            # Generar el PDF
+            pdf = generar_pdf_reserva(request, reserva)
 
-            messages.append({'message_type': 'success', 'message': 'Mesa reservada correctamente'})
+            if pdf:
+                destinatario = user.email
+                contexto = {
+                    'reserva': reserva,
+                    'request': request
+                }
+                mensaje_html = render_to_string('Oasis/emails/plantillas/reserva_email_template.html', contexto)
+
+                # Guardar el PDF en un archivo temporal
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
+                    temp_pdf.write(pdf.content)
+                    temp_pdf_path = temp_pdf.name
+
+                # Enviar el correo con el PDF adjunto
+                email = EmailMessage(
+                    subject='Reserva exitosa en Oasis Night Club',
+                    body=mensaje_html,
+                    from_email=settings.EMAIL_HOST_USER,
+                    to=[destinatario],
+                )
+                email.attach_file(temp_pdf_path)  # Adjuntar el archivo PDF
+                email.content_subtype = 'html'  # Asegurarse de que el correo sea HTML
+                email.send()  # Enviar el correo
+
+                messages.append({'message_type': 'success', 'message': 'Mesa reservada correctamente'})
+                
+                # Eliminar el archivo temporal después de enviar
+                os.remove(temp_pdf_path)
+            else:
+                messages.append({'message_type': 'error', 'message': 'Error al generar el PDF.'})
         else:
             messages.append({'message_type': 'error', 'message': 'No hay suficientes entradas disponibles'})
 
     return JsonResponse({'messages': messages})
-
 
 
 def eliminar_reserva(request, id):
@@ -1432,8 +1521,18 @@ def pedidoUsuario(request, id):
     mesa = get_object_or_404(Mesa, pk=id)
     carrito = request.session.get("carrito", [])
     productos = Producto.objects.all()
+    categorias = Categoria.objects.all()
 
-    contexto = {'data': user, 'productos': productos, 'mesa': mesa, 'carrito': carrito}
+    cat = request.GET.get("cat")
+
+    if cat is not None:
+        cat = int(cat)
+        c = Categoria.objects.get(pk=cat)
+        productos = Producto.objects.filter(categoria=c)
+    else:
+        productos = Producto.objects.all()
+
+    contexto = {'data': user, 'productos': productos, 'mesa': mesa, 'carrito': carrito, 'cat': cat, 'categorias':categorias}
     return render(request, "Oasis/front_pedidos/pedido_usuario.html", contexto)
     
 
@@ -2823,9 +2922,6 @@ def verificar_recuperar(request):
 		correo = request.GET.get("correo")
 		contexto = {"correo":correo}
 		return render(request, "Oasis/login/verificar_recuperar.html", contexto)
-
-
-
 
 
 

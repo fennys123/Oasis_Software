@@ -62,7 +62,10 @@
               {% endfor %}
             </div>
             <div class="productos">
-                {% for i in productos %}
+                {% if productos|length == 0 %}
+                  <p>No se encuentran productos en esta categoria</p>
+                {% else %}
+                  {% for i in productos %}
                     <div class="pedido-item">
                         <img src="{{ i.foto.url }}" class="card-img-top rounded" alt="Producto" width="200px"> 
                         <p>{{ i.nombre }}</p>
@@ -75,7 +78,8 @@
                             <button type="button" onclick="add_carrito(`{% url 'carrito_add' %}`, {{ i.id }});" class="btn btn-primary">Agregar</button>
                         </form>
                     </div>
-                {% endfor %}
+                  {% endfor %}
+                {% endif %}
             </div>
           </div>
       </div>

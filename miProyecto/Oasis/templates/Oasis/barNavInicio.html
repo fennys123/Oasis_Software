@@ -12,7 +12,36 @@
   <link rel="stylesheet" href="{% static 'Oasis/css/front_eventos/front_eventos_info.css' %}">
   <link rel="stylesheet" href="{% static 'Oasis/css/barrasGestiones.css' %}">
   <link rel="stylesheet" href="{% static 'Oasis/css/pedidoEmpleado.css' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'Oasis/img/favicon-32x32.png' %}">
+
+  <!-- Favicon -->
+  <link href="img/favicon.ico" rel="icon">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Libraries Stylesheet -->
+  <link rel="stylesheet" href="{% static 'Oasis/lib/animate/animate.min.css' %}">
+  <link rel="stylesheet" href="{% static 'Oasis/lib/owlcarousel/assets/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static 'Oasis/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css' %}"/>
+
+  <!-- Lightbox CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
+
+  <!-- Customized Bootstrap Stylesheet -->
+  <link rel="stylesheet" href="{% static 'Oasis/css/front.css' %}">
+
+  <!-- Incluir CSS de DateTime Picker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+
+  <!-- Iconos Bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+
+  <!-- Bootstrap CSS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
     crossorigin="anonymous"></script>
@@ -22,6 +51,66 @@
 
 <body>
   <header>
+    <!-- Navbar Start -->
+    <div class="container-fluid p-0">
+      <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
+          <a href="{% url 'index' %}" class="navbar-brand ml-lg-3">
+            <img src="{% static 'Oasis/img/logoOasisNegro.png' %}" alt="logo_oasis" width="170" height="40">
+          </a>
+          <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
+              <div class="navbar-nav m-auto py-0">
+                <a href="{% url 'index' %}" class="nav-item nav-link {% if request.path == '/' or request.path == '/inicio/' %}active{% endif %}">Inicio</a>
+                <a href="{% url 'front_productos' %}" class="nav-item nav-link {% if url == 'front_productos' or url == 'front_producto_info' %}active{% endif %}">Menú</a>
+                <a href="{% url 'front_eventos' %}" class="nav-item nav-link {% if url == 'front_eventos' or url == 'front_eventos_info' %}active{% endif %}">Eventos</a>
+                <a href="{% url 'front_galeria' %}" class="nav-item nav-link {% if url == 'front_galeria' or url == 'front_fotos' %}active{% endif %}">Galería</a>
+              </div>
+              
+              {% if data %}
+                {% if data.rol == 4 %}
+                  <a href="{% url 'escanear_mesa' %}" class="btn btn-primary d-none d-lg-block">Pedir Ahora</a>
+                  <div class="dropdown dropstart">
+                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                      <img src="{{ data.foto.url }}" alt="LogoUsuario" width="40px" height="40px" class="rounded-circle">
+                    </button>
+                    <ul class="dropdown-menu cerrar">
+                      <li><a class="dropdown-item" href="{% url 'ver_perfil' %}">Perfil</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="{% url 'logout' %}">Salir</a></li>
+                    </ul>
+                  </div>
+                {% else %}
+                  <div class="dropdown dropstart">
+                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                      <img src="{{ data.foto.url }}" alt="LogoUsuario" width="40px" height="40px" class="rounded-circle">
+                    </button>
+                    <ul class="dropdown-menu cerrar">
+                      {% if data.rol == 1 %}
+                        <li><a class="dropdown-item" href="{% url 'ver_perfil' %}">Administrador</a></li>
+                      {% elif data.rol == 2 %}
+                        <li><a class="dropdown-item" href="{% url 'ver_perfil' %}">Bartender</a></li>
+                      {% elif data.rol == 3 %}
+                        <li><a class="dropdown-item" href="{% url 'ver_perfil' %}">Mesero</a></li>
+                      {% endif %}
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="{% url 'logout' %}">Salir</a></li>
+                    </ul>
+                  </div>
+                {% endif %}
+              {% else %}
+                  <div class="nav-item nav-link">
+                    <a type="button" class="btn btn-primary d-none d-lg-block" data-bs-toggle="offcanvas" data-bs-target="#pantallaLogin">Iniciar Sesión</a>
+                  </div>
+              {% endif %}
+          </div>
+      </nav>
+  </div>
+  <!-- Navbar End -->
+
+
+  <!-- Navbar Viejo 
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
       <div class="container-fluid">
         <a id="enlace_logo" href="{% url 'index' %}"><img src="{% static 'Oasis/img/logoOasisBlanco.png' %}" alt="logo_oasis"></a>
@@ -98,14 +187,17 @@
         </div>
     </nav>
     
-    <div class="offcanvas offcanvas-end bg-dark" id="pantallaLogin">
+    -->
+
+
+    <div class="offcanvas offcanvas-end" id="pantallaLogin">
       <div class="offcanvas-header cabecera">
         <p class="offcanvas-title titulo">Iniciar Sesión</p>
-        <button id="botonCerrar" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        <button id="botonCerrar" type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
       </div>
       <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
-        <div class="offcanvas-body text-white cuerpo">
+        <div class="offcanvas-body cuerpo">
           <p>Ingresa con tu email y contraseña.</p>
           <div class="input-container inputEdit1">
             <input type="text" required="" name="correo">
@@ -117,7 +209,8 @@
             <label for="input" class="label">Escribe tu contraseña</label>
             <div class="underline"></div>
           </div>
-          <a class="olvidarContraseña" href="{% url 'recuperar_clave' %}">Olvidé mi contraseña</a>          <button type="submit" class="btn-normal">Entrar</button>
+          <a class="olvidarContraseña" href="{% url 'recuperar_clave' %}">Olvidé mi contraseña</a>      
+          <button type="submit" class="btn-normal">Entrar</button>
           <p class="p1">¿No tiene una cuenta?</p>
         </div>
       </form>
@@ -129,7 +222,7 @@
   {% if messages %}
   {% for message in messages %}
   <div
-    class="alert alert-{% if message.tags and message.tags != 'error' %}{{ message.tags }}{% else %}danger{% endif %} alert-dismissible fade show"
+    class="alert alert-{% if message.tags and message.tags != 'error' %}{{ message.tags }}{% else %}danger{% endif %} alert-dismissible fade show mt-3 mb-0"
     role="alert">
     {{ message }}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -139,7 +232,31 @@
   {% block contenedor %}
   {% endblock %}
 
+  <!-- Back to Top -->
+  <a href="#" class="btn btn-lg btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <script src="lib/easing/easing.min.js"></script>
+  <script src="lib/waypoints/waypoints.min.js"></script>
+  <script src="lib/counterup/counterup.min.js"></script>
+  <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+  <script src="lib/tempusdominus/js/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+  <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+  <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+  <!-- Contact Javascript File -->
+  <script src="mail/jqBootstrapValidation.min.js"></script>
+  <script src="mail/contact.js"></script>
+
+  <!-- Lightbox JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
+
+  <!-- Template Javascript -->
+  <script src="{% static 'Oasis/js/front.js' %}"></script>
   <script src="{% static 'Oasis/js/jquery-3.7.1.min.js' %}"></script>
   <script src="{% static 'Oasis/js/libreria.js' %}"></script>
   <script src="{% static 'tienda/js/bootstrap.bundle.min.js' %}"></script>

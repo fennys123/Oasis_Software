@@ -3,67 +3,296 @@
 
 {% block titulo %}Inicio{% endblock %}
 
-
-{% block lateral %}
-  <div class="offcanvas offcanvas-end bg-dark" id="pantallaLogin">
-    <div class="offcanvas-header cabecera">
-      <p class="offcanvas-title titulo">Iniciar Sesión</p>
-      <button id="botonCerrar" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <form action="{% url 'login' %}" method="post">
-      {% csrf_token %}
-      <div class="offcanvas-body text-white cuerpo">
-        <p>Ingresa con tu email y contraseña.</p>
-        <div class="input-container inputEdit1">
-          <input type="text" name="correo">
-          <label for="input" class="label">Escribe tu correo electrónico</label>
-          <div class="underline"></div>
-        </div>
-        <div class="input-container inputEdit2">
-          <input type="password" name="clave">
-          <label for="input" class="label">Escribe tu contraseña</label>
-          <div class="underline"></div>
-        </div>
-        <a class="olvidarContraseña" href="{% url 'recuperar' %}">Olvidé mi contraseña</a>
-        <button type="submit" class="btn-normal">Entrar</button>
-        <p class="p1">¿No tiene una cuenta?</p>
-      </div>
-    </form>
-  </div>
-  <a type="button" class="btn-normal2" href="{% url 'registro' %}">Registrarse</a>
-{% endblock %}
-
 {% block contenedor %}
-<div>
-  <div id="demo" class="carousel slide" data-bs-ride="carousel">
-
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="{% static 'Oasis/img/fondo1.jpg' %}" alt="fondo1" class="d-block w-100">
+  <!-- Carousel Start -->
+  <div class="container-fluid p-0 mb-5 pb-5">
+    <div id="header-carousel" class="carousel slide carousel-fade" data-ride="carousel">
+      <ol class="carousel-indicators">
+        <li data-target="#header-carousel" data-slide-to="0" class="active"></li>
+        <li data-target="#header-carousel" data-slide-to="1"></li>
+        <li data-target="#header-carousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <div class="carousel-item position-relative active" style="min-height: 100vh;">
+          <img class="position-absolute w-100 h-100" src="{% static 'Oasis/img/personas_discoteca.jpg' %}" style="object-fit: cover;">
+          <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+            <div class="p-3" style="max-width: 900px;">
+              <h6 class="text-white text-uppercase mb-3 animate__animated animate__fadeInDown"
+                style="letter-spacing: 3px;">Oasis Night Club</h6>
+              <h3 class="display-3 text-capitalize text-white mb-3">Nuestros Eventos</h3>
+              <p class="mx-md-5 px-5">Explora nuestros próximos eventos y disfruta de noches inolvidables con los mejores DJs, espectáculos en vivo y fiestas temáticas. Vive la experiencia única de Oasis Night Club,
+                donde cada evento está diseñado para ofrecerte diversión y entretenimiento al máximo.</p>
+              <a class="btn btn-outline-light py-3 px-4 mt-3 animate__animated animate__fadeInUp" href="{% url 'front_eventos' %}">
+                Ver eventos</a>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item position-relative" style="min-height: 100vh;">
+          <img class="position-absolute w-100 h-100" src="{% static 'Oasis/img/fondo3.jpg' %}" style="object-fit: cover;">
+          <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+            <div class="p-3" style="max-width: 900px;">
+              <h6 class="text-white text-uppercase mb-3 animate__animated animate__fadeInDown"
+                style="letter-spacing: 3px;">Oasis Night Club</h6>
+              <h3 class="display-3 text-capitalize text-white mb-3">Pedidos en linea</h3>
+              <p class="mx-md-5 px-5"> Disfruta de una experiencia exclusiva sin salir de tu mesa. Haz tu pedido en línea y recibe tus bebidas y 
+                aperitivos directamente en tu lugar. ¡Rápido, cómodo y sin complicaciones!</p>
+              <a class="btn btn-outline-light py-3 px-4 mt-3 animate__animated animate__fadeInUp" href="{% url 'escanear_mesa' %}">Realizar Pedido</a>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item position-relative" style="min-height: 100vh;">
+          <img class="position-absolute w-100 h-100" src="{% static 'Oasis/img/fondo1.jpg' %}" style="object-fit: cover;">
+          <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+            <div class="p-3" style="max-width: 900px;">
+              <h6 class="text-white text-uppercase mb-3 animate__animated animate__fadeInDown"
+                style="letter-spacing: 3px;">Oasis Night Club</h6>
+              <h3 class="display-3 text-capitalize text-white mb-3">Nuestro menú</h3>
+              <p class="mx-md-5 px-5">Descubre nuestro exquisito menú, diseñado para deleitar tus sentidos con una selección de bebidas premium, 
+                cocteles creativos y deliciosos aperitivos. Vive una experiencia gastronómica única mientras disfrutas de la mejor música y ambiente de la ciudad.</p>
+              <a class="btn btn-outline-light py-3 px-4 mt-3 animate__animated animate__fadeInUp" href="{% url 'front_productos' %}">Ver Menú</a>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="carousel-item">
-        <img src="{% static 'Oasis/img/fondo5.jpg' %}" alt="fondo5" class="d-block w-100">
-      </div>
-      <div class="carousel-item">
-        <img src="{% static 'Oasis/img/fondo3.jpg' %}" alt="fondo3" class="d-block w-100">
-      </div>
-    </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
-    </button>
-
-    <div id="frase">
-      <p>- Bienvenidos a Oasis</p>
-      <div id="parrafo">
-        Sumérgete en la noche en nuestro bar único, donde los cócteles cobran vida, la música llena el aire y las
-        risas
-        fluyen sin parar. Únete a nosotros y descubre el epicentro de la diversión nocturna en la ciudad.
-      </div>
-      <button class="btn3" onclick="window.location.href='{% url 'mas_info' %}'">Más información</button>
     </div>
   </div>
-</div>
-</div>
+  <!-- Carousel End -->
+
+
+
+  <!-- About Start -->
+  <div class="container-fluid py-5">
+    <div class="container py-5">
+      <div class="row align-items-center">
+        <div class="col-lg-6 pb-5 pb-lg-0">
+          <img class="img-fluid w-100" src="{% static 'Oasis/img/sobre_nosotros.jpg' %}" alt="">
+        </div>
+        <div class="col-lg-6">
+          <h6 class="d-inline-block text-primary text-uppercase bg-light py-1 px-2">Sobre Nosotros</h6>
+          <h1 class="mb-4">El Mejor Club Nocturno de la Ciudad</h1>
+          <p class="pl-4 border-left border-primary">Oasis Night Club es más que una discoteca, es un lugar donde las noches cobran vida. Nos especializamos en crear experiencias inolvidables con la mejor música,
+             eventos exclusivos y un ambiente único que te invita a disfrutar.</p>
+          <div class="row pt-3">
+            <div class="col-6">
+              <div class="bg-light text-center p-4">
+                <h3 class="display-4 text-primary" data-toggle="counter-up">150</h3>
+                <h6 class="text-uppercase">Eventos Realizados</h6>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="bg-light text-center p-4">
+                <h3 class="display-4 text-primary" data-toggle="counter-up">5000+</h3>
+                <h6 class="text-uppercase">Clientes Satisfechos</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- About End -->
+
+
+
+  <!-- Menu Header Start -->
+    <div class="container-fluid px-0 my-5">
+      <div class="row mx-0 justify-content-center text-center">
+            <div class="col-lg-6">
+                <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Nuestro Menú</h6>
+                <h1>Descubre nuestro exquisito menú</h1>
+            </div>
+        </div>
+    </div>
+  <!-- Menu Header End -->
+
+
+  <!-- Carousel Menu Start -->
+  <div class="container pb-5">
+    <div id="header-carousel" class="carousel slide carousel-fade" data-ride="carousel" style="height: 400px;">
+      <div class="carousel-inner" style="height: 400px;">
+        {% for m in menu %}
+        <div class="carousel-item position-relative {% if forloop.first %}active{% endif %}" style="min-height: 100vh;">
+          <img class="position-absolute w-100 h-100" src="{{ m.foto.url }}" style="object-fit: cover;">
+          <div class="carousel-caption d-flex flex-column align-items-center justify-content-center"
+            style="height: 400px;">
+            <div class="p-3" style="max-width: 900px;">
+              <h4 class="text-white text-uppercase mb-3 animate__animated animate__fadeInDown"
+                style="letter-spacing: 3px;">{{ m.nombre }}</h4>
+              <a class="btn btn-outline-light py-3 px-4 mt-3 animate__animated animate__fadeInUp"
+                href="{% url 'front_productos' %}?cat={{ m.id }}">
+                Ver {{ m.nombre }}</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <!-- Carousel End -->
+
+
+  <!-- Menu Footer Start -->
+  <div class="container-fluid px-0 pb-5">
+    <div class="row mx-0 justify-content-center text-center">
+          <div class="col-lg-6">
+              <a type="button" class="btn btn-primary" >Ver todo el Menú</a>
+          </div>
+      </div>
+  </div>
+  <!-- Menu Footer End -->
+
+
+  <!-- Eventos Start -->
+  <div class="container-fluid bg-pricing" style="margin: 90px 0;">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-5" style="min-height: 500px;">
+          <div class="position-relative h-100">
+            <img class="position-absolute w-100 h-100" src="{% static 'Oasis/img/chica-eventos.png' %}" style="object-fit: cover;">
+          </div>
+        </div>
+        <div class="col-lg-7 pt-5 pb-lg-5">
+          <div class="pricing-text bg-light p-4 p-lg-5 my-lg-5">
+            <div class="owl-carousel pricing-carousel">
+              <div class="bg-white">
+                <div class="d-flex align-items-center justify-content-between border-bottom border-primary p-4">
+                  <h2 class="display-4 mb-0">
+                    Nuestros eventos
+                  </h2>
+                </div>
+                <div class="p-4">
+                  <p><i class="fa fa-check text-success mr-2"></i>Noches de Música en Vivo</p>
+                  <p><i class="fa fa-check text-success mr-2"></i>Fiestas Temáticas Semanales</p>
+                  <p><i class="fa fa-check text-success mr-2"></i>Eventos de Djs Internacionales</p>
+                  <p><i class="fa fa-check text-success mr-2"></i>Promociones de Bebidas</p>
+                  <p><i class="fa fa-check text-success mr-2"></i>Noches de Karaoke y Open Mic</p>
+                  <a href="{% url 'front_eventos' %}" class="btn btn-primary my-2">Ver Todos los Eventos</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Eventos End -->
+
+
+  <!-- Galeria Start -->
+  <div class="container-fluid py-5">
+    <div class="container pt-5">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-6">
+          <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Galería</h6>
+          <h1 class="mb-5">Momentos inolvidables</h1>
+        </div>
+      </div>
+      <div class="row">
+        {% for g in galeria|slice:":6" %}
+          <div class="col-lg-4 col-md-6">
+            <div class="team position-relative overflow-hidden mb-5" style="display: flex; flex-direction: column; flex: 1;">
+              <img class="img-fluid" src="{{ g.foto.url }}" alt="" style="width: 100%; height: 200px; object-fit: cover;">
+              <div class="position-relative text-center" style="flex: 1;">
+                <div class="team-text bg-light text-dark">
+                  <h5 class="font-weight-bold" style="font-size: 16px;">{{ g.nombre }}</h5>
+                  <p class="m-0" style="font-size: 12px;">{{ g.fecha }}</p>
+                </div>
+                <div class="team-social bg-primary text-center">
+                  <a class="btn btn-outline-light" href="#">Ver Carpeta</a>
+                </div>  
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+
+        {% if galeria|length > 6 %}
+          <div class="container-fluid px-0 pb-5">
+            <div class="row mx-0 justify-content-center text-center">
+                  <div class="col-lg-6">
+                      <a type="button" class="btn btn-primary">Ver toda la Galería</a>
+                  </div>
+              </div>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+  <!-- Galeria End -->
+
+
+  <!-- Horario Start -->
+  <div class="container-fluid py-5">
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-lg-6" style="min-height: 500px;">
+          <div class="position-relative h-100">
+            <img class="position-absolute w-100 h-100" src="{% static 'Oasis/img/hombre-horario.png' %}" style="object-fit: cover;">
+          </div>
+        </div>
+        <div class="col-lg-6 pt-5 pb-lg-5">
+          <div class="hours-text bg-light p-4 p-lg-5 my-lg-5">
+            <h6 class="d-inline-block text-white text-uppercase bg-primary py-1 px-2">Nuestro Horario</h6>
+            <h1 class="mb-4">¡Hasta el amanecer!</h1>
+            <p>En Oasis Night Club, queremos que vivas experiencias inolvidables. Nuestro horario está diseñado para ofrecerte las mejores noches de diversión y entretenimiento. Te esperamos de Martes a Domingo para disfrutar de la mejor música y un ambiente único.</p>
+            <ul class="list-inline">
+              <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Martes – Jueves : 7:00 PM - 2:00 AM</li>
+              <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Viernes - Domingo : 7:00 PM - 4:00 AM</li>
+              <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Lunes : Cerrado</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Horario End -->
+
+
+  <!-- Footer Start -->
+  <div class="footer container-fluid position-relative bg-dark py-5" style="margin-top: 90px;">
+    <div class="container pt-5">
+      <div class="row">
+        <div class="col-lg-6 pr-lg-5 mb-5">
+          <a href="index.html" class="navbar-brand pb-5">
+            <img src="{% static 'Oasis/img/logoOasisBlanco.png' %}" alt="logo_oasis" style="width: 230px;">
+          </a>
+          <p><i class="fa fa-map-marker-alt mr-2"></i>4441 Collins Ave, Miami Beach</p>
+          <p><i class="fa fa-phone-alt mr-2"></i>+57 3052777053</p>
+          <p><i class="fa fa-phone-alt mr-2"></i>+57 321 123 4567</p>
+          <p><i class="fa fa-envelope mr-2"></i>info@oasisdiscoteca.com</p>
+          <div class="d-flex justify-content-start mt-4">
+            <a class="btn btn-lg btn-primary btn-lg-square mr-2" href=""><i class="fab fa-twitter"></i></a>
+            <a class="btn btn-lg btn-primary btn-lg-square mr-2" href=""><i class="fab fa-facebook-f"></i></a>
+            <a class="btn btn-lg btn-primary btn-lg-square mr-2" href=""><i class="fab fa-linkedin-in"></i></a>
+            <a class="btn btn-lg btn-primary btn-lg-square" href=""><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-6 pl-lg-5">
+          <div class="row">
+            <h5 class="text-white text-uppercase mb-4">¡Encuentranos Facilmente!</h5>
+            <div style="min-height: 400px;">
+                <div class="position-relative h-100">
+                    <iframe class="position-absolute w-100 h-100" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3591.567555383074!2d-80.12758281973493!3d25.817837118829257!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88d9b36a38e461a1%3A0xcd4f95ec04ca8e14!2sLIV!5e0!3m2!1ses!2sco!4v1727925666310!5m2!1ses!2sco" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid bg-dark text-light border-top py-4"
+    style="border-color: rgba(256, 256, 256, .15) !important;">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 text-center text-md-left mb-3 mb-md-0">
+          <p class="m-0 text-white">&copy; <a href="#">OasisNightClub</a>. All Rights Reserved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer End -->
+
+
 {% endblock %}
+

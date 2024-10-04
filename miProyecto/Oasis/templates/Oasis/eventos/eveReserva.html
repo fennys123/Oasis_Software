@@ -36,7 +36,7 @@
                 <td data-label="Mesa">{{ r.mesa.nombre }}</td>
                 <td data-label="Usuario">{{ r.usuario.nombre }}</td>
                 <td data-label="Evento">{{ r.evento.nombre }}</td>
-                <td data-label="Fecha">{{ r.evento.fecha }}</td>
+                <td data-label="Fecha">{{ r.fecha_compra }}</td>
                 <td data-label="Acciones">
                   <button type="button" class="btn btn-info" data-toggle="modal" data-target="#verReserva{{ r.id }}"><i class="bi bi-info-circle"></i></button>
                   <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminar_reserva' r.id %}')"><i class="bi bi-x-lg"></i></a>
