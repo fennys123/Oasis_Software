@@ -1,0 +1,176 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Productos{% endblock %}
+
+{% block contenedor %}
+    <div class="container-fluid">
+        <div class="linea"></div>
+    </div>
+
+
+    <!-- Pedidos Start -->
+    <div class="container-fluid px-0 py-5 px-5">
+        <div class="row justify-content-center mx-0">
+            <div class="col-lg-2 py-5">
+                <a href="{% url 'ver_perfil' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'Perfil' %} bg-primary text-white {% else %} bg-light {% endif %}">Perfil</a>
+                <a href="{% url 'ver_detalles_pedido_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'ver_detalles_pedido_usuario' %} bg-primary text-white {% else %} bg-light {% endif %}">Pedidos activos</a>
+                <a href="{% url 'ver_ventas' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'historial_pedidos' %} bg-primary text-white {% else %} bg-light {% endif %}">Historial de pedidos</a>
+                <a href="{% url 'entradas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'entradas' or url == 'entradas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Entradas</a>
+                <a href="{% url 'reservas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'reservas' or url == 'reservas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Reservas</a>
+            </div>
+            <div class="col-lg-10 py-5">
+                <div class="row mx-0 justify-content-center text-center pb-5 pt-3">
+                    <div class="col-lg-6">
+                        {% if mesa %}
+                            <h1>{{ mesa.nombre }}</h1>
+                            <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Pedidos ({{ total_pedidos }})</h6>
+                            <div class="row mx-0 justify-content-center text-center mt-5">
+                                <div class="col-lg-6">
+                                    <a type="button" class="btn btn-secondary" href="{% url 'pedidoUsuario' mesa.id %}">Nuevo pedido</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Pedidos</h6>
+                            <h1>Revisa tus pedidos activos</h1>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if mesa %}
+                    {% for detalle_pedido in detalles_pedidos %}
+                        <div style="margin-bottom: 3em; margin-top: 3em;">
+                            <h6>Fecha: {{ detalle_pedido.pedido.fecha }}</h6>
+                            <div class="d-flex w-100 justify-content-between mt-2 mb-2">
+                                <div class="d-flex gap-2">
+                                    <p style="margin-bottom: 0%;">Estado: <b>{{ detalle_pedido.pedido.estado }}</b></p>
+                                    <div class="d-flex justify-content-center align-items-center rounded-circle"
+                                    {% if detalle_pedido.pedido.estado == 'Entregado' %} style="background-color: rgb(14, 153, 14); width: 1.5em; height: 1.5em;"
+                                    {% elif detalle_pedido.pedido.estado == 'Cancelado' %} style="background-color: rgb(225, 25, 25); width: 1.5em; height: 1.5em;" 
+                                    {% else %} style="background-color: #ff9800; width: 1.5em; height: 1.5em;" 
+                                    {% endif %}>
+                                        <p 
+                                        {% if detalle_pedido.pedido.estado == 'Entregado' %} class="bi bi-check text-white mb-0 vertical-align-middle" 
+                                        {% elif detalle_pedido.pedido.estado == 'Cancelado' %} class="bi bi-x text-white mb-0 vertical-align-middle"
+                                        {% else %} class="bi bi-clock text-white mb-0 vertical-align-middle" 
+                                        {% endif %}></p>
+                                    </div>
+                                </div>
+                                {% if detalle_pedido.pedido.estado == 'En preparación' %}
+                                    <a href="javascript:eliminar('{% url 'cancelar_pedido_sin_comentario_sin_mesa' detalle_pedido.pedido.id 'ver_detalles_pedido_usuario' %}')" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                {% endif %}
+                            </div>
+                            {% if detalle_pedido.pedido.estado == 'Cancelado' %}
+                                {% if detalle_pedido.pedido.comentario != '' %}
+                                    <small style="color: red;">Motivo de cancelación: {{ detalle_pedido.pedido.comentario }}</small>
+                                {% endif %}
+                                <table class="table table-responsive-sm table-danger">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50%">Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Unitario</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for detalle in detalle_pedido.detalles %}
+                                            <tr>
+                                                <td>{{ detalle.producto.nombre }}</td>
+                                                <td>{{ detalle.cantidad }}</td>
+                                                <td>--</td>
+                                                <td>--</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <table class="table table-responsive-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50%">Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Unitario</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for detalle in detalle_pedido.detalles %}
+                                            {% if detalle.estado == 'Eliminado' %}
+                                                <tr class="table-danger">
+                                                    <td>{{ detalle.producto.nombre }}
+                                                        {% if detalle.motivo_eliminacion != '' %}
+                                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#motivoEliminacionModal{{ detalle.id }}"><i class="bi bi-question-circle"></i></button>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ detalle.cantidad }}</td>
+                                                    <td>--</td>
+                                                    <td>--</td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td>
+                                                        {% if detalle_pedido.pedido.estado == 'En preparación' and detalle_pedido.detalles_activos_count > 1 %}  
+                                                            <a href="javascript:eliminar('{% url 'eliminar_item_sin_comentario_sin_mesa' detalle.id 'ver_detalles_pedido_usuario' %}')" type="button" class="btn btn-close"></a>
+                                                        {% endif %}
+                                                        {{ detalle.producto.nombre }}
+                                                    </td>
+                                                    <td>{{ detalle.cantidad }}</td>
+                                                    <td>${{ detalle.precio|intcomma }}</td>
+                                                    <td>${{ detalle.subtotal|intcomma }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                            </table>
+                        </div>
+                    {% endfor %}
+
+                    <div style="display: flex; justify-content: end; align-items: center; gap: 2em; margin-right: 2em; margin-bottom: 3em;">
+                        {% if pedidos_eliminados == total_pedidos %}
+                            <a type="button" class="btn btn-success" href="{% url 'liberar_mesa' mesa.id %}">Liberar Mesa</a>
+                        {% else %}
+                            <a type="button" class="btn btn-success" href="{% url 'pagar_pedido' detalles_pedidos.0.pedido.mesa 'usuario' %}">Pagar cuenta</a>
+                        {% endif %}
+                        <h3 class="text-end fw-bold">Total: ${{ cuenta|intcomma }}</h3>
+                    </div>
+
+
+                    {% for detalle_pedido in detalles_pedidos %}
+                        {% for detalle in detalle_pedido.detalles %}
+                            <div class="modal fade" id="motivoEliminacionModal{{ detalle.id }}" tabindex="-1" aria-labelledby="motivoEliminacionModalLabel{{ detalle.id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="motivoEliminacionModalLabel{{ detalle.id }}">Motivo de la eliminación</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{{ detalle.motivo_eliminacion }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <div class="row mx-0 justify-content-center text-center">
+                        <div class="col-lg-6">
+                            <p>No tienes pedidos activos</p>
+                            <a type="button" class="btn btn-secondary" href="{% url 'escanear_mesa' %}">Nuevo pedido</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Pedidos End -->
+    
+
+{% endblock %}

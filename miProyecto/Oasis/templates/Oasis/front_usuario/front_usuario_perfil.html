@@ -1,0 +1,136 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Productos{% endblock %}
+
+{% block contenedor %}
+    <div class="container-fluid">
+        <div class="linea"></div>
+    </div>
+
+
+    <!-- Perfil Start -->
+    <div class="container-fluid px-0 py-5 px-5">
+        <div class="row justify-content-center mx-0">
+            <div class="col-lg-2 py-5">
+                <a href="{% url 'ver_perfil' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'Perfil' %} bg-primary text-white {% else %} bg-light {% endif %}">Perfil</a>
+                <a href="{% url 'ver_detalles_pedido_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'ver_detalles_pedido_usuario' %} bg-primary text-white {% else %} bg-light {% endif %}">Pedidos activos</a>
+                <a href="{% url 'ver_ventas' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'historial_pedidos' %} bg-primary text-white {% else %} bg-light {% endif %}">Historial de pedidos</a>
+                <a href="{% url 'entradas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'entradas' or url == 'entradas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Entradas</a>
+                <a href="{% url 'reservas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'reservas' or url == 'reservas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Reservas</a>
+            </div>
+            <div class="col-lg-10 py-5">
+                <div class="row mx-0 justify-content-center text-center pb-5 pt-3">
+                    <div class="col-lg-6">
+                        <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Perfil</h6>
+                        <h1>Información de tu perfil</h1>
+                    </div>
+                </div>
+                <div class="container d-flex justify-content-center">
+                    <div class="col-lg-9 bg-light p-5">
+                        <div class="bg-white row">
+                            <div class="col-lg-5 p-4" style="height: 280px;">
+                                <img src="{{ user.foto.url }}" class="img-fluid rounded-circle w-100 h-100" alt="{{ user.nombre }}">
+                            </div>
+                            <div class="col-lg-7 p-4">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h3>{{ user.nombre }}</h3>
+                                    <a href="{% url 'front_eventos' %}" class="btn btn-warning my-2" data-toggle="modal" data-target="#editarPerfil"><i class="bi bi-pencil"></i></a>
+                                </div>
+                                <p class="mb-4">{{ user.get_rol_display }}</p>
+                                <p><i class="fa fa-envelope mr-2"></i>{{ user.email }}</p>
+                                <p><i class="fa fa-id-card mr-2"></i>{{ user.cedula }}</p>
+                                <p><i class="fa fa-birthday-cake mr-2"></i>{{ user.fecha_nacimiento }}</p>
+                                <a class="btn btn-primary my-2" data-toggle="modal" data-target="#cambiarContrasena">Cambiar contraseña</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Perfil End -->
+
+
+    <div class="modal fade" id="editarPerfil" tabindex="-1" role="dialog" aria-labelledby="editarPerfilLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="fw-bold">Editar perfil</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{% url 'editar_perfil' user.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body d-flex flex-column align-items-center justify-content-center mx-1">
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control text-dark" name="nombre" value="{{ user.nombre }}" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Cedula</label>
+                                <input type="text" class="form-control text-dark" name="cedula" value="{{ user.cedula }}" required>
+                            </div>
+                        </div>
+                        <div class="w-100 mt-4">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control text-dark" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="w-100 mt-4">
+                            <label class="form-label">Fecha de nacimiento</label>
+                            <input type="date" class="form-control text-dark" name="fechaNacimiento" value="{{ user.fecha_nacimiento|date:'Y-m-d' }}" required>
+                        </div>
+                        <div class="my-4">
+                            <label for="foto">Cambiar foto de perfil</label>
+                            <input type="file" class="form-control" name="foto_nueva" id="formFile">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="cambiarContrasena" tabindex="-1" role="dialog" aria-labelledby="cambiarContrasenaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="fw-bold">Cambiar contraseña</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{% url 'cambiar_clave' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body d-flex flex-column align-items-center justify-content-center mx-1">
+                        <div class="w-100 mt-2">
+                            <label class="form-label">Contraseña actual</label>
+                            <input type="password" class="form-control text-dark" name="clave" required>
+                        </div>
+                        <div class="w-100 mt-4">
+                            <label class="form-label">Contraseña nueva</label>
+                            <input type="password" class="form-control text-dark"  name="nueva1" required>
+                        </div>
+                        <div class="w-100 my-4">
+                            <label class="form-label">Repetir contraseña nueva</label>
+                            <input type="password" class="form-control text-dark"  name="nueva2" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-secondary">Olvidé la contraseña</a>
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

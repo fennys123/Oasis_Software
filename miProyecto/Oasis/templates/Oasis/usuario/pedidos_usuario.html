@@ -74,11 +74,7 @@
         <thead class="thead-light">
           <tr>
             <th>Mesa</th>
-            {% if user.rol == 4 %}
-              <th>Fecha</th>
-            {% else %}
-              <th>Cliente</th>
-            {% endif %}
+            <th>Fecha</th>
             <th>Total</th>
             <th>Acciones</th>
           </tr>
@@ -87,11 +83,7 @@
           {% for p in detalles_pedidos %}
             <tr>
               <td data-label="Mesa">{{ p.pedido.mesa.nombre }}</td>
-              {% if user.rol == 4 %}
-                <td data-label="Fecha">{{ p.pedido.fecha }}</td>
-              {% else %}
-                <td data-label="Cliente">{{ p.pedido.usuario.nombre }}</td>
-              {% endif %}
+              <td data-label="Fecha">{{ p.pedido.fecha }}</td>
               <td data-label="Total">${{ p.pedido.total|intcomma }}</td>
               <td data-label="Acciones">
                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#detalleModal{{ p.pedido.id }}"><i class="bi bi-info-circle"></i></button>

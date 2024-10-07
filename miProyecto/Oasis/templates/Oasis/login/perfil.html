@@ -54,18 +54,18 @@
     <div class="card mb-3 mt-5 w-100 ml-0 mr-0 mx-auto" style="max-width: 540px; margin-top: 2.5em;">
     <div class="row g-0">
       <div class="col-md-4">
-        <img src="{{ data.foto.url }}" class="img-fluid rounded-start" alt="...">
+        <img src="{{ user.foto.url }}" class="img-fluid rounded-start" alt="...">
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <h5 class="card-title">{{ data.nombre }}</h5>
+          <h5 class="card-title">{{ user.nombre }}</h5>
           <br>
           <p class="card-text">
-            <strong>Correo:</strong> {{ data.email }} <br>
-            <strong>Cedula:</strong> {{ data.cedula }} <br>
-            <strong>Fecha Nacimiento:</strong> {{ data.fecha_nacimiento }}
+            <strong>Correo:</strong> {{ user.email }} <br>
+            <strong>Cedula:</strong> {{ user.cedula }} <br>
+            <strong>Fecha Nacimiento:</strong> {{ user.fecha_nacimiento }}
           </p>
-          <p class="card-text"><small class="text-body-secondary">{{ data.get_rol_display }}</small></p>
+          <p class="card-text"><small class="text-body-secondary">{{ user.get_rol_display }}</small></p>
         </div>
         <div class="card-body">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 3%; margin-right: 3%;">
@@ -89,29 +89,29 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form class="formulario" action="{% url 'editar_perfil' data.id %}" method="post" enctype="multipart/form-data">
+                <form class="formulario" action="{% url 'editar_perfil' user.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="flex">
                         <label>
-                            <input required="true" type="text" class="input" name="nombre" value="{{ data.nombre }}">
+                            <input required="true" type="text" class="input" name="nombre" value="{{ user.nombre }}">
                             <span>Nombre</span>
                         </label>
                         <label>
-                            <input required="true" type="number" class="input" name="cedula" value="{{ data.cedula }}">
+                            <input required="true" type="number" class="input" name="cedula" value="{{ user.cedula }}">
                             <span>Cédula</span>
                         </label>
                     </div> 
                     <label>
-                        <input required="true" type="email" class="input" name="email" value="{{ data.email }}">
+                        <input required="true" type="email" class="input" name="email" value="{{ user.email }}">
                         <span>Email</span>
                     </label>  
                     <label>
-                      <input required="true" type="date" class="input" name="fechaNacimiento" value="{{ data.fecha_nacimiento|date:'Y-m-d' }}">
+                      <input required="true" type="date" class="input" name="fechaNacimiento" value="{{ user.fecha_nacimiento|date:'Y-m-d' }}">
                       <span>Fecha de nacimiento</span>
                     </label> 
                     <div class="mb-3 mt-2 file-input">
                         <span>Cambiar foto de perfil</span>
-                        <input class="form-control" type="file" id="formFile" name="foto_nueva" value="{{ data.foto.url }}">
+                        <input class="form-control" type="file" id="formFile" name="foto_nueva" value="{{ user.foto.url }}">
                     </div>
                   <button class="btn btn-success mb-2 mt-2" type="submit">Editar Perfil</button>
                 </form>

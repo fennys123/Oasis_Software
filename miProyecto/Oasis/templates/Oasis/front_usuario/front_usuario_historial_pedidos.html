@@ -1,0 +1,122 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Productos{% endblock %}
+
+{% block contenedor %}
+    <div class="container-fluid">
+        <div class="linea"></div>
+    </div>
+
+
+    <!-- Historial de pedidos Start -->
+    <div class="container-fluid px-0 py-5 px-5">
+        <div class="row justify-content-center mx-0">
+            <div class="col-lg-2 py-5">
+                <a href="{% url 'ver_perfil' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'Perfil' %} bg-primary text-white {% else %} bg-light {% endif %}">Perfil</a>
+                <a href="{% url 'ver_detalles_pedido_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'ver_detalles_pedido_usuario' %} bg-primary text-white {% else %} bg-light {% endif %}">Pedidos activos</a>
+                <a href="{% url 'ver_ventas' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'historial_pedidos' %} bg-primary text-white {% else %} bg-light {% endif %}">Historial de pedidos</a>
+                <a href="{% url 'entradas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'entradas' or url == 'entradas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Entradas</a>
+                <a href="{% url 'reservas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'reservas' or url == 'reservas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Reservas</a>
+            </div>
+            <div class="col-lg-10 py-5">
+                <div class="row mx-0 justify-content-center text-center pb-5 pt-3">
+                    <div class="col-lg-6">
+                        <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Historial de pedidos</h6>
+                        <h1>Revisa tu historial de pedidos</h1>
+                    </div>
+                </div>
+
+                {% if detalles_pedidos %}
+                    <table class="table table-responsive-sm">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Mesa</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in detalles_pedidos %}
+                            <tr>
+                                <td data-label="Mesa">{{ p.pedido.mesa.nombre }}</td>
+                                <td data-label="Fecha">{{ p.pedido.fecha }}</td>
+                                <td data-label="Total">${{ p.pedido.total|intcomma }}</td>
+                                <td data-label="Acciones">
+                                    <button type="button" class="btn btn-info" data-toggle="modal"
+                                        data-target="#detalleModal{{ p.pedido.id }}"><i class="bi bi-info-circle"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                    {% for detalle_pedido in detalles_pedidos %}
+                        <div class="modal fade invoice-modal" id="detalleModal{{ detalle_pedido.pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="detalleModalLabel{{ detalle_pedido.pedido.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="fw-bold">Detalles del pedido</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                    <div class="modal-body mb-2">
+                                        <div class="logoFactura">
+                                        <img src="{% static 'Oasis/img/logoOasisNegro.png' %}" alt="logoOasisNegro" width="150px">
+                                        <button type="button" class="btn btn-primary"><i class="bi bi-printer"></i></button>
+                                        </div>
+                                        <p class="datosFactura">ID: {{ detalle_pedido.pedido.id }}</p>
+                                        <p class="datosFactura">{{ detalle_pedido.pedido.mesa.nombre }}</p>
+                                        <p class="datosFactura">{{ detalle_pedido.pedido.fecha }}</p>
+                                        {% if detalle_pedido.pedido.usuario.rol == 3 %}
+                                        <p class="datosFactura">Mesero: {{ detalle_pedido.pedido.usuario }} | CC: {{ detalle_pedido.pedido.usuario.cedula }}</p>
+                                        {% else %}
+                                        <p class="datosFactura">Cliente: {{ detalle_pedido.pedido.usuario }} | CC: {{ detalle_pedido.pedido.usuario.cedula }}</p>
+                                        {% endif %}
+                                        <br>
+
+                                        <div class="row mx-4">
+                                            <table class="table table-responsive-sm" style="font-size: 12px;"> 
+                                                <tbody>
+                                                {% for detalle in detalle_pedido.detalles %}
+                                                    <tr>
+                                                        <td data-label="Cantidad" style="border: none; padding: 3px;">x{{ detalle.cantidad }}</td>
+                                                        <td data-label="Producto" style="border: none; padding: 3px;">{{ detalle.producto }}</td>
+                                                        <td data-label="Subtotal" style="text-align: end; border: none; padding: 3px;">${{ detalle.subtotal|intcomma }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <h6 class="text-end mt-2 mx-4"><strong>Total: ${{ detalle_pedido.pedido.total|intcomma }}</strong></h6>
+                                    </div>
+                                    <!-- Añadimos los picos aquí -->
+                                    <div class="picos-container">
+                                        {% for i in "1234567890123456789012" %}
+                                            <span class="pico"></span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="row mx-0 justify-content-center text-center pb-5 pt-3">
+                        <div class="col-lg-6">
+                            <p>No has realizado pedidos</p>
+                            <a type="button" class="btn btn-secondary" href="{% url 'escanear_mesa' %}">Nuevo pedido</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Historial de pedidos End -->
+
+    
+
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Productos{% endblock %}
+
+{% block contenedor %}
+    <div class="container-fluid">
+        <div class="linea"></div>
+    </div>
+
+
+    <!-- Reserva Info Start -->
+    <div class="container-fluid px-0 py-5 px-5">
+        <div class="row justify-content-center mx-0">
+            <div class="col-lg-2 py-5">
+                <a href="{% url 'ver_perfil' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'Perfil' %} bg-primary text-white {% else %} bg-light {% endif %}">Perfil</a>
+                <a href="{% url 'ver_detalles_pedido_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'ver_detalles_pedido_usuario' %} bg-primary text-white {% else %} bg-light {% endif %}">Pedidos activos</a>
+                <a href="{% url 'ver_ventas' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'historial_pedidos' %} bg-primary text-white {% else %} bg-light {% endif %}">Historial de pedidos</a>
+                <a href="{% url 'entradas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'entradas' or url == 'entradas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Entradas</a>
+                <a href="{% url 'reservas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'reservas' or url == 'reservas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Reservas</a>
+            </div>
+            <div class="col-lg-10 py-5">
+
+                <div class="row mx-0 justify-content-center text-center pb-5 pt-3">
+                    <div class="col-lg-6">
+                        <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Reservas</h6>
+                        <h1>Revisa tus mesas reservadas</h1>
+                    </div>
+                </div>
+
+
+                <div class="d-flex justify-content-center">
+                    <div class="bg-light p-5">
+                        <div class="bg-white px-4">
+                            <div class="row align-items-center">
+                                <div class="col-lg-5 p-4" style="height: 280px;">
+                                    <img src="{{ evento.foto.url }}" alt="{{ evento.nombre }}" class="img-fluid rounded w-100 h-100">
+                                </div>
+                                <div class="col-lg-7 p-4">
+                                    <h3>{{ evento.nombre }} - {{ reserva.mesa.nombre }}</h3>
+                                    <h6 class="d-inline-block text-primary text-uppercase bg-light py-1 px-2">{{ evento.fecha }} a las {{ evento.hora_incio }} pm</h6>
+                                    <p class="pl-4 border-left border-primary">{{ evento.descripcion }}</p> 
+                                    <p class="pl-4 border-left border-primary text-dark fw-bold">Capacidad de la mesa: {{ reserva.mesa.capacidad }} personas</p> 
+                                    <p class="pl-4 border-left border-primary text-dark fw-bold">Total pagado: ${{ reserva.total|intcomma }}</p> 
+                                    <p class="pl-4 border-left border-primary text-dark fw-bold">Fecha de compra: {{ reserva.fecha_compra }}</p> 
+                                </div>
+                            </div>
+                            
+                            <div class="row justify-content-around">
+                                <div class="col-lg-4 my-4">
+                                    <p class="d-inline-block text-primary fw-bold bg-light py-1 px-2">Mapa de la discoteca</p>
+                                    <div style="height: 300px; cursor: pointer;">
+                                        <img src="{% static 'Oasis/img/mapaMesasBlanco-removebg-preview.png' %}" alt="mapa" data-toggle="modal" data-target="#verMapa" class="img-fluid rounded w-100 h-100">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 my-4">
+                                    <p class="d-inline-block text-primary fw-bold bg-light py-1 px-2">Código QR</p>
+                                    <div style="height: 300px; cursor: pointer;">
+                                        <img src="{{ reserva.qr_imagen.url }}" alt="qr" data-toggle="modal" data-target="#verQr" class="img-fluid rounded w-100 h-100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-bottom">
+                                <p class="text-dark fw-bold mb-2">Instrucciones de llegada</p>
+                                <p>Al llegar, ¡No hagas fila!, puedes presentar el código QR en la entrada para acceder a tu mesa.</p>
+                            </div>
+                            <div class="pt-4 border-bottom">
+                                <p class="text-dark fw-bold mb-2">Recomendaciones para la Noche</p>
+                                <p>No olvides revisar el menú, disponible directamente desde tu mesa escaneando el código QR.</p>
+                            </div>
+                            <div class="pt-4 border-bottom">
+                                <p class="text-dark fw-bold mb-2">Política de Cancelación o Cambio</p>
+                                <p>Si necesitas cancelar o modificar tu reserva, lo puedes hacer por este medio, en el botón de cancelar reserva. Si vas a cancelar una reserva faltando menos de <b>24 horas</b>, por favor contáctanos a los sigientes números: (+57) 305 277 7073 o (+57) 321 123 4567. Las cancelaciones fuera de este plazo podrían no ser reembolsables.</p>
+                            </div>
+                            <div class="pt-4 border-bottom">
+                                <p class="text-dark fw-bold mb-2">Recordatorio de Seguridad</p>
+                                <p>Por tu seguridad y la de los demás asistentes, por favor respeta la capacidad máxima de la mesa, que es de 8 personas. Mantén tus pertenencias personales en un lugar seguro durante el evento.</p>
+                            </div>
+                            <div class="py-4">
+                                <p class="text-dark fw-bold mb-2">Contacto</p>
+                                <p>Si tienes alguna duda o inconveniente con tu compra, no dudes en contactarnos al (+57) 305 277 7073 o (+57) 321 123 4567 o por correo electrónico a reservas@oasisdiscoteca.com. Estamos aquí para ayudarte.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="verMapa" tabindex="-1" role="dialog" aria-labelledby="verMapaLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="fw-bold">Ver mapa</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div> 
+                            <div class="modal-body px-4">
+                                <p>A continuación, puedes ver el mapa de la discoteca con la ubicación exacta de tu mesa reservada, la <b>{{ reserva.mesa.nombre}}</b>.</p>
+                                <div class="w-100 d-flex justify-content-center">
+                                    <img src="{% static 'Oasis/img/mesas_white.png' %}" alt="mapa" class="img-fluid rounded w-100 h-100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            
+                <div class="modal fade" id="verQr" tabindex="-1" role="dialog" aria-labelledby="verQrLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="fw-bold">Ver código QR</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div> 
+                            <div class="modal-body px-4">
+                                <p> El código QR que aparece aquí también será enviado a tu correo electrónico. Este código es necesario para ingresar al evento.</p>
+                                <div class="w-100 d-flex justify-content-center"    >
+                                    <img src="{{ reserva.qr_imagen.url }}" alt="qr" width="50%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Reserva Info End -->
+
+    
+
+{% endblock %}

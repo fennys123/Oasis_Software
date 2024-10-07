@@ -2448,20 +2448,20 @@ fieldset:disabled a.btn {
 
 .btn-secondary {
   color: #212529;
-  background-color: #6EBBF6;
-  border-color: #6EBBF6;
+  background-color: #aa46fc;
+  border-color: #aa46fc;
 }
 
 .btn-secondary:hover {
   color: #fff;
-  background-color: #4aaaf4;
-  border-color: #3ea4f3;
+  background-color: #8c00ff;
+  border-color: #8c00ff;
 }
 
 .btn-secondary:focus, .btn-secondary.focus {
   color: #fff;
-  background-color: #4aaaf4;
-  border-color: #3ea4f3;
+  background-color: #8c00ff;
+  border-color: #8c00ff;
   box-shadow: 0 0 0 0.2rem rgba(98, 165, 215, 0.5);
 }
 
@@ -2474,8 +2474,8 @@ fieldset:disabled a.btn {
 .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active,
 .show > .btn-secondary.dropdown-toggle {
   color: #fff;
-  background-color: #3ea4f3;
-  border-color: #329ff2;
+  background-color: #8c00ff;
+  border-color: #8c00ff;
 }
 
 .btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus,
@@ -9659,6 +9659,11 @@ h6,
 
 .bg-jumbotron-menu {
   background: linear-gradient(rgba(33, 30, 28, 0.7), rgba(33, 40, 28, 0.7)), url(../img/menu-cocteleles.jpg), no-repeat center center;
+  background-size: cover;
+}
+
+.bg-jumbotron-eventos {
+  background: linear-gradient(rgba(33, 30, 28, 0.7), rgba(33, 40, 28, 0.7)), url(../img/fondoDj.png), no-repeat center center;
   background-size: cover;
 }
 

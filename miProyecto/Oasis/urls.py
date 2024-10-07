@@ -83,10 +83,9 @@ urlpatterns = [
     #CAMBIAR CONTRASEÑA
     path('cambiar_clave/', views.cambiar_clave, name="cambiar_clave"),
 
-  #RECUPERAR CONTRASEÑA
+    #RECUPERAR CONTRASEÑA
     path('recuperar_clave/', views.recuperar_clave, name="recuperar_clave"),
     path('verificar_recuperar/', views.verificar_recuperar, name="verificar_recuperar"),
-
 
     #USUARIOS
     path('Gestion_Usuarios/', views.guInicio, name='guInicio'),
@@ -234,6 +233,7 @@ urlpatterns = [
 #RESERVAR MESAS
     path("reservar_mesa/<int:id>/", views.reservar_mesa, name="reservar_mesa"),
     path("eliminar_reserva/<int:id>/", views.eliminar_reserva, name="eliminar_reserva"),
+
 
 #mas_info
     path("mas_info/", views.mas_info, name="mas_info"),

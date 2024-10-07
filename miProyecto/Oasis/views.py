@@ -89,7 +89,7 @@ def index(request):
     logueo = request.session.get("logueo", False)
     menu = Categoria.objects.all()
     galeria = Galeria.objects.all()
-    contexto = {'menu': menu, 'galeria': galeria}
+    contexto = {'menu': menu, 'galeria': galeria, 'user': logueo}
     if logueo == False:
         return render(request, "Oasis/index.html", contexto)
     else:
@@ -140,7 +140,7 @@ def inicio(request):
             usuario = Usuario.objects.get(pk=usuario_id)
             menu = Categoria.objects.all()
             galeria = Galeria.objects.all()
-            contexto = {'data': usuario, 'menu': menu, 'galeria':galeria}
+            contexto = {'user': usuario, 'menu': menu, 'galeria':galeria}
             return render(request, "Oasis/index.html", contexto)
         except Usuario.DoesNotExist:
             messages.error(request, "El usuario no existe")
@@ -198,17 +198,25 @@ def crear_usuario_registro(request):
 def terminos_condiciones(request):
     return render(request, 'Oasis/terminos_condiciones/tyc.html')
 
+
+
 #PERFIL
 def ver_perfil(request):
     logueo = request.session.get("logueo", False)
     user = Usuario.objects.get(pk = logueo["id"])
-    logueo = request.session.get("logueo", False)
+
+    ruta = ""
+    if user.rol == 4:
+        ruta = "Oasis/front_usuario/front_usuario_perfil.html"
+    else:
+        ruta = "Oasis/login/perfil.html"
+
     #Consultamos en base de datos el ID del usuario logueado
     q = Usuario.objects.get(pk = logueo["id"])
     roles = Usuario.ROLES
     estado = Usuario.ESTADO
-    contexto = {'data': q, 'roles': roles, 'estado':estado, 'user':user, 'url': 'Perfil'}
-    return render(request, "Oasis/login/perfil.html", contexto)
+    contexto = {'user': q, 'roles': roles, 'estado':estado, 'user':user, 'url': 'Perfil'}
+    return render(request, ruta, contexto)
 
 def editar_perfil(request, id):
     if request.method == 'POST':
@@ -254,18 +262,16 @@ def cambiar_clave(request):
                 #Cambiar clave en DB
                 q.password = hash_password(c1)
                 q.save()
-                del request.session["logueo"]
-                del request.session["carrito"]
                 messages.success(request, "Contraseña cambiada correctamente!")
-                return redirect("index")
+                return redirect("ver_perfil")
             else:
                messages.info(request, "Las contraseñas nuevas no coinciden...")
         else:
-            messages.error(request, "Contraseña no válida...")
+            messages.error(request, "Contraseña actual inválida...")
     else:
         messages.warning(request, "Error: No se enviaron datos...")
     
-    return redirect('cc_formulario')
+    return redirect('ver_perfil')
 
 def entradas_usuario(request):
     logueo = request.session.get("logueo", False)
@@ -274,7 +280,7 @@ def entradas_usuario(request):
 
     if not entrada:
         contexto = {'entrada_info': None, 'user': user, 'url': 'entradas'}
-        return render(request, "Oasis/usuario/entradas.html", contexto)
+        return render(request, "Oasis/front_usuario/front_usuario_entradas.html", contexto)
 
     evento_info = [Evento.objects.get(id=entrada.evento.id) for entrada in entrada]
     
@@ -283,7 +289,7 @@ def entradas_usuario(request):
         entradas_info.append({'entrada': entrada, 'evento': evento})
 
     contexto = {'entrada_info': entradas_info, 'user': user, 'url':'entradas'}
-    return render(request, "Oasis/usuario/entradas.html", contexto)
+    return render(request, "Oasis/front_usuario/front_usuario_entradas.html", contexto)
 
 def entradas_usuario_info(request, id):
     logueo = request.session.get("logueo", False)
@@ -296,7 +302,7 @@ def entradas_usuario_info(request, id):
         evento = Evento.objects.get(pk=compra_entrada.evento.id)
         
         contexto = {'compra': compra_entrada, 'qr_entradas': qr_entradas, 'evento': evento, 'user': user, 'url':'entradas_info'}
-        return render(request, "Oasis/usuario/entradas_info.html", contexto)
+        return render(request, "Oasis/front_usuario/front_usuario_entradas_info.html", contexto)
     
     except CompraEntrada.DoesNotExist:
         messages.error(request, f'La compra de entrada con el ID {id} no existe o no pertenece al usuario actual.')
@@ -309,7 +315,7 @@ def reservas_usuario(request):
 
     if not reserva:
         contexto = {'reservas_info': None, 'user': user, 'url': 'reservas'}
-        return render(request, "Oasis/usuario/reservas.html", contexto)
+        return render(request, "Oasis/front_usuario/front_usuario_reservas.html", contexto)
 
     evento_info = [Evento.objects.get(id=reserva.evento.id) for reserva in reserva]
     
@@ -318,7 +324,7 @@ def reservas_usuario(request):
         reservas_info.append({'reserva': reserva, 'evento': evento})
 
     contexto = {'reservas_info': reservas_info, 'user': user, 'url': 'reservas'}
-    return render(request, "Oasis/usuario/reservas.html", contexto)
+    return render(request, "Oasis/front_usuario/front_usuario_reservas.html", contexto)
 
 def reservas_usuario_info(request, id):
     logueo = request.session.get("logueo", False)
@@ -329,7 +335,7 @@ def reservas_usuario_info(request, id):
         evento = Evento.objects.get(pk=reserva.evento.id)
         
         contexto = {'reserva': reserva, 'evento': evento, 'user': user, 'url': 'reservas_info'}
-        return render(request, "Oasis/usuario/reservas_info.html", contexto)
+        return render(request, "Oasis/front_usuario/front_usuario_reservas_info.html", contexto)
     except CompraEntrada.DoesNotExist:
         messages.error(request, f'La compra de entrada con el ID {id} no existe o no pertenece al usuario actual.')
         return redirect('reservas_usuario')
@@ -1223,7 +1229,7 @@ def front_productos(request):
         nombre_categoria = c.nombre
     
     contexto = {
-        "data": user,
+        "user": user,
         "productos": productos,
         "categorias": categorias,
         "sin_productos": sin_productos,
@@ -1243,7 +1249,7 @@ def front_producto_info(request, id):
 
     producto = Producto.objects.get(pk=id)
 
-    contexto = {"data": user, "producto": producto, "url": "front_producto_info"}
+    contexto = {"user": user, "producto": producto, "url": "front_producto_info"}
 
     return render(request, "Oasis/front_productos/front_producto_info.html", contexto)
 
@@ -1255,7 +1261,7 @@ def front_eventos(request):
         user = Usuario.objects.get(pk = logueo["id"])
     eventos = Evento.objects.all()
 
-    contexto = {"data": user, "eventos": eventos, "url": "front_eventos"}
+    contexto = {"user": user, "eventos": eventos, "url": "front_eventos"}
     return render(request, "Oasis/front_eventos/front_eventos.html", contexto)
 
 def front_eventos_info(request, id):
@@ -1274,7 +1280,7 @@ def front_eventos_info(request, id):
 
     total_defecto = evento.precio_entrada + evento.precio_vip
 
-    contexto = {"data": user, "evento": evento, "mesas": mesas, "total_defecto": total_defecto, "listMesas": listMesas, 'url': 'front_eventos_info'}
+    contexto = {"user": user, "evento": evento, "mesas": mesas, "total_defecto": total_defecto, "listMesas": listMesas, 'url': 'front_eventos_info'}
     return render(request, "Oasis/front_eventos/front_eventos_info.html", contexto)
 
 
@@ -1285,7 +1291,7 @@ def front_galeria(request):
     if logueo:
         user = Usuario.objects.get(pk = logueo["id"])
     q = Galeria.objects.all()
-    contexto = {'data' : user, 'galeria': q, 'url': 'front_galeria'}
+    contexto = {'user' : user, 'galeria': q, 'url': 'front_galeria'}
     return render(request, "Oasis/front_galeria/front_galeria.html", contexto)
 
 
@@ -1296,7 +1302,7 @@ def front_fotos(request, id):
         user = Usuario.objects.get(pk = logueo["id"])
     q = Galeria.objects.get(pk=id)
     fotos = Fotos.objects.filter(carpeta = q)
-    contexto = {'data' : user, 'galeria': q,'fotos': fotos, 'url': 'front_fotos'}
+    contexto = {'user' : user, 'galeria': q,'fotos': fotos, 'url': 'front_fotos'}
     return render(request, "Oasis/front_galeria/front_fotos.html", contexto)
 
 def generar_pdf_entrada(request, compra, entrada):
@@ -1508,7 +1514,7 @@ def escanear_mesa (request):
 
     mesas = Mesa.objects.all()
 
-    contexto = {'data':user, 'mesas':mesas}
+    contexto = {'user':user, 'mesas':mesas}
     return render(request, "Oasis/front_pedidos/escanear_mesa.html", contexto)
 
 
@@ -1532,7 +1538,7 @@ def pedidoUsuario(request, id):
     else:
         productos = Producto.objects.all()
 
-    contexto = {'data': user, 'productos': productos, 'mesa': mesa, 'carrito': carrito, 'cat': cat, 'categorias':categorias}
+    contexto = {'user': user, 'productos': productos, 'mesa': mesa, 'carrito': carrito, 'cat': cat, 'categorias':categorias}
     return render(request, "Oasis/front_pedidos/pedido_usuario.html", contexto)
     
 
@@ -2731,7 +2737,10 @@ def eliminar_item_sin_comentario(request, id_producto, id_mesa=None, ruta=None):
     
 
 def liberar_mesa(request, id):
+    logueo = request.session.get("logueo")
+    user = Usuario.objects.get(pk=logueo["id"])
     try:
+
         mesa = Mesa.objects.get(pk=id)
         mesa.estado = mesa.DISPONIBLE
         mesa.usuario = None
@@ -2744,7 +2753,10 @@ def liberar_mesa(request, id):
     except Exception as e:
         messages.error(request, f"Ocurrio un error: {e}")
 
-    return redirect('peGestionMesas')
+    if user.rol == 4:
+        return redirect('ver_detalles_pedido_usuario')
+    else:
+        return redirect('peGestionMesas')
 
 
 def crear_venta(request):
@@ -2782,6 +2794,12 @@ def crear_venta(request):
 def ver_pedidos_usuario(request):
     logueo = request.session.get("logueo")
     user = Usuario.objects.get(pk=logueo["id"])
+    ruta = ""
+    if user.rol == 4:
+        ruta = "Oasis/front_usuario/front_usuario_historial_pedidos.html"
+    else:
+        ruta = "Oasis/usuario/pedidos_usuario.html"
+
     historial_pedidos = HistorialPedido.objects.filter(usuario=user).order_by('-fecha')
 
     detalles_pedidos = []
@@ -2797,27 +2815,33 @@ def ver_pedidos_usuario(request):
     contexto = {
         'user':user, 'detalles_pedidos': detalles_pedidos, 'total_pedidos': total_pedidos, 'url': 'historial_pedidos'
     }
-    return render(request, "Oasis/usuario/pedidos_usuario.html", contexto)
+    return render(request, ruta, contexto)
 
 def ver_detalles_usuario(request):
     logueo = request.session.get("logueo")
-    if logueo is None:
-        return redirect('login')  
-
     user = Usuario.objects.get(pk=logueo["id"])
+    ruta = ""
+
+    if user.rol == 4:
+        ruta = "Oasis/front_usuario/front_usuario_pedidos.html"
+    else:
+        ruta = "Oasis/usuario/detalles_pedido_usuario.html"
+
     pedidos = Pedido.objects.filter(usuario=user).order_by('-fecha')
 
-    mesas = Mesa.objects.filter(usuario=user)
-    if mesas.exists():
-        mesa = mesas.first()  
-    else:
+
+    try:
+        mesa = Mesa.objects.get(usuario=user)
+    except Mesa.DoesNotExist:
         mesa = None
+
 
     detalles_pedidos = []
     cuenta = 0
 
     for pedido in pedidos:
         detalles = DetallePedido.objects.filter(pedido=pedido)
+        detalles_activos_count = detalles.filter(estado='Activo').count()
         subtotal_pedido = 0
 
         for detalle in detalles:
@@ -2827,6 +2851,7 @@ def ver_detalles_usuario(request):
         detalles_pedidos.append({
             'pedido': pedido,
             'detalles': detalles,
+            'detalles_activos_count': detalles_activos_count
         })
 
         if pedido.estado != 'Cancelado':
@@ -2844,7 +2869,7 @@ def ver_detalles_usuario(request):
         'cuenta': cuenta,
         'url': 'ver_detalles_pedido_usuario'
     }
-    return render(request, 'Oasis/usuario/detalles_pedido_usuario.html', contexto)
+    return render(request, ruta, contexto)
 
 #mas_info
 def mas_info(request):
