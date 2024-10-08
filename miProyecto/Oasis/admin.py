@@ -9,7 +9,7 @@ class UsuarioAdmin(admin.ModelAdmin):
     list_display = ['id','nombre','cedula','fecha_nacimiento','email','password','rol','estado','foto','last_login']
     search_fields = ['id','nombre','cedula','email','telefono','rol','estado']
     list_filter = ['rol']
-    list_editable = ['estado']
+    list_editable = ['rol','estado']
 
     def ver_foto(self, obj):
         return mark_safe(f"<a href='{obj.foto.url}'><img src='{obj.foto.url}' width='10%'></a>")

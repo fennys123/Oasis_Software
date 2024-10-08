@@ -19,6 +19,7 @@
                 <a href="{% url 'ver_ventas' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'historial_pedidos' %} bg-primary text-white {% else %} bg-light {% endif %}">Historial de pedidos</a>
                 <a href="{% url 'entradas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'entradas' or url == 'entradas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Entradas</a>
                 <a href="{% url 'reservas_usuario' %}" class="d-flex align-items-center py-2 px-4 mb-2 text-decoration-none {% if url == 'reservas' or url == 'reservas_info' %} bg-primary text-white {% else %} bg-light {% endif %}">Reservas</a>
+                <a href="{% url 'logout' %}" class="d-flex align-items-center bg-light py-2 px-4 mb-2 text-decoration-none"><i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i>Cerrar sesión</a>
             </div>
             <div class="col-lg-10 py-5">
                 <div class="row mx-0 justify-content-center text-center pb-5 pt-3">

@@ -7,24 +7,30 @@
 
 {% block contenedor %}
   <div class="radio-inputs many">
-    <label class="radio">
-      <a href="{% url 'peInicio' %}">
-        <input type="radio" name="radio"/>
-        <span class="name">Inicio</span>
-      </a>
-    </label>
-    <label class="radio">
-      <a href="{% url 'peHistorial' %}">
-        <input type="radio" name="radio"/>
-        <span class="name">Historial de Pedidos</span>
-      </a>
-    </label>
-    <label class="radio">
-      <a href="{% url 'peGestionMesas' %}">
-        <input type="radio" name="radio" checked=""/>
-        <span class="name">Gestión de Mesas</span>
-      </a>
-    </label>
+    {% if user.rol == 2 or user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peInicio' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Inicio</span>
+        </a>
+      </label>
+    {% endif %}
+    {% if user.rol == 3 or user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peGestionMesas' %}">
+          <input type="radio" name="radio" checked=""/>
+          <span class="name">Gestión de Mesas</span>
+        </a>
+      </label>
+    {% endif %}
+    {% if user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peHistorial' %}">
+          <input type="radio" name="radio"/>
+          <span class="name">Historial de Pedidos</span>
+        </a>
+      </label>
+    {% endif %}
   </div>
     <div class="contenedor">
         <h1>{{ mesa.nombre }}</h1>
@@ -49,10 +55,6 @@
             </form>
           </div>
           <div class="content-productos">
-            <div class="search">
-              <input  type="text" id="myInput" placeholder="Buscar productos...">
-              <button id="searchButton" type="submit">Buscar</button>
-            </div>
             <div class="categorias">
               <a href="{% url 'pedidoEmpleado' mesa.id %}"><p {% if cat == None %} class="categorias__active" {% endif %}>Todos</p></a>
               {% for c in categorias %}
@@ -85,4 +87,3 @@
       </div>
     </div>
 {% endblock %}
-

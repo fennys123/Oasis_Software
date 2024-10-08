@@ -51,26 +51,28 @@
       </label>
     {% endif %}
   </div>
-    <div class="card mb-3 mt-5 w-100 ml-0 mr-0 mx-auto" style="max-width: 540px; margin-top: 2.5em;">
+    <div class="card mb-3 mt-5 w-100 ml-0 mr-0 mx-auto" style="max-width: 700px; margin-top: 2.5em;">
     <div class="row g-0">
       <div class="col-md-4">
-        <img src="{{ user.foto.url }}" class="img-fluid rounded-start" alt="...">
+        <img src="{{ user.foto.url }}" class="img-fluid rounded-circle" alt="..." style="height: 200px;">
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <h5 class="card-title">{{ user.nombre }}</h5>
-          <br>
+          <div class="card-title d-flex justify-content-between">
+            <h5 class="card-title fw-bold">{{ user.nombre }}</h5>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarPerfil"><i class="bi bi-pencil"></i></button>
+          </div>
+          <p class="card-text"><small class="text-body-secondary">{{ user.get_rol_display }}</small></p>
           <p class="card-text">
             <strong>Correo:</strong> {{ user.email }} <br>
             <strong>Cedula:</strong> {{ user.cedula }} <br>
             <strong>Fecha Nacimiento:</strong> {{ user.fecha_nacimiento }}
           </p>
-          <p class="card-text"><small class="text-body-secondary">{{ user.get_rol_display }}</small></p>
         </div>
         <div class="card-body">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 3%; margin-right: 3%;">
-                <a class="card-link" data-toggle="modal" data-target="#cambiarContrasena">Cambiar contraseña</a>
-                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarPerfil"><i class="bi bi-pencil"></i></button>
+                <a class="btn btn-primary" data-toggle="modal" data-target="#cambiarContrasena">Cambiar contraseña</a>
+                <a href="{% url 'logout' %}" type="button" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
             </div>
         </div>
       </div>

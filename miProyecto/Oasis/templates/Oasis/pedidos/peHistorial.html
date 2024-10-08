@@ -7,24 +7,30 @@
 
 {% block contenedor %}
 <div class="radio-inputs many">
-  <label class="radio">
-    <a href="{% url 'peInicio' %}">
-      <input type="radio" name="radio" />
-      <span class="name">Inicio</span>
-    </a>
-  </label>
-  <label class="radio">
-    <a href="{% url 'peHistorial' %}">
-      <input type="radio" name="radio" checked=""/>
-      <span class="name">Historial de Pedidos</span>
-    </a>
-  </label>
-  <label class="radio">
-    <a href="{% url 'peGestionMesas' %}">
-      <input type="radio" name="radio"/>
-      <span class="name">Gestión de Mesas</span>
-    </a>
-  </label>
+  {% if user.rol == 2 or user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peInicio' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Inicio</span>
+        </a>
+      </label>
+    {% endif %}
+    {% if user.rol == 3 or user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peGestionMesas' %}">
+          <input type="radio" name="radio"/>
+          <span class="name">Gestión de Mesas</span>
+        </a>
+      </label>
+    {% endif %}
+    {% if user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peHistorial' %}">
+          <input type="radio" name="radio" checked=""/>
+          <span class="name">Historial de Pedidos</span>
+        </a>
+      </label>
+    {% endif %}
 </div>
 
 
@@ -33,14 +39,10 @@
     <div class="conteos">
     <p>Todos (<span>{{ detalles_pedidos|length }}</span>)</p>
     </div>
-    <div class="search">
-        <input type="text" id="myInput" placeholder="Buscar pedidos...">
-        <button id="searchButton" type="submit">Buscar</button>
-    </div>
 </div>
 
 <div id="contenedorTabla" style="margin-top: 2%;">
-  <table class="table">
+  <table class="table" id="table">
     <thead class="thead-light">
       <tr>
         <th>Mesa</th>

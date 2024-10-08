@@ -63,36 +63,40 @@
     {% else %}
         <h1>Historial de Ventas</h1>
     {% endif %}
-    <div class="Contenido">
+
+    {% if detalles_pedidos %}
+      <div class="Contenido">
         <div class="conteos">
             <p>Todos (<span>{{ total_pedidos }}</span>)</p>
         </div>
-    </div>
-
-    <div id="contenedorTabla">
-      <table class="table">
-        <thead class="thead-light">
-          <tr>
-            <th>Mesa</th>
-            <th>Fecha</th>
-            <th>Total</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in detalles_pedidos %}
+      </div>
+      <div id="contenedorTabla">
+        <table class="table" id="table">
+          <thead class="thead-light">
             <tr>
-              <td data-label="Mesa">{{ p.pedido.mesa.nombre }}</td>
-              <td data-label="Fecha">{{ p.pedido.fecha }}</td>
-              <td data-label="Total">${{ p.pedido.total|intcomma }}</td>
-              <td data-label="Acciones">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#detalleModal{{ p.pedido.id }}"><i class="bi bi-info-circle"></i></button>
-              </td>
+              <th>Mesa</th>
+              <th>Fecha</th>
+              <th>Total</th>
+              <th>Acciones</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {% for p in detalles_pedidos %}
+              <tr>
+                <td data-label="Mesa">{{ p.pedido.mesa.nombre }}</td>
+                <td data-label="Fecha">{{ p.pedido.fecha }}</td>
+                <td data-label="Total">${{ p.pedido.total|intcomma }}</td>
+                <td data-label="Acciones">
+                  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#detalleModal{{ p.pedido.id }}"><i class="bi bi-info-circle"></i></button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>No hay pedidos</p>
+    {% endif %}
 
 
 

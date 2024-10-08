@@ -26,16 +26,12 @@
     {% else %}
         <div class="Contenido">
             <div class="conteos">
-            <p>Todos (<span>{{ data|length }}</span>)</p>
-            </div>
-            <div class="search">
-                <input placeholder="Buscar usuarios..." type="text">
-                <button type="submit">Buscar</button>
+                <p>Todos (<span>{{ data|length }}</span>)</p>
             </div>
         </div>
 
         <div id="contenedorTabla" style="margin-top: 20px;">
-            <table class="table"> <!--id="table" Para agregar el DataTables-->
+            <table class="table" id="table">
             <thead class="thead-light">
                 <tr>
                 <th>Nombre</th>
@@ -177,4 +173,3 @@
         </div>
     {% endif %}
 {% endblock %}
-

@@ -6,24 +6,30 @@
 
 {% block contenedor %}
   <div class="radio-inputs many">
-    <label class="radio">
-      <a href="{% url 'peInicio' %}">
-        <input type="radio" name="radio"/>
-        <span class="name">Inicio</span>
-      </a>
-    </label>
-    <label class="radio">
-      <a href="{% url 'peHistorial' %}">
-        <input type="radio" name="radio"/>
-        <span class="name">Historial de Pedidos</span>
-      </a>
-    </label>
-    <label class="radio">
-      <a href="{% url 'peGestionMesas' %}">
-        <input type="radio" name="radio" checked=""/>
-        <span class="name">Gestión de Mesas</span>
-      </a>
-    </label>
+    {% if user.rol == 2 or user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peInicio' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Inicio</span>
+        </a>
+      </label>
+    {% endif %}
+    {% if user.rol == 3 or user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peGestionMesas' %}">
+          <input type="radio" name="radio" checked=""/>
+          <span class="name">Gestión de Mesas</span>
+        </a>
+      </label>
+    {% endif %}
+    {% if user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'peHistorial' %}">
+          <input type="radio" name="radio"/>
+          <span class="name">Historial de Pedidos</span>
+        </a>
+      </label>
+    {% endif %}
   </div>
 
   
@@ -35,10 +41,6 @@
       <p>Activas (<span>{{ mesas_activas }}</span>)</p>
       <p class="divider">|</p>
       <p>Disponibles (<span>{{ mesas_disponibles }}</span>)</p>
-    </div>
-    <div class="search">
-      <input type="text" id="myInput" placeholder="Buscar mesas...">
-      <button id="searchButton" type="submit">Buscar</button>
     </div>
   </div>
   <div class="mesas">
@@ -67,4 +69,3 @@
     {% endfor %}
   </div>
 {% endblock %}
-

@@ -19,16 +19,12 @@
         <div class="conteos">
             <p>Todos (<span>{{ data|length }}</span>)</p>
         </div>
-        <div class="search">
-            <input id="myInput" placeholder="Buscar eventos..." type="text">
-            <button id="searchButton" type="submit">Buscar</button>
-        </div>
     </div>
     <div class="Agregar">
       <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarEvento">Agregar Evento</button>
     </div>
     <div id="contenedorTabla">
-      <table class="table">
+      <table class="table" id="table">
         <thead class="thead-light">
           <tr>
             <th>ID</th>
