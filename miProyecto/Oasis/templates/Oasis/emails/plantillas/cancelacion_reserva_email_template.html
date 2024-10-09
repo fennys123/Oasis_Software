@@ -16,11 +16,10 @@
         <!--<img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-reserva-email.png" alt="cabecera_reserva"
         <p>{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-reserva-email.png</p-->
         <div class="header">
-            <p class="header-title">Oasis Nigth Club - Confirmación de Reserva</p>
+            <p class="header-title">Oasis Nigth Club - Cancelación de Reserva</p>
         </div>
         <p>Hola {{ reserva.usuario.nombre }},</p>
-        <p>Tu reserva para el evento <strong>{{ reserva.evento.nombre }}</strong> en la mesa <strong>{{ reserva.mesa.nombre }}</strong> el día <strong>{{ reserva.evento.fecha }}</strong> ha sido confirmada.</p>
-        <p>A continuación entontrarás un pdf con la información de la reserva</p>
+        <p>Tu reserva para el evento <strong>{{ reserva.evento.nombre }}</strong> en la mesa <strong>{{ reserva.mesa.nombre }}</strong> el día <strong>{{ reserva.evento.fecha }}</strong> ha sido <strong>CANCELADA</strong> de manera exitosa.</p>
         <div class="footer">
             <p>¡Gracias por confiar en Oasis!</p>
         </div>

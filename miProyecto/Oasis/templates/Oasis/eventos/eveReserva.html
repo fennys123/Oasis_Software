@@ -8,9 +8,15 @@
     <div class="radio-inputs">
         <label class="radio">
         <a href="{% url 'Eventos' %}">
-            <input type="radio" name="radio" checked=""/>
+            <input type="radio" name="radio" {% if evento.estado == True %} checked="" {% endif %}/>
             <span class="name">Inicio</span>
         </a>
+        </label>
+        <label class="radio">
+          <a href="{% url 'EventosEliminados' %}">
+            <input type="radio" name="radio" {% if evento.estado == False %} checked="" {% endif %}/>
+            <span class="name">Eventos eliminados</span>
+          </a>
         </label>
     </div>
     <h1>Reservas {{ evento }}</h1>
@@ -75,9 +81,11 @@
                             <p class="m-0"><strong>{{ r.mesa.nombre }} x {{ r.mesa.capacidad }} personas</strong></p>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success w-100" data-dismiss="modal">Llegada al bar</button>
-                    </div>
+                    {% if evento.estado %}
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-success w-100" data-dismiss="modal">Llegada al bar</button>
+                      </div>
+                    {% endif %}
                 </div>
             </div>
             </div>

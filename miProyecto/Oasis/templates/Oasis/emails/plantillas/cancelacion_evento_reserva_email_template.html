@@ -16,11 +16,12 @@
         <!--<img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-reserva-email.png" alt="cabecera_reserva"
         <p>{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-reserva-email.png</p-->
         <div class="header">
-            <p class="header-title">Oasis Nigth Club - Confirmación de Reserva</p>
+            <p class="header-title">Oasis Nigth Club - Cancelación de Evento</p>
         </div>
         <p>Hola {{ reserva.usuario.nombre }},</p>
-        <p>Tu reserva para el evento <strong>{{ reserva.evento.nombre }}</strong> en la mesa <strong>{{ reserva.mesa.nombre }}</strong> el día <strong>{{ reserva.evento.fecha }}</strong> ha sido confirmada.</p>
-        <p>A continuación entontrarás un pdf con la información de la reserva</p>
+        <p>Desafortunadamente, el evento <strong>{{ reserva.evento.nombre }}</strong> programado para el día <strong>{{ reserva.evento.fecha }}</strong> ha sido <strong>CANCELADO</strong>.</p>
+        <p>Para Oasis, tú eres primero, y sabemos que tenías una reserva para la mesa <strong>{{ reserva.mesa.nombre }}</strong>. Porfavor, comunicate lo antes posible a este WhatsApp para continuar con el proceso de devolción del dinero: https://wa.me/573052777053</p>
+        <p>Tenemos 5 días hábiles para darte respuesta.</p>
         <div class="footer">
             <p>¡Gracias por confiar en Oasis!</p>
         </div>

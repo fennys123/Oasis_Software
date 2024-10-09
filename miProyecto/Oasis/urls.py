@@ -155,6 +155,8 @@ urlpatterns = [
 
     path('Detalle_Evento/<int:id>', views.detalleEvento, name='detalleEvento'),
 
+    path('Gestion_Eventos_Eliminados/', views.eveEliminados, name='EventosEliminados'),
+
 #   CRUD MENÚ (CATEGORÍAS)
     path('Gestion_Menu/', views.meInicio, name='Menu'),
     path('Crear_Categoria/', views.crearCategoria, name='crearCategoria'),

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Poppins, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; background-color: black; color: white; padding: 10px}
+        .header-title { font-size: 20px; margin-bottom: 8px; font-weight: bold; }
+        .footer { text-align: center; font-size: 12px; color: #888; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!--<img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-reserva-email.png" alt="cabecera_reserva"
+        <p>{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-reserva-email.png</p-->
+        <div class="header">
+            <p class="header-title">Oasis Nigth Club - Cancelación de {% if total_entradas > 1 %} Entradas {% else %} Entrada {% endif %}</p>
+        </div>
+        <p>Hola {{ compra.usuario.nombre }},</p>
+        {% if compra.entrada_general > 0 and compra.entrada_vip <= 0 %}
+            {% if compra.entrada_general == 1 %}
+                <p>Tu entrada GENERAL para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> ha sido <strong>CANCELADA</strong> de manera exitosa.</p>
+            {% else %}
+                <p>Tus entradas GENERALES para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> han sido <strong>CANCELADAS</strong> de manera exitosa.</p>
+            {% endif %}
+        {% elif compra.entrada_general <= 0 and compra.entrada_vip > 0 %}
+            {% if compra.entrada_vip == 1 %}
+                <p>Tu entrada VIP para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> ha sido <strong>CANCELADA</strong> de manera exitosa.</p>
+            {% else %}
+                <p>Tus entradas VIP para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> han sido <strong>CANCELADAS</strong> de manera exitosa.</p>
+            {% endif %}
+        {% elif compra.entrada_general > 0 and compra.entrada_vip > 0 %}
+            {% if compra.entrada_general == 1 and compra.entrada_vip == 1 %}
+                <p>Tus entradas ({{ compra.entrada_general }} entrada GENERAL y {{ compra.entrada_vip }} entrada VIP) para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> han sido <strong>CANCELADAS</strong> de manera exitosa.</p>
+            {% elif compra.entrada_general > 1 and compra.entrada_vip == 1 %}
+                <p>Tus entradas ({{ compra.entrada_general }} entradas GENERALES y {{ compra.entrada_vip }} entrada VIP) para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> han sido <strong>CANCELADAS</strong> de manera exitosa.</p>
+            {% elif compra.entrada_general == 1 and compra.entrada_vip > 1 %}
+                <p>Tus entradas ({{ compra.entrada_general }} entrada GENERAL y {{ compra.entrada_vip }} entradas VIP) para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> han sido <strong>CANCELADAS</strong> de manera exitosa.</p>
+            {% else %}
+                <p>Tus entradas ({{ compra.entrada_general }} entradas GENERALES y {{ compra.entrada_vip }} entradas VIP) para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> han sido <strong>CANCELADAS</strong> de manera exitosa.</p>
+            {% endif %}
+        {% endif %}
+        <div class="footer">
+            <p>¡Gracias por confiar en Oasis!</p>
+        </div>
+    </div>
+</body>
+</html>

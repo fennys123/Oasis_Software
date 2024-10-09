@@ -37,8 +37,8 @@
                                 <div class="team position-relative overflow-hidden mb-5" style="display: flex; flex-direction: column; flex: 1;">
                                 <img class="img-fluid" src="{{ r.evento.foto.url }}" alt="{{ r.evento.nombre }}" style="width: 100%; height: 230px; object-fit: cover;">
                                 <div class="position-relative text-center" style="flex: 1;">
-                                    <div class="team-text bg-light text-dark">
-                                    <h5 class="font-weight-bold" style="font-size: 16px;">{{ r.evento.nombre }}</h5>
+                                    <div class="team-text {% if r.evento.estado %} bg-light text-dark {% else %} bg-dark text-light {% endif %}">
+                                    <h5 class="font-weight-bold {% if r.evento.estado %} text-dark {% else %} text-light {% endif %}" style="font-size: 16px;">{{ r.evento.nombre }} {% if not r.evento.estado %} - CANCELADO {% endif %}</h5>
                                     <p class="m-0" style="font-size: 12px;">{{ r.evento.fecha }}</p>
                                     </div>
                                     <div class="team-social bg-primary text-center">

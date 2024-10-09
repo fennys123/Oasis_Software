@@ -1,0 +1,74 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{{data}}
+
+{% block titulo %}Eventos{% endblock %}
+
+
+{% block contenedor %}
+  <div class="radio-inputs">
+    <label class="radio">
+      <a href="{% url 'Eventos' %}">
+        <input type="radio" name="radio"/>
+        <span class="name">Inicio</span>
+      </a>
+    </label>
+    <label class="radio">
+      <a href="{% url 'Eventos' %}">
+        <input type="radio" name="radio" checked=""/>
+        <span class="name">Eventos eliminados</span>
+      </a>
+    </label>
+  </div>
+    <h1>Eventos eliminados</h1>
+    {% if data %}
+      <div class="Contenido">
+          <div class="conteos">
+              <p>Todos (<span>{{ data|length }}</span>)</p>
+          </div>
+      </div>
+      <div id="contenedorTabla">
+        <table class="table" id="table">
+          <thead class="thead-light">
+            <tr>
+              <th>ID</th>
+              <th>Evento</th>
+              <th>Fecha</th>
+              <th>Aforo</th>
+              <th>Entradas Disponibles</th>
+              <th>Reservas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in data %}
+              <tr>
+                <td data-label="ID">{{ e.id }}</td>
+                <td data-label="Evento">{{ e.nombre }}</td>
+                <td data-label="Fecha">{{ e.fecha }}</td>
+                <td data-label="Aforo">{{ e.aforo }}</td>
+                {% if e.entradas %}
+                  <td data-label="Entradas Disponibles"><a href="{% url 'eveEntradas' e.id %}" style="text-decoration: none;">{{ e.entradas_disponibles }}</a></td>
+                {% else %}
+                  <td data-label="Entradas Disponibles">No existen entradas</td>
+                {% endif %}
+                
+                {% if e.reservas %}
+                    <td data-label="Reservas"><a href="{% url 'eveReserva' e.id%}" style="text-decoration: none;">Ver reservas</a></td>
+                {% else %}
+                    <td data-label="Reservas">No existen reservas</td>
+                {% endif %}
+                <td data-label="Acciones">
+                  <a type="button" class="btn btn-info" href="{% url 'detalleEvento' e.id %}"><i class="bi bi-eye-fill"></i></a>
+                  <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarEvento' e.id %}')"><i class="bi bi-x-lg"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>  
+      </div>
+    {% else %}
+      <p>No existen eventos eliminados</p>
+    {% endif %}
+    
+{% endblock %}

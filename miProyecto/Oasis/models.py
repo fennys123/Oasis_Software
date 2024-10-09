@@ -69,6 +69,7 @@ class Evento(models.Model):
     reservas = models.BooleanField(default=False)
     entradas = models.BooleanField(default=False)
     foto = models.ImageField(upload_to="Img_eventos/", default="Img_eventos/default.png")
+    estado = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nombre

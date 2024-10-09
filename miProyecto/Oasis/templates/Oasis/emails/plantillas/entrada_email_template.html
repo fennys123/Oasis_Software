@@ -6,14 +6,22 @@
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
         .container { background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .qr-container { text-align: center; margin-top: 20px; }
+        .header { text-align: center; background-color: black; color: white; padding: 10px}
+        .header-title { font-size: 20px; margin-bottom: 8px; font-weight: bold; }
         .footer { text-align: center; font-size: 12px; color: #888; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="container text-center">
-        <img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-entrada-email.png" alt="cabecera_reserva">
-        <p>{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-entrada-email.png</p>
+    <div class="container">
+        <!--<img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-entrada-email.png" alt="cabecera_reserva">
+        <p>{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-entrada-email.png</p>-->
+        <div class="header">
+            {% if entradas|length <= 1 %}
+                <p class="header-title">Oasis Nigth Club - Confirmación compra de Entrada</p>
+            {% else %}
+                <p class="header-title">Oasis Nigth Club - Confirmación compra de Entradas</p>
+            {% endif %}
+        </div>
         <p>Hola {{ compra.usuario.nombre }},</p>
         {% if entradas|length <= 1 %}
             <p>Tu entrada para el evento <strong>{{ compra.evento.nombre }}</strong> el día <strong>{{ compra.evento.fecha }}</strong> ha sido confirmada.</p>
