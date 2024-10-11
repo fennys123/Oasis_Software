@@ -151,9 +151,10 @@ header {
     margin-bottom: 10px;
   }
   .cuerpo .olvidarContraseña{
-    margin-left: 398px;
+    margin-left: 380px;
     color:rgb(252, 70, 100);
     text-decoration: none;
+    cursor: pointer;
   }
   
   #pantallaLogin .p1 {

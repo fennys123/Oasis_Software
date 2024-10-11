@@ -47,6 +47,7 @@
               <td data-label="Usuario">Sin usuario</td>
             {% endif %}
             <td data-label="Acciones">
+              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#verQr{{ m.id }}"><i class="bi bi-qr-code"></i></button>
               <button type="button" class="btn btn-info" data-toggle="modal" data-target="#verMesa{{ m.id }}"><i class="bi bi-eye-fill"></i></button>
               <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarMesa{{ m.id }}"><i class="bi bi-pencil"></i></button>
               <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarMesa' m.id %}')"><i class="bi bi-x-lg"></i></a>
@@ -56,6 +57,28 @@
       </tbody>
     </table>
   </div>
+
+
+  {% for m in data %}
+    <div class="modal fade" id="verQr{{ m.id }}" tabindex="-1" role="dialog" aria-labelledby="editarMesaLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <p class="tituloFormulario">Ver código QR</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <p>Este código QR pertence a la mesa, y es el mismo que se encuentra en la mesa fisica.</p>
+                <div class="w-100 d-flex justify-content-center"    >
+                    <img src="{{ m.qr_imagen.url }}" alt="qr" width="50%">
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  {% endfor %}
 
 
   <div class="modal fade" id="agregarMesa" tabindex="-1" role="dialog" aria-labelledby="agregarMesaLabel" aria-hidden="true">

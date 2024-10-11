@@ -6,7 +6,7 @@ from .models import *
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ['id','nombre','cedula','fecha_nacimiento','email','password','rol','estado','foto','last_login']
+    list_display = ['id','nombre','cedula','fecha_nacimiento','email','password','rol','estado','foto','codigo_recuperar','last_login']
     search_fields = ['id','nombre','cedula','email','telefono','rol','estado']
     list_filter = ['rol']
     list_editable = ['rol','estado']
@@ -45,7 +45,7 @@ class entradasQRAdmin(admin.ModelAdmin):
 
 @admin.register(Mesa)
 class MesaAdmin(admin.ModelAdmin):
-    list_display = ['id','nombre', 'capacidad', 'precio','estado','estado_reserva','codigo_qr', 'usuario']
+    list_display = ['id','nombre', 'capacidad', 'precio','estado','estado_reserva','codigo_qr', 'qr_imagen','usuario']
     search_fields = ['id','estado', 'capacidad','estado_reserva']
     list_filter = ['estado', 'capacidad','estado_reserva']
     list_editable = ['estado', 'capacidad', 'estado_reserva', 'precio']

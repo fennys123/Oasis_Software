@@ -69,7 +69,7 @@
                             <img src="{{ r.evento.foto.url }}" alt="{{ r.evento.nombre }}" class="rounded" width="50%">
                         </div>
                         <div class="d-flex flex-column justify-content-center align-items-center mt-3">
-                            <p class="m-0"><strong>{{ r.evento.nombre }}</strong></p>
+                            <p class="m-0"><strong>{{ r.evento.nombre }} {% if not r.estado_qr %} (Llegada al bar) {% endif %}</strong></p>
                             <p class="text-12">{{ r.evento.fecha }}</p>
                             <p class="m-0"><strong>Info de la reserva</strong></p>
                             <p class="text-12 m-0">Usuario: {{ r.usuario.nombre }}</p>
@@ -82,9 +82,11 @@
                         </div>
                     </div>
                     {% if evento.estado %}
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-success w-100" data-dismiss="modal">Llegada al bar</button>
-                      </div>
+                      {% if r.estado_qr %}
+                        <div class="modal-footer">
+                            <a href="{% url 'eveReservaLlegada' r.codigo_qr r.id %}" type="button" class="btn btn-success w-100">Llegada al bar</a>
+                        </div>
+                      {% endif %}
                     {% endif %}
                 </div>
             </div>

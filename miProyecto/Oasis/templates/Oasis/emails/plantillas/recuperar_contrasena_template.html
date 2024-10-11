@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Poppins, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; background-color: black; color: white; padding: 10px}
+        .header-title { font-size: 20px; margin-bottom: 8px; font-weight: bold; }
+        .footer { text-align: center; font-size: 12px; color: #888; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!--<img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-reserva-email.png" alt="cabecera_reserva"
+        <p>{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title-reserva-email.png</p-->
+        <div class="header">
+            <p class="header-title">Oasis Nigth Club - Recuperar Contraseña</p>
+        </div>
+        <p>Hola {{ usuario.nombre }},</p>
+        <p>Has solicitado recuperar tu contraseña, por favor ingresa el siguiente código: <strong>{{ codigo }}</strong> en el siguiente enlace: {{ link }}</p>
+        <div class="footer">
+            <p>¡Gracias por confiar en Oasis!</p>
+        </div>
+    </div>
+</body>
+</html>

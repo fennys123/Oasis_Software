@@ -33,7 +33,7 @@
         {% for r in reservas %}
           <tr>
             <td data-label="Usuario">{{ r.usuario }}</td>
-            <td data-label="Evento">{{ r.evento }}</td>
+            <td data-label="Evento">{{ r.evento }} {% if not r.evento.estado %} <strong>- CANCELADO </strong> {% endif %}</td>
             <td data-label="Fecha">{{ r.evento.fecha }}</td>
             <td data-label="Acciones">
               <button type="button" class="btn btn-info" data-toggle="modal" data-target="#verReserva{{ r.id }}"><i class="bi bi-info-circle"></i></button>

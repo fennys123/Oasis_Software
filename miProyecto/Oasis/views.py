@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.urls import reverse
+from urllib.parse import urlencode
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -43,6 +44,7 @@ import os
 import tempfile
 from django.core.files import File
 
+from django.urls import reverse
 
 
 from rest_framework import viewsets
@@ -146,6 +148,118 @@ def inicio(request):
             messages.error(request, "El usuario no existe")
     else:
         return redirect("index")
+    
+
+def recuperar_contrasena_template(request):
+    logueo = request.session.get("logueo", False)
+    user = None
+    if logueo:
+        user = Usuario.objects.get(pk=logueo["id"])
+
+    contexto = {'user': user}
+    return render(request, 'Oasis/recuperar_contrasena/recuperar_contrasena.html', contexto)
+
+
+def enviar_correo_recuperar(usuario, codigo, link):
+    try:
+        destinatario = usuario.email
+        contexto = {'usuario': usuario, 'codigo': codigo, 'link': link}
+        mensaje_html = render_to_string('Oasis/emails/plantillas/recuperar_contrasena_template.html', contexto)
+        
+        email = EmailMessage(
+            subject='Recuperar Contraseña en Oasis Night Club',
+            body=mensaje_html,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[destinatario],
+        )
+        email.content_subtype = 'html'
+        email.send()
+    except Exception as e:
+        print(f"Error al enviar el correo de reserva: {e}")
+
+def recuperar_contrasena(request):
+    if request.method == "POST":
+        correo = request.POST.get("email")
+        try:
+            q = Usuario.objects.get(email=correo)
+            from random import randint
+            import base64
+            codigo = base64.b64encode(str(randint(100000, 999999)).encode("ascii")).decode("ascii")
+            q.codigo_recuperar = codigo
+            q.save()
+
+            link = "http://127.0.0.1:8000/verificar_recuperar/?correo="+q.email
+
+            threading.Thread(target=enviar_correo_recuperar, args=(q,codigo,link)).start()
+
+            messages.success(request, "El correo para recuperar contraseña ¡ya fué enviado!")
+
+        except Usuario.DoesNotExist:
+            messages.error(request, "No existe el usuario....")
+        
+        return redirect("form_recuperar_contrasena")
+    else:
+        return redirect("form_recuperar_contrasena")
+
+
+def verificar_recuperar(request):
+    logueo = request.session.get("logueo", False)
+    user = None
+    if logueo:
+        user = Usuario.objects.get(pk=logueo["id"])
+
+    if request.method == "POST":
+        if request.POST.get("check"):
+            correo = request.POST.get("correo")
+            q = Usuario.objects.get(email=correo)
+
+            c1 = request.POST.get("nueva1")
+            c2 = request.POST.get("nueva2")
+
+            if c1 == c2:
+                q.password = hash_password(c1)
+                q.codigo_recuperar = ""
+                q.save()
+
+                messages.success(request, "Contraseña guardada correctamente.")
+                return redirect("index")
+            
+            else:
+                messages.warning(request, "Las contraseñas nuevas no coinciden.")
+
+                url = reverse("verificar_recuperar")
+                query_params = urlencode({"correo": correo})
+                full_url = f"{url}?{query_params}"
+                
+                return redirect(full_url)
+        else:
+            correo = request.POST.get("correo")
+            codigo = request.POST.get("codigo")
+            q = Usuario.objects.get(email=correo)
+            if (q.codigo_recuperar == codigo) and q.codigo_recuperar != "":
+                contexto = {"check": "ok", "correo":correo, 'user': user}
+                return render(request, "Oasis/recuperar_contrasena/verificar_recuperar.html", contexto)
+            else:
+                messages.error(request, "Código incorrecto")
+                
+                url = reverse("verificar_recuperar")
+                query_params = urlencode({"correo": correo})
+                full_url = f"{url}?{query_params}"
+                
+                return redirect(full_url)
+    else:
+        correo = request.GET.get("correo")
+        contexto = {"correo":correo, 'user': user}
+        return render(request, "Oasis/recuperar_contrasena/verificar_recuperar.html", contexto)
+
+
+
+
+
+
+
+
+
 
 def registro(request):
     logueo = request.session.get("logueo", False)
@@ -155,6 +269,8 @@ def registro(request):
 
     contexto = {'user': user}
     return render(request, 'Oasis/registro/registro.html', contexto)
+
+
 
 def crear_usuario_registro(request):
     if request.method == 'POST':
@@ -388,6 +504,16 @@ def guUsuariosCrear(request):
             if foto is None:
                 foto = "Img_usuarios/default.png"
 
+            try:
+                cedula = int(cedula)
+                if cedula <= 0 or len(str(cedula)) != 10:
+                    messages.warning(request, "La cédula debe ser mayor a 0 y tener 10 dígitos")
+                    return redirect("guInicio")
+            except ValueError:
+                messages.warning(request, "La cédula debe ser un número válido")
+                return redirect("guInicio")
+
+
             if Usuario.objects.filter(email=email).exists():
                 messages.warning(request, "El correo ya está registrado")
                 return redirect("guInicio")
@@ -442,6 +568,28 @@ def guUsuariosActualizar(request, id):
         rol = request.POST.get('rol')
         estado = request.POST.get('Estado')
         foto_nueva = request.FILES.get('foto_nueva')
+
+        try:
+            cedula = int(cedula)
+            if cedula <= 0 or len(str(cedula)) != 10:
+                messages.warning(request, "La cédula debe ser mayor a 0 y tener 10 dígitos")
+                return redirect("guInicio")
+        except ValueError:
+            messages.warning(request, "La cédula debe ser un número válido")
+            return redirect("guInicio")
+
+        if Usuario.objects.filter(email=email).exclude(pk=id).exists():
+            messages.warning(request, "El correo ya está registrado por otro usuario")
+            return redirect("guInicio")
+
+        if Usuario.objects.filter(cedula=cedula).exclude(pk=id).exists():
+            messages.warning(request, "La cédula ya está registrada por otro usuario")
+            return redirect("guInicio")
+        
+        edad = calcular_edad(fecha_nacimiento)
+        if edad < 18:
+            messages.warning(request, "Debe ser mayor de 18 años para registrarse")
+            return redirect("guInicio")
 
         try:
             q = Usuario.objects.get(pk=id)
@@ -592,6 +740,18 @@ def crearProducto(request):
             if foto == None:
                 foto = "Img_productos/default.png"
 
+            if int(pre) <= 0:
+                messages.warning(request, "El precio debe ser mayor a 0")
+                return redirect("Productos")
+            
+            if inventario <= 0:
+                messages.warning(request, "El inventario debe ser mayor a 0")
+                return redirect("Productos")
+
+            if Producto.objects.filter(nombre=nom).exists():
+                messages.warning(request, "Ya existe un producto con ese nombre")
+                return redirect("Productos")
+
             q = Producto(
                 nombre=nom,
                 descripcion=desc,
@@ -629,6 +789,18 @@ def actualizarProducto(request, id):
         precio_str = precio_str.replace(',', '.')
         pre = float(precio_str)
         foto_nueva = request.FILES.get('foto_nueva')
+
+        if int(pre) <= 0:
+            messages.warning(request, "El precio debe ser mayor a 0")
+            return redirect("Productos")
+        
+        if inventario <= 0:
+            messages.warning(request, "El inventario debe ser mayor a 0")
+            return redirect("Productos")
+
+        if Producto.objects.filter(nombre=nom).exclude(pk=id).exists():
+            messages.warning(request, "Ya existe otro producto con ese nombre")
+            return redirect("Productos")
 
         try:
             q = Producto.objects.get(pk=id)
@@ -735,6 +907,10 @@ def crearMesa(request):
             nom = request.POST.get('nombre')
             cap = int(request.POST.get('capacidad'))
             precio = int(request.POST.get('precio'))
+
+            if precio <= 0:
+                messages.warning (request, 'El precio de cada mesa debe ser mayor a 0.')
+                return redirect('Mesas')
             
             if Mesa.objects.filter(nombre=nom).count() == 0:
                 if 4 <= cap <= 8:
@@ -747,9 +923,9 @@ def crearMesa(request):
                     q.save()
                     messages.success(request, "Mesa Registrada Correctamente!")
                 else:
-                    messages.warning (request, f'Incorrecto: La capacidad de cada mesa debe ser mayor a 4 o menor a 8.')
+                    messages.warning (request, f'La capacidad de cada mesa debe ser mayor a 4 o menor a 8.')
             else:
-                messages.warning (request, f'Incorrecto: Esta mesa ya esta creada en el sistema.')
+                messages.warning (request, f'Esta mesa ya esta creada en el sistema.')
         except Exception as e:
             messages.error(request, f'Error: {e}')
         return redirect('Mesas')
@@ -764,9 +940,15 @@ def mesaActualizar(request, id):
         precio = int(request.POST.get('precio'))
         try:
             if Mesa.objects.filter(nombre=nom).exclude(pk=id).exists():
-                messages.warning(request, f'Incorrecto: Esta mesa ya está creada en el sistema con otro ID.')
+                messages.warning(request, 'Esta mesa ya está creada en el sistema con otro ID.')
+
             elif cap > 9 or cap < 4:
-                messages.warning (request, f'Incorrecto: La capacidad de cada mesa debe ser mayor a 4 o menor a 8')
+                messages.warning (request, 'La capacidad de cada mesa debe ser mayor a 4 o menor a 8')
+            
+            elif precio <= 0:
+                messages.warning (request, 'El precio de cada mesa debe ser mayor a 0.')
+                return redirect('Mesas')
+            
             else:
                 q = Mesa.objects.get(pk=id)
                 q.nombre = nom
@@ -785,6 +967,20 @@ def mesaActualizar(request, id):
 def eliminarMesa(request, id):
     try:
         q = Mesa.objects.get(pk = id)
+
+        if q.estado == "Activa":
+            messages.error(request, 'No puedes eliminar una mesa que tiene pedidos activos.')
+            return redirect('Mesas')
+        
+        if q.estado_reserva == "Reservada":
+            messages.error(request, 'No puedes eliminar una mesa que tiene reservas hechas.')
+            return redirect('Mesas')
+
+        if HistorialPedido.objects.filter(mesa=q).exists():
+            messages.error(request, 'No puedes eliminar una mesa que tiene historial de pedidos hechos, primero elimina el historial.')
+            return redirect('Mesas')
+
+        
         q.delete()
         messages.success(request, "Mesa Eliminada Correctamente!")
     except Exception as e:
@@ -802,7 +998,7 @@ def reservasMesa(request, id):
     except Exception as e:
         messages.error(request, f'Error: {e}')
 
-    return render(request, "Oasis/mesas/reservasMesa.html", {'user': user, 'mesa': Mesa.objects.get(pk = id),'reservas' : q})
+    return render(request, "Oasis/mesas/reservasMesa.html", {'user': user, 'mesa': Mesa.objects.get(pk = id),'reservas' : q, 'url': "reservasMesa"})
 
 
 
@@ -832,6 +1028,28 @@ def crearEvento(request):
             if flyer == None:
                 flyer = "Img_eventos/default.png"
 
+            if Evento.objects.filter(nombre=nom, fecha=date).exists():
+                for i in Evento.objects.filter(nombre=nom, fecha=date):
+                    if i.estado == True:
+                        messages.warning(request, 'Este evento ya está creado en el sistema para esta fecha.')
+                        return redirect('Eventos')
+            
+            if date < datetime.now().strftime("%Y-%m-%d"):
+                messages.warning (request, 'La fecha debe ser mayor o igual a la actual.')
+                return redirect('Eventos')
+            
+            if int(general) <= 0:
+                messages.warning (request, 'La entrada general debe ser mayor a 0.')
+                return redirect('Eventos')
+            
+            if int(vip) <= 0:
+                messages.warning (request, 'La entrada VIP debe ser mayor a 0.')
+                return redirect('Eventos')
+            
+            if int(aforo) <= 0:
+                messages.warning (request, 'El aforo debe ser mayor a 0.')
+                return redirect('Eventos')
+
             # INSERT INTO Evento VALUES (nom, date, time, desc, foto)
             q = Evento(
                 nombre = nom,
@@ -853,103 +1071,59 @@ def crearEvento(request):
         messages.warning (request, f'Error: No se enviaron datos...')
         return redirect('Eventos')
 
+def enviar_correo_cancelacion_evento_reserva(reserva):
+    try:
+        destinatario = reserva.usuario.email
+        contexto = {'reserva': reserva}
+        mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_evento_reserva_email_template.html', contexto)
+        
+        email = EmailMessage(
+            subject='Cancelación de Evento en Oasis Night Club',
+            body=mensaje_html,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[destinatario],
+        )
+        email.content_subtype = 'html'
+        email.send()
+    except Exception as e:
+        print(f"Error al enviar el correo de reserva: {e}")  # Loguear el error
+
+# Función para enviar correos de cancelación de entradas
+def enviar_correo_cancelacion_evento_entrada(entrada, qr_entradas):
+    try:
+        destinatario = entrada.usuario.email
+        contexto = {'compra': entrada, 'entradas': qr_entradas}
+        mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_evento_entrada_email_template.html', contexto)
+        
+        email = EmailMessage(
+            subject='Cancelación de Evento en Oasis Night Club',
+            body=mensaje_html,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[destinatario],
+        )
+        email.content_subtype = 'html'
+        email.send()
+    except Exception as e:
+        print(f"Error al enviar el correo de entrada: {e}")  # Loguear el error
+
 def eliminarEvento(request, id):
     try:
         evento = Evento.objects.get(pk=id)
         evento.estado = False
         evento.save()
 
-        if Reserva.objects.filter(evento=evento) and CompraEntrada.objects.filter(evento=evento):  
-            for r in Reserva.objects.filter(evento=evento): 
-                try:
-                    destinatario = r.usuario.email
+        # Procesar las reservas y entradas asociadas al evento
+        reservas = Reserva.objects.filter(evento=evento)
+        entradas = CompraEntrada.objects.filter(evento=evento)
 
-                    contexto = {
-                        'reserva': r,
-                    }
-                    mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_evento_reserva_email_template.html', contexto)
+        # Si hay reservas, enviar correos de cancelación en segundo plano
+        for reserva in reservas:
+            threading.Thread(target=enviar_correo_cancelacion_evento_reserva, args=(reserva,)).start()
 
-                    # Enviar el correo con el PDF adjunto
-                    email = EmailMessage(
-                        subject='Cancelación de Evento en Oasis Night Club',
-                        body=mensaje_html,
-                        from_email=settings.EMAIL_HOST_USER,
-                        to=[destinatario],
-                    )
-                    email.content_subtype = 'html'
-                    email.send()
-                
-                except Exception as e:
-                    messages.error(request, f"Error al enviar el correo: {e}")
-            
-            for e in CompraEntrada.objects.filter(evento=evento):
-                try:
-                    qr_entradas = EntradasQR.objects.filter(compra=e.id)
-
-                    destinatario = e.usuario.email
-                    mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_evento_entrada_email_template.html', {
-                        'compra': e,
-                        'entradas': qr_entradas,
-                    })
-                    
-                    email = EmailMessage(
-                        subject='Cancelación de Evento en Oasis Night Club',
-                        body=mensaje_html,
-                        from_email=settings.EMAIL_HOST_USER,
-                        to=[destinatario],
-                    )
-                    email.content_subtype = 'html' 
-
-                    email.send()
-                except Exception as e:
-                    messages.error(request, f"Error al enviar el correo de entrada: {e}")
-
-
-        elif Reserva.objects.filter(evento=evento) and not CompraEntrada.objects.filter(evento=evento): 
-            for r in Reserva.objects.filter(evento=evento):
-                try:
-                    destinatario = r.usuario.email
-
-                    contexto = {
-                        'reserva': r,
-                    }
-                    mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_evento_reserva_email_template.html', contexto)
-
-                    # Enviar el correo con el PDF adjunto
-                    email = EmailMessage(
-                        subject='Cancelación de Evento en Oasis Night Club',
-                        body=mensaje_html,
-                        from_email=settings.EMAIL_HOST_USER,
-                        to=[destinatario],
-                    )
-                    email.content_subtype = 'html'
-                    email.send()
-                
-                except Exception as e:
-                    messages.error(request, f"Error al enviar el correo: {e}")
-
-        elif CompraEntrada.objects.filter(evento=evento) and not Reserva.objects.filter(evento=evento):
-            for e in CompraEntrada.objects.filter(evento=evento):
-                try:
-                    qr_entradas = EntradasQR.objects.filter(compra=e.id)
-
-                    destinatario = e.usuario.email
-                    mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_evento_entrada_email_template.html', {
-                        'compra': e,
-                        'entradas': qr_entradas,
-                    })
-                    
-                    email = EmailMessage(
-                        subject='Cancelación de Evento en Oasis Night Club',
-                        body=mensaje_html,
-                        from_email=settings.EMAIL_HOST_USER,
-                        to=[destinatario],
-                    )
-                    email.content_subtype = 'html' 
-
-                    email.send()
-                except Exception as e:
-                    messages.error(request, f"Error al enviar el correo: {e}")
+        # Si hay entradas, enviar correos de cancelación en segundo plano
+        for entrada in entradas:
+            qr_entradas = EntradasQR.objects.filter(compra=entrada)
+            threading.Thread(target=enviar_correo_cancelacion_evento_entrada, args=(entrada, qr_entradas)).start()
 
         messages.success(request, "Evento Eliminado Correctamente!")
 
@@ -957,6 +1131,28 @@ def eliminarEvento(request, id):
         messages.error(request, f'Error: {e}')
     
     return redirect('Eventos')
+
+
+def eliminarEventoDefinitivo(request, id):
+    try:
+        evento = Evento.objects.get(pk=id)
+
+        if CompraEntrada.objects.filter(evento=evento).exists():
+            messages.warning(request, "No puedes eliminar un evento que tiene entradas por resolver")
+            return redirect('EventosEliminados')
+        
+        elif Reserva.objects.filter(evento=evento).exists():
+            messages.warning(request, "No puedes eliminar un evento que tiene reservas por resolver")
+            return redirect('EventosEliminados')
+        
+        else:
+            evento.delete()
+            messages.success(request, "Evento eliminado correctamente")
+            return redirect('EventosEliminados')
+    except Exception as e:
+        messages.error(request, f'Error: {e}')
+        return redirect('EventosEliminados')
+
 
 def actualizarEvento(request, id):
     if request.method == "POST":
@@ -968,6 +1164,30 @@ def actualizarEvento(request, id):
         aforo = request.POST.get('aforo')
         desc = request.POST.get('descripcion')
         foto_nueva = request.FILES.get('foto_nueva')
+
+        if Evento.objects.filter(nombre=nom, fecha=date).exclude(pk=id).exists():
+            for i in Evento.objects.filter(nombre=nom, fecha=date).exclude(pk=id):
+                if i.estado == True:
+                    messages.warning(request, 'Este evento ya está creado en el sistema para esta fecha.')
+                    return redirect('Eventos')
+        
+        if date < datetime.now().strftime("%Y-%m-%d"):
+            messages.warning (request, 'La fecha debe ser mayor o igual a la actual.')
+            return redirect('Eventos')
+        
+        if int(general) <= 0:
+            messages.warning (request, 'La entrada general debe ser mayor a 0.')
+            return redirect('Eventos')
+        
+        if int(vip) <= 0:
+            messages.warning (request, 'La entrada VIP debe ser mayor a 0.')
+            return redirect('Eventos')
+        
+        if int(aforo) <= 0:
+            messages.warning (request, 'El aforo debe ser mayor a 0.')
+            return redirect('Eventos')
+
+
         try:
             q = Evento.objects.get(pk=id)
             q.nombre = nom
@@ -1021,15 +1241,42 @@ def eveEntradas(request, id):
     return render(request, 'Oasis/eventos/eveEntradas.html', contexto)
 
 
+
+
+def enviar_correo_cancelacion_entrada(entrada, total_entradas):
+    try:
+        destinatario = entrada.usuario.email
+        contexto = {
+            'compra': entrada,
+            'total_entradas': total_entradas
+        }
+        mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_entrada_email_template.html', contexto)
+
+        subject = "Cancelación de Entrada en Oasis Night Club" if total_entradas == 1 else "Cancelación de Entradas en Oasis Night Club"
+
+        email = EmailMessage(
+            subject=subject,
+            body=mensaje_html,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[destinatario],
+        )
+        email.content_subtype = 'html'
+        email.send()
+
+    except Exception as e:
+        print(f"Error al enviar el correo: {e}")
+
+
 def eliminarEntrada(request, id):
     try:
         entrada = CompraEntrada.objects.get(pk=id)
-        entrada.delete()
+        evento = Evento.objects.get(pk=entrada.evento.id)
+        
         qr_entradas = EntradasQR.objects.filter(compra=entrada)
         qr_entradas.delete()
-        evento = Evento.objects.get(pk=entrada.evento.id)
+        entrada.delete()
+
         evento.entradas_disponibles = F('entradas_disponibles') + entrada.entrada_general + entrada.entrada_vip
-        
         cantidad_entradas_evento = CompraEntrada.objects.filter(evento=evento).count()
 
         if cantidad_entradas_evento == 0:
@@ -1037,38 +1284,13 @@ def eliminarEntrada(request, id):
 
         evento.save()
 
-        try:
-            destinatario = entrada.usuario.email
-            total_entradas = entrada.entrada_general + entrada.entrada_vip
-            contexto = {
-                'compra': entrada,
-                'total_entradas': total_entradas
-            }
-            mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_entrada_email_template.html', contexto)
+        total_entradas = entrada.entrada_general + entrada.entrada_vip
+        threading.Thread(target=enviar_correo_cancelacion_entrada, args=(entrada, total_entradas)).start()
 
-            subject = ""
-            if total_entradas > 1:
-                subject = "Cancelación de Entradas en Oasis Night Club"
-            else:
-                subject = "Cancelación de Entrada en Oasis Night Club"
-
-            # Enviar el correo con el PDF adjunto
-            email = EmailMessage(
-                subject=subject,
-                body=mensaje_html,
-                from_email=settings.EMAIL_HOST_USER,
-                to=[destinatario],
-            )
-            email.content_subtype = 'html'  # Asegurarse de que el correo sea HTML
-            email.send()  # Enviar el correo
-
-            messages.success(request, "Entrada Eliminada Correctamente!")
-
-        except Exception as e:
-            messages.error(request, f"Error al enviar el correo: {e}")
+        messages.success(request, "Entrada eliminada correctamente!")
 
     except Exception as e:
-        messages.error(request, f'Error: {e}')
+        messages.error(request, f"Error: {e}")
     
     return redirect(f'/Evento_Entradas/{evento.id}')
 
@@ -1083,13 +1305,28 @@ def eveReserva(request, id):
 
     return render(request, 'Oasis/eventos/eveReserva.html', contexto)
 
+def eveReservaLlegada(request, codigo_qr):
+    try:
+        reserva = Reserva.objects.get(codigo_qr=codigo_qr)
+        reserva.estado_qr = False
+        reserva.save()
+
+        messages.success(request, "¡Llegada al bar exitosa!")
+        return redirect(reverse('eveReserva', args=[reserva.evento.id]))
+
+    except Exception as e:
+        messages.error(request, f'Error: {e}')
+        return redirect(reverse('eveReserva', args=[reserva.evento.id]))
+
 
 def eveEliminados(request):
     logueo = request.session.get("logueo", False)
     user = Usuario.objects.get(pk = logueo["id"])
     q = Evento.objects.filter(estado=False)
+
     contexto = {'data' : q, 'user':user, 'url': "Gestion_Eventos"}
     return render(request, "Oasis/eventos/eveEliminados.html", contexto)
+
 
 # MENÚ (CATEGORÍAS)
 def meInicio(request):
@@ -1109,6 +1346,10 @@ def crearCategoria(request):
 
             if foto == None:
                 foto = "Img_categorias/default.jpg"
+
+            if Categoria.objects.filter(nombre=nom).exists():
+                messages.warning(request, 'Ya existe una categoria con ese nombre.')
+                return redirect('Menu')
 
             # INSERT INTO Categoria VALUES (nom, desc)
             q = Categoria(
@@ -1142,6 +1383,11 @@ def actualizarCategoria(request, id):
         nom = request.POST.get('nombre')
         desc = request.POST.get('descripcion')
         foto_nueva = request.FILES.get('foto_nueva')
+
+        if Categoria.objects.filter(nombre=nom).exclude(pk=id).exists():
+            messages.warning(request, 'Ya existe otra categoria con ese nombre.')
+            return redirect('Menu')
+    
         try:
             q = Categoria.objects.get(pk=id)
             q.nombre = nom
@@ -1231,6 +1477,10 @@ def crearCarpeta(request):
             if foto == None:
                 foto = "Img_carpeta/default.png"
 
+            if Galeria.objects.filter(nombre=nom, fecha=date).exists():
+                messages.warning(request, 'Ya existe una carpeta con ese nombre y fecha.')
+                return redirect('gaInicio')
+
             # INSERT INTO Evento VALUES (nom, date, time, desc, foto)
             q = Galeria(
                 nombre = nom,
@@ -1263,6 +1513,12 @@ def actualizarCarpeta(request, id):
         nom = request.POST.get('nombre')
         date = request.POST.get('fecha')
         foto_nueva = request.FILES.get('foto_nueva')
+
+        if Galeria.objects.filter(nombre=nom, fecha=date).exclude(pk=id).exists():
+            messages.warning(request, 'Ya existe una carpeta con ese nombre y fecha.')
+            return redirect('gaFotos', id=id)
+
+
         try:
             q = Galeria.objects.get(pk=id)
             q.nombre = nom
@@ -1280,7 +1536,7 @@ def actualizarCarpeta(request, id):
     else:
         messages.warning (request, f'Error: No se enviaron datos...')
         
-    return redirect('gaInicio')
+    return redirect('gaFotos', id=id)
 
 
 def gaFotos(request, id):
@@ -1290,6 +1546,7 @@ def gaFotos(request, id):
     fotos = Fotos.objects.filter(carpeta = carpeta)
     contexto = {'user':user, 'carpeta': carpeta, "fotos": fotos,'url': 'gaFotos'}
     return render(request, 'Oasis/galeria/gaFotos.html', contexto)
+
 
 def agregarFoto(request, id):
     if request.method == "POST":
@@ -1445,6 +1702,33 @@ def generar_pdf_entrada(request, compra, entrada):
         return None
     return response
 
+def enviar_correo_entradas(request, compra, qr_entradas, destinatario):
+    mensaje_html = render_to_string('Oasis/emails/plantillas/entrada_email_template.html', {
+        'compra': compra,
+        'entradas': qr_entradas,
+        'request': request
+    })
+    
+    email = EmailMessage(
+        subject='Compra de entradas en Oasis Night Club',
+        body=mensaje_html,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[destinatario],
+    )
+    email.content_subtype = 'html' 
+
+    # Generar y adjuntar PDFs por cada entrada
+    for entrada in qr_entradas:
+        pdf = generar_pdf_entrada(request, compra, entrada)
+        if pdf:
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
+                temp_pdf.write(pdf.content)
+                temp_pdf_path = temp_pdf.name
+            email.attach_file(temp_pdf_path)
+            os.remove(temp_pdf_path)
+
+    # Enviar el correo
+    email.send()
 
 def comprar_entradas(request, id):
     logueo = request.session.get("logueo", False)
@@ -1456,6 +1740,10 @@ def comprar_entradas(request, id):
 
     user = Usuario.objects.get(pk=logueo["id"])
     evento = Evento.objects.get(pk=id)
+
+    if user.rol != 4:
+        messages.append({'message_type': 'warning', 'message': 'Debes de ser un cliente para comprar entradas'})
+        return JsonResponse({'messages': messages})
 
     if request.method == "POST":    
         data = json.loads(request.body)
@@ -1497,35 +1785,13 @@ def comprar_entradas(request, id):
                     ) 
 
             qr_entradas = EntradasQR.objects.filter(compra=compra.id)
-
             destinatario = user.email
-            mensaje_html = render_to_string('Oasis/emails/plantillas/entrada_email_template.html', {
-                'compra': compra,
-                'entradas': qr_entradas,
-                'request': request
-            })
-            
-            email = EmailMessage(
-                subject='Compra de entradas en Oasis Night Club',
-                body=mensaje_html,
-                from_email=settings.EMAIL_HOST_USER,
-                to=[destinatario],
-            )
-            email.content_subtype = 'html' 
 
-            # Generar y adjuntar PDFs por cada entrada
-            for entrada in qr_entradas:
-                pdf = generar_pdf_entrada(request, compra, entrada)
-                if pdf:
-                    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
-                        temp_pdf.write(pdf.content)
-                        temp_pdf_path = temp_pdf.name
-                    email.attach_file(temp_pdf_path)
-                    os.remove(temp_pdf_path)
+            # Iniciar el hilo para enviar el correo en segundo plano
+            correo_thread = threading.Thread(target=enviar_correo_entradas, args=(request, compra, qr_entradas, destinatario))
+            correo_thread.start()
 
-            # Enviar el correo
-            email.send()
-
+            # Confirmación inmediata de la compra
             messages.append({'message_type': 'success', 'message': 'Entradas compradas correctamente'})
         else:
             messages.append({'message_type': 'error', 'message': 'No hay suficientes entradas disponibles'})
@@ -1542,16 +1808,48 @@ def generar_pdf_reserva(request, reserva):
         return HttpResponse('Error al generar PDF')
     return response
 
+def enviar_correo_reserva(user, reserva, request):
+    pdf = generar_pdf_reserva(request, reserva)
+
+    if pdf:
+        destinatario = user.email
+        contexto = {
+            'reserva': reserva,
+            'request': request
+        }
+        mensaje_html = render_to_string('Oasis/emails/plantillas/reserva_email_template.html', contexto)
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
+            temp_pdf.write(pdf.content)
+            temp_pdf_path = temp_pdf.name
+
+        email = EmailMessage(
+            subject='Reserva exitosa en Oasis Night Club',
+            body=mensaje_html,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[destinatario],
+        )
+        email.attach_file(temp_pdf_path)
+        email.content_subtype = 'html'
+        email.send()
+
+        os.remove(temp_pdf_path)
+
+
 def reservar_mesa(request, id):
     logueo = request.session.get("logueo", False)
     messages = []
 
     if not logueo:
-        messages.append({'message_type': 'warning', 'message': 'Inicia sesión antes de comprar'})
+        messages.append({'message_type': 'warning', 'message': 'Inicia sesión antes de reservar'})
         return JsonResponse({'messages': messages}) 
 
     user = Usuario.objects.get(pk=logueo["id"])
     evento = Evento.objects.get(pk=id)
+
+    if user.rol != 4:
+        messages.append({'message_type': 'warning', 'message': 'Debes de ser un cliente para reservar una mesa'})
+        return JsonResponse({'messages': messages})
 
     if request.method == "POST":
         data = json.loads(request.body)
@@ -1559,7 +1857,6 @@ def reservar_mesa(request, id):
         total = int(data.get("total_general", 0))
 
         if evento.entradas_disponibles >= mesa.capacidad:
-            # Crear la reserva
             reserva = Reserva.objects.create(
                 usuario=user, 
                 evento=evento,  
@@ -1575,43 +1872,35 @@ def reservar_mesa(request, id):
             mesa.estado_reserva = 'Reservada'
             mesa.save()
 
-            # Generar el PDF
-            pdf = generar_pdf_reserva(request, reserva)
+            messages.append({'message_type': 'success', 'message': 'Mesa reservada correctamente'})
 
-            if pdf:
-                destinatario = user.email
-                contexto = {
-                    'reserva': reserva,
-                    'request': request
-                }
-                mensaje_html = render_to_string('Oasis/emails/plantillas/reserva_email_template.html', contexto)
+            threading.Thread(target=enviar_correo_reserva, args=(user, reserva, request)).start()
 
-                # Guardar el PDF en un archivo temporal
-                with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
-                    temp_pdf.write(pdf.content)
-                    temp_pdf_path = temp_pdf.name
-
-                # Enviar el correo con el PDF adjunto
-                email = EmailMessage(
-                    subject='Reserva exitosa en Oasis Night Club',
-                    body=mensaje_html,
-                    from_email=settings.EMAIL_HOST_USER,
-                    to=[destinatario],
-                )
-                email.attach_file(temp_pdf_path)  # Adjuntar el archivo PDF
-                email.content_subtype = 'html'  # Asegurarse de que el correo sea HTML
-                email.send()  # Enviar el correo
-
-                messages.append({'message_type': 'success', 'message': 'Mesa reservada correctamente'})
-                
-                # Eliminar el archivo temporal después de enviar
-                os.remove(temp_pdf_path)
-            else:
-                messages.append({'message_type': 'error', 'message': 'Error al generar el PDF.'})
         else:
             messages.append({'message_type': 'error', 'message': 'No hay suficientes entradas disponibles'})
 
     return JsonResponse({'messages': messages})
+
+
+def enviar_correo_cancelacion_reserva(reserva):
+    try:
+        destinatario = reserva.usuario.email
+        contexto = {
+            'reserva': reserva,
+        }
+        mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_reserva_email_template.html', contexto)
+
+        email = EmailMessage(
+            subject='Cancelación de Reserva en Oasis Night Club',
+            body=mensaje_html,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[destinatario],
+        )
+        email.content_subtype = 'html'
+        email.send() 
+
+    except Exception as e:
+        print(f"Error al enviar el correo: {e}") 
 
 
 def eliminar_reserva(request, id):
@@ -1619,38 +1908,22 @@ def eliminar_reserva(request, id):
         reserva = Reserva.objects.get(pk=id)
         reserva.evento.entradas_disponibles += reserva.mesa.capacidad
         reserva.delete()
-            
-        cantidad_reservas_evento = Reserva.objects.filter(evento=reserva.evento).count()
 
+        cantidad_reservas_evento = Reserva.objects.filter(evento=reserva.evento).count()
         if cantidad_reservas_evento == 0:
             reserva.evento.reservas = False
-        
+
         reserva.evento.save()
 
-        reserva.mesa.estado_reserva = "Disponible"
+        mesa = Mesa.objects.get(pk=reserva.mesa.id)
+        if not Reserva.objects.filter(mesa=mesa).exists():
+            reserva.mesa.estado_reserva = "Disponible"
+
         reserva.mesa.save()
 
-        try:
-            destinatario = reserva.usuario.email
-            contexto = {
-                'reserva': reserva,
-            }
-            mensaje_html = render_to_string('Oasis/emails/plantillas/cancelacion_reserva_email_template.html', contexto)
+        threading.Thread(target=enviar_correo_cancelacion_reserva, args=(reserva,)).start()
 
-            # Enviar el correo con el PDF adjunto
-            email = EmailMessage(
-                subject='Cancelación de Reserva en Oasis Night Club',
-                body=mensaje_html,
-                from_email=settings.EMAIL_HOST_USER,
-                to=[destinatario],
-            )
-            email.content_subtype = 'html'  # Asegurarse de que el correo sea HTML
-            email.send()  # Enviar el correo
-
-            messages.success(request,'Reserva eliminada correctamente')
-
-        except Exception as e:
-            messages.error(request, f"Error al enviar el correo: {e}")
+        messages.success(request, 'Reserva eliminada correctamente')
 
     except Exception as e:
         messages.error(request, f"Error al eliminar la reserva: {e}")
@@ -2002,34 +2275,12 @@ class comprar_entradas_movil(APIView):
                             tipo_entrada="VIP",
                         ) 
 
+
                 qr_entradas = EntradasQR.objects.filter(compra=compra.id)
-
                 destinatario = usuario.email
-                mensaje = f"""
-                    <h1 style='color:blue;'>Oasis</h1>
-                    <p>Usted ha comprado <b>{qr_entradas.count()}</b> {'entradas' if qr_entradas.count() > 1 else 'entrada'} para el evento <b>{compra.evento.nombre}</b> en la fecha <b>{compra.evento.fecha}</b></p>
-                    {'<p>Estos son los códigos QR de las entradas:' if qr_entradas.count() > 1 else '<p>Este es el código QR de la entrada:'}
 
-                    <table style='border-collapse: collapse; width: 100%;'>
-                        <thead>
-                            <tr>
-                                <th style='border: 1px solid black; padding: 8px;'>Tipo de Entrada</th>
-                                <th style='border: 1px solid black; padding: 8px;'>Código QR</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {''.join(f'''
-                            <tr>
-                                <td style='border: 1px solid black; padding: 8px;'>{e.tipo_entrada}</td>
-                                <td style='border: 1px solid black; padding: 8px;'>
-                                    <img src="{e.qr_imagen.url}" alt="Código QR" width="100">
-                                </td>
-                            </tr>''' for e in qr_entradas)}
-                        </tbody>
-                    </table>
-                """
-                
-                EmailThread('Compra de entradas en Oasis', mensaje, [destinatario]).start()
+                correo_thread = threading.Thread(target=enviar_correo_entradas, args=(request, compra, qr_entradas, destinatario))
+                correo_thread.start()   
 
                 return JsonResponse({'message':'Entradas compradas con éxito'})
             else:
@@ -2068,7 +2319,8 @@ class entradas_usuario_movil(APIView):
                         'aforo': evento.aforo,
                         'precio_entrada': evento.precio_entrada,
                         'precio_vip': evento.precio_vip,
-                        'foto': evento.foto.url
+                        'foto': evento.foto.url,
+                        'estado': evento.estado
                     }
                 })
 
@@ -2108,6 +2360,32 @@ class entradas_detalles_usuario_movil(APIView):
         except Exception as e:
             return JsonResponse({'error': f'Error: {str(e)}'})
 
+
+class mesas_reservadas_movil(APIView):
+    def get(self, request, id_evento):
+        try:
+            evento = Evento.objects.get(pk=id_evento)
+            reservas = Reserva.objects.filter(evento=evento)
+            mesas = Mesa.objects.all()
+
+            listMesasReservadas = [reserva.mesa.id for reserva in reservas]
+
+            mesas_serializer = MesaSerializer(mesas, many=True, context={'request': request})
+
+            # Marcar las mesas como reservadas
+            mesas_data = []
+            for mesa in mesas_serializer.data:
+                mesa['reservada'] = mesa['id'] in listMesasReservadas
+                mesas_data.append(mesa)
+
+            return Response({
+                'mesas': mesas_data,
+            })
+        except Exception as e:
+            return JsonResponse({'error': f'Error: {str(e)}'})
+
+                
+
 class reservar_mesa_movil(APIView):
     def post(self, request):
         try:
@@ -2137,17 +2415,9 @@ class reservar_mesa_movil(APIView):
                 mesa.estado_reserva = 'Reservada'
                 mesa.save()
 
-                # Enviar correo en un hilo separado
-                destinatario = usuario.email
-                mensaje = f"""
-                    <h1 style='color:blue;'>Oasis</h1>
-                    <p>Usted ha reservado la <b>{reserva.mesa.nombre}</b> para el evento <b>{reserva.evento.nombre}</b> en la fecha <b>{reserva.evento.fecha}</b></p>
-                    <p>Este es su código QR para acceder:</p>
-                    <img src="{reserva.qr_imagen.url}" alt="Código QR"/>
-                """
-                EmailThread('Reserva en Oasis', mensaje, [destinatario]).start()
-
+                threading.Thread(target=enviar_correo_reserva, args=(usuario, reserva, request)).start()
                 return JsonResponse({'message':'Reserva hecha con éxito'})
+
             else:
                 return JsonResponse({'message':'No hay suficientes entradas disponibles'})
 
@@ -2177,7 +2447,8 @@ class reservas_usuario_movil(APIView):
                         'id': evento.id,
                         'nombre': evento.nombre,
                         'fecha': evento.fecha,
-                        'foto': evento.foto.url
+                        'foto': evento.foto.url,
+                        'estado': evento.estado
                     }
                 })
             
@@ -2577,6 +2848,10 @@ def crear_pedido_usuario(request, id):
         else:
             messages.error(request, "Inicia sesión ó registrate para realizar el pedido.")
             return redirect('pedidoUsuario', id=id)
+
+        if user.rol != 4:
+            messages.warning(request, 'Debes de ser un cliente para realizar el pedido.')
+            return redirect('pedidoUsuario', id=id)
         
         mesa = Mesa.objects.get(pk=id)
         
@@ -2780,7 +3055,7 @@ def ver_mesas_a_cargo(request):
         mesas = Mesa.objects.filter(usuario=user)
 
         contexto = {
-            'user':user, 'mesas':mesas
+            'user':user, 'mesas':mesas, 'url': 'ver_mesas_a_cargo'
         }
         return render(request, "Oasis/usuario/mesas_a_cargo.html", contexto)
     
@@ -3023,6 +3298,7 @@ def ver_detalles_usuario(request):
     }
     return render(request, ruta, contexto)
 
+
 #mas_info
 def mas_info(request):
     return render(request, 'Oasis/mas_info.html')
@@ -3099,7 +3375,6 @@ def verificar_recuperar(request):
 		correo = request.GET.get("correo")
 		contexto = {"correo":correo}
 		return render(request, "Oasis/login/verificar_recuperar.html", contexto)
-
 
 
 # -------------------------------------------------------------------------------------------

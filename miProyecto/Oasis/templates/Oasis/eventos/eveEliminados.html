@@ -60,7 +60,7 @@
                 {% endif %}
                 <td data-label="Acciones">
                   <a type="button" class="btn btn-info" href="{% url 'detalleEvento' e.id %}"><i class="bi bi-eye-fill"></i></a>
-                  <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarEvento' e.id %}')"><i class="bi bi-x-lg"></i></a>
+                  <a type="button" class="btn btn-danger" href="javascript:eliminar('{% url 'eliminarEventoDefinitivo' e.id %}')"><i class="bi bi-x-lg"></i></a>
                 </td>
               </tr>
             {% endfor %}

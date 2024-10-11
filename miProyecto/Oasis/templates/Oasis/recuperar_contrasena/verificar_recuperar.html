@@ -1,0 +1,70 @@
+{% extends 'Oasis/barNavInicio.html' %}
+{% load static %}
+
+{% block titulo %}Registro{% endblock %}
+
+{% block contenedor %}
+
+<div class="container-fluid">
+  <div class="linea"></div>
+</div>
+
+<div class="container-fluid px-0 py-5 my-5">
+  <div class="row mx-0 justify-content-center text-center pb-5 pt-3">
+      <div class="col-lg-6">
+          <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Recuperar contraseña</h6>
+          <h1>¡Recupera tu contraseña!</h1>
+      </div>
+  </div>
+
+  <div class="row justify-content-center bg-registro mx-0">
+    <div class="col-lg-6 py-5">
+      <div class="p-5 my-5" style="background: rgba(33, 30, 28, 0.7);">
+        {% if check %}
+            <h4 class="text-white text-center mb-4">Ingresa tu nueva contraseña y recupera tu cuenta</h4>
+            <form method="POST" action="{% url 'verificar_recuperar' %}">
+            {% csrf_token %}
+                <input type="hidden" name="check" value="{{ check }}"/>
+                <input type="hidden" name="correo" value="{{correo}}"><br>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                    <input type="password" class="form-control text-light bg-transparent p-4" placeholder="Contraseña nueva" required="required" name="nueva1"/>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                    <input type="password" class="form-control text-light bg-transparent p-4" placeholder="Repetir contraseña" required="required" name="nueva2"/>
+                    </div>
+                </div>
+                <div class="form-row justify-content-center mt-4">
+                    <div class="col-sm-6">
+                      <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Guardar</button>
+                    </div>
+                </div>
+            </form>
+                
+        {% else %}
+            <h4 class="text-white text-center mb-4">Ingresa el código enviado al correo</h4>
+            <form method="POST" action="{% url 'verificar_recuperar' %}">
+                {% csrf_token %}
+                <input type="hidden" name="correo" required="" value="{{correo}}"><br>
+                <div class="row justify-content-center">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                        <input type="text" class="form-control text-light bg-transparent p-4" placeholder="Código" required="required" name="codigo"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row justify-content-center mt-4">
+                    <div class="col-sm-6">
+                    <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Verificar</button>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

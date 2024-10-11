@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="{% static 'Oasis/css/barrasGestiones.css' %}">
   <link rel="stylesheet" href="{% static 'Oasis/css/pedidoEmpleado.css' %}">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'Oasis/img/favicon-32x32.png' %}">
-  
+
   <!-- Favicon -->
   <link href="img/favicon.ico" rel="icon">
 
@@ -79,9 +79,9 @@
                     <img src="{{ user.foto.url }}" alt="LogoUsuario" width="40px" height="40px" class="rounded-circle">
                   </a>
               {% else %}
-                  <div class="nav-item nav-link">
-                    <a type="button" class="btn btn-primary d-none d-lg-block" data-bs-toggle="offcanvas" data-bs-target="#pantallaLogin">Iniciar Sesión</a>
-                  </div>
+                  <a class="nav-item nav-link">
+                    <a class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#pantallaLogin">Iniciar Sesión</a>
+                  </a>
               {% endif %}
           </div>
       </nav>
@@ -108,7 +108,7 @@
             <label for="input" class="label">Escribe tu contraseña</label>
             <div class="underline"></div>
           </div>
-          <a class="olvidarContraseña" href="{% url 'recuperar_clave' %}">Olvidé mi contraseña</a>      
+          <a href="{% url 'form_recuperar_contrasena' %}" class="olvidarContraseña">Olvidé mi contraseña</a>
           <button type="submit" class="btn-normal">Entrar</button>
           <p class="p1">¿No tiene una cuenta?</p>
         </div>

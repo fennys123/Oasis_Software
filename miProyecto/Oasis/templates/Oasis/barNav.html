@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="{% static 'Oasis/css/entradas.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'Oasis/img/favicon-32x32.png' %}">
-    
+
 
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -78,7 +78,7 @@
                 </a></li>
               {% endif %}
               {% if user.rol == 1 %}
-                <li><a href="{% url 'Mesas'%}" {% if url == 'Gestion_Mesas' %} class="active" {% endif %}>
+                <li><a href="{% url 'Mesas'%}" {% if url == 'Gestion_Mesas' or url == 'reservasMesa' %} class="active" {% endif %}>
                   <span class="icon"><i class="fas fa-chair"></i></span>
                   <span class="title">Mesas</span>
                 </a></li>
@@ -107,7 +107,7 @@
               {% endif %}
             </ul>
             <ul class="items-barra logout">
-              <li><a href="{% url 'ver_perfil' %}" {% if url == 'Perfil' or url == 'ver_detalles_pedido_usuario' or url == 'historial_pedidos' or url == 'reservas' or url == 'reservas_info' or url == 'entradas' or url == 'entradas_info' %} class="active" {% endif %}>
+              <li><a href="{% url 'ver_perfil' %}" {% if url == 'Perfil' or url == 'ver_detalles_pedido_usuario' or url == 'historial_pedidos' or url == 'ver_mesas_a_cargo' %} class="active" {% endif %}>
                 <span class="icon"><i class="fas fa-user-circle"></i></span>
                 <span class="title">Mi perfil</span>
               </a></li>
@@ -145,8 +145,8 @@
     <script>
 
         $(document).ready(function () {
-            if ($.fn.dataTable.isDataTable('#table')) {
-            $('#table').DataTable().clear().destroy();
+            if ($.fn.dataTable.isDataTable('#dataTable')) {
+            $('#dataTable').DataTable().clear().destroy();
             }
 
             var table = $('#table').DataTable({

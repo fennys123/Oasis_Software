@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/1.0/comprar_entradas/', views.comprar_entradas_movil.as_view()),
     path('api/1.0/entradas_usuario/<int:id>/', views.entradas_usuario_movil.as_view()),
     path('api/1.0/entradas_detalles_usuario/<int:user_id>/<int:entrada_id>/', views.entradas_detalles_usuario_movil.as_view()),
+    path('api/1.0/mesas_reservadas/<int:id_evento>/', views.mesas_reservadas_movil.as_view()),
     path('api/1.0/reservar_mesa/', views.reservar_mesa_movil.as_view()),
     path('api/1.0/reservas_usuario/<int:id>/', views.reservas_usuario_movil.as_view()),
     path('api/1.0/reservas_detalles_usuario/<int:user_id>/<int:reserva_id>/', views.reservas_detalles_usuario_movil.as_view()),
@@ -62,6 +63,9 @@ urlpatterns = [
 	path('logout/', views.logout, name="logout"),
 
 
+    path('form_recuperar_contrasena/', views.recuperar_contrasena_template, name='form_recuperar_contrasena'),
+    path('recuperar_contrasena/', views.recuperar_contrasena, name='recuperar_contrasena'),
+    path('verificar_recuperar/', views.verificar_recuperar, name='verificar_recuperar'),
     path('registro/', views.registro, name='registro'),
 
     #TÉRMINOS Y CONDICIONES
@@ -82,10 +86,11 @@ urlpatterns = [
 
     #CAMBIAR CONTRASEÑA
     path('cambiar_clave/', views.cambiar_clave, name="cambiar_clave"),
-
+    
     #RECUPERAR CONTRASEÑA
     path('recuperar_clave/', views.recuperar_clave, name="recuperar_clave"),
     path('verificar_recuperar/', views.verificar_recuperar, name="verificar_recuperar"),
+
 
     #USUARIOS
     path('Gestion_Usuarios/', views.guInicio, name='guInicio'),
@@ -150,12 +155,16 @@ urlpatterns = [
     path('Eliminar_Evento/<int:id>', views.eliminarEvento, name='eliminarEvento'),
     path('Actualizar_Evento/<int:id>', views.actualizarEvento, name='actualizarEvento'),
     path('Reservas/<int:id>', views.eveReserva, name='eveReserva'),
+    path('ReservasLLegada/<str:codigo_qr>/<int:id>', views.eveReservaLlegada, name='eveReservaLlegada'),
     path('Evento_Entradas/<int:id>', views.eveEntradas, name='eveEntradas'),
     path('Eliminar_Entrada/<int:id>', views.eliminarEntrada, name='eliminarEntrada'),
 
     path('Detalle_Evento/<int:id>', views.detalleEvento, name='detalleEvento'),
 
     path('Gestion_Eventos_Eliminados/', views.eveEliminados, name='EventosEliminados'),
+    path('Eliminar_Evento_Definitivo/<int:id>', views.eliminarEventoDefinitivo, name='eliminarEventoDefinitivo'),
+
+
 
 #   CRUD MENÚ (CATEGORÍAS)
     path('Gestion_Menu/', views.meInicio, name='Menu'),

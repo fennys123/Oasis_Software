@@ -18,7 +18,7 @@ class BloqueoSerializer(serializers.HyperlinkedModelSerializer):
 class EventoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Evento
-        fields = ['id', 'nombre', 'fecha', 'hora_incio', 'descripcion', 'aforo', 'entradas_disponibles','precio_entrada', 'precio_vip', 'reservas','foto']
+        fields = ['id', 'nombre', 'fecha', 'hora_incio', 'descripcion', 'aforo', 'entradas_disponibles','precio_entrada', 'precio_vip', 'reservas','foto', 'estado']
 
 class CompraEntradaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
