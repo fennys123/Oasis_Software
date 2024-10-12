@@ -146,14 +146,6 @@
                               </select>
                               <span>Rol</span>
                           </label>
-                          <label class="select-label">
-                            <select name="Estado" class="input select">
-                                {% for estado_value, estado_nombre in estado %}
-                                    <option value="{{ estado_value }}">{{ estado_nombre }}</option>
-                                {% endfor %}
-                            </select>
-                            <span>Estado</span>
-                        </label>
                       </div> 
                       <label>
                         <input required="true" type="date" class="input" name="fechaNacimiento">
@@ -207,14 +199,6 @@
                               </select>
                               <span>Rol</span>
                           </label>
-                          <label class="select-label">
-                            <select name="Estado" class="input select">
-                                {% for estado_value, estado_nombre in estado %}
-                                  <option value="{{ estado_value }}" {% if c.estado == estado_value %}selected{% endif %}>{{ estado_nombre }}</option>
-                                {% endfor %}
-                            </select>
-                            <span>Estado</span>
-                        </label>
                       </div> 
                       <label>
                         <input required="true" type="date" class="input" name="fechaNacimiento" value="{{ c.fecha_nacimiento|date:'Y-m-d' }}">

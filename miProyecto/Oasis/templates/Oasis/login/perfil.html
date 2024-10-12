@@ -11,32 +11,7 @@
         <span class="name">Inicio</span> 
       </a>
     </label>
-    {% if user.rol == 4 %}
-      <label class="radio">
-        <a href="{% url 'ver_detalles_pedido_usuario' %}">
-          <input type="radio" name="radio" />
-          <span class="name">Pedidos activos</span>
-        </a>
-      </label>
-      <label class="radio">
-        <a href="{% url 'ver_ventas' %}">
-          <input type="radio" name="radio" />
-          <span class="name">Historial de pedidos</span>
-        </a>
-      </label>
-      <label class="radio">
-        <a href="{% url 'reservas_usuario' %}">
-          <input type="radio" name="radio" />
-          <span class="name">Reservas</span>
-        </a>
-      </label>
-      <label class="radio">
-        <a href="{% url 'entradas_usuario' %}">
-          <input type="radio" name="radio" />
-          <span class="name">Entradas</span>
-        </a>
-      </label>
-    {% else %}
+    {% if user.rol == 1 or user.rol == 3 %}
       <label class="radio">
         <a href="{% url 'ver_ventas' %}">
           <input type="radio" name="radio" />

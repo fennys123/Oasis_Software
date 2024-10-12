@@ -1,0 +1,59 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Reporte de Mesas{% endblock %}
+
+{% block contenedor %}
+  <div class="radio-inputs">
+    <label class="radio">
+      <a href="{% url 'Mesas' %}">
+        <input type="radio" name="radio" />
+        <span class="name">Inicio</span>
+      </a>
+    </label>
+    <label class="radio">
+      <a href="{% url 'reporte_mesas' %}">
+        <input type="radio" name="radio" checked="" />
+        <span class="name">Reporte de Mesas</span>
+      </a>
+    </label>
+  </div>
+  <h1>Reporte de Ganancias por Mesa</h1>
+
+  <div id="contenedorTabla">
+    <table class="table" id="table">
+      <thead class="thead-light">
+        <tr>
+          <th>Mesa</th>
+          <th>Ganancia Total</th>
+          <th>Acciones</th> <!-- Nueva columna para el botón -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for reporte in mesas_reporte %}
+          <tr>
+            <td>{{ reporte.mesa.nombre }}</td>
+            <td>${{ reporte.total_ganancia|intcomma }}</td>
+            <td>
+              <form action="{% url 'limpiar_ganancias' reporte.mesa.id %}" method="post"> <!-- Aquí se define el método -->
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="confirmarLimpiarGanancias(event)"><i class="bi bi-backspace-reverse-fill"></i></button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+<script>
+  function confirmarLimpiarGanancias(event) {
+    event.preventDefault(); // Evita que el formulario se envíe inmediatamente
+    const confirmar = confirm("¿Estás seguro de que deseas limpiar las ganancias de esta mesa?");
+    if (confirmar) {
+      event.target.closest("form").submit(); // Envía el formulario si el usuario confirma
+    }
+  }
+</script>

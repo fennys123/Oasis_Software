@@ -97,8 +97,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('alert');
                 if (message.message_type === 'success') {
+
+                    // Cerrar el modal simulando el clic en el botón de cerrar
+                    const closeModalButton = document.querySelector('#confirmModal .btn-close');
+                    closeModalButton.click();
+
                     messageDiv.classList.add('alert-success');
                     alert(message.message);
+
+
                 } else if (message.message_type === 'error') {
                     messageDiv.classList.add('alert-danger');
                     alert(message.message);
@@ -201,6 +208,11 @@ document.getElementById('confirmarReservaBtn').addEventListener('click', functio
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('alert');
             if (message.message_type === 'success') {
+
+                // Cerrar el modal simulando el clic en el botón de cerrar
+                const closeModalButton = document.querySelector('#confirmCompraMesa .btn-close');
+                closeModalButton.click();
+
                 messageDiv.classList.add('alert-success');
                 alert(message.message);
             } else if (message.message_type === 'error') {

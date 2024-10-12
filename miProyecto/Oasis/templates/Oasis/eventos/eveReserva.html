@@ -84,7 +84,7 @@
                     {% if evento.estado %}
                       {% if r.estado_qr %}
                         <div class="modal-footer">
-                            <a href="{% url 'eveReservaLlegada' r.codigo_qr r.id %}" type="button" class="btn btn-success w-100">Llegada al bar</a>
+                            <a href="{% url 'eveReservaLlegada' r.codigo_qr %}" type="button" class="btn btn-success w-100">Llegada al bar</a>
                         </div>
                       {% endif %}
                     {% endif %}

@@ -37,7 +37,7 @@ class Usuario(AbstractUser):
     )
     estado = models.IntegerField(choices=ESTADO, default=1)
     foto = models.ImageField(upload_to="Img_usuarios/", default="Img_usuarios/default.png", blank=True)
-    codigo_recuperar = models.CharField(max_length=254, default="", blank=True, null=True)
+    token_recuperar = models.CharField(max_length=254, default="", blank=True, null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["nombre", "cedula", "fecha_nacimiento"]
@@ -160,7 +160,8 @@ class Mesa(models.Model):
     codigo_qr = models.CharField(max_length=100, unique=True)
     qr_imagen = models.ImageField(upload_to='mesas_qr_codes/', blank=True, null=True)
     usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, null=True, blank=True, default=None)
-    
+    total_ganancia = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Campo para almacenar ganancias
+
     def __str__(self):
         return f'{self.id}'
 
@@ -333,17 +334,20 @@ class Fotos(models.Model):
     carpeta = models.ForeignKey(Galeria, on_delete=models.DO_NOTHING)
 
 class Venta(models.Model):
-	fecha_venta = models.DateTimeField(auto_now=True)
-	usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, default=None)
-	ESTADOS = (
-		(1, 'Pendiente'),
-		(2, 'Enviado'),
-		(3, 'Rechazada'),
-	)
-	estado = models.IntegerField(choices=ESTADOS, default=1)
+    fecha_venta = models.DateTimeField(auto_now=True)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, default=None)
+    total_ganancia = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-	def __str__(self):
-		return f"{self.id} - {self.usuario}"
+    ESTADOS = (
+        (1, 'Pendiente'),
+        (2, 'Enviado'),
+        (3, 'Rechazada'),
+    )
+    estado = models.IntegerField(choices=ESTADOS, default=1)
+
+    def __str__(self):
+        return f"{self.id} - {self.usuario}"
+
 
 
 class DetalleVenta(models.Model):

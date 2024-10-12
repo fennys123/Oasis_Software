@@ -52,6 +52,8 @@ from rest_framework import viewsets
 from .serializers import *
 from rest_framework import viewsets
 
+#suma
+from django.db.models import Sum 
 
 #Importar el crypt
 from .crypt import *
@@ -185,7 +187,7 @@ def recuperar_contrasena(request):
             from random import randint
             import base64
             codigo = base64.b64encode(str(randint(100000, 999999)).encode("ascii")).decode("ascii")
-            q.codigo_recuperar = codigo
+            q.token_recuperar = codigo
             q.save()
 
             link = "http://127.0.0.1:8000/verificar_recuperar/?correo="+q.email
@@ -218,7 +220,7 @@ def verificar_recuperar(request):
 
             if c1 == c2:
                 q.password = hash_password(c1)
-                q.codigo_recuperar = ""
+                q.token_recuperar = ""
                 q.save()
 
                 messages.success(request, "Contraseña guardada correctamente.")
@@ -236,7 +238,7 @@ def verificar_recuperar(request):
             correo = request.POST.get("correo")
             codigo = request.POST.get("codigo")
             q = Usuario.objects.get(email=correo)
-            if (q.codigo_recuperar == codigo) and q.codigo_recuperar != "":
+            if (q.token_recuperar == codigo) and q.token_recuperar != "":
                 contexto = {"check": "ok", "correo":correo, 'user': user}
                 return render(request, "Oasis/recuperar_contrasena/verificar_recuperar.html", contexto)
             else:
@@ -499,7 +501,6 @@ def guUsuariosCrear(request):
             cedula = request.POST.get('cedula')
             foto = request.FILES.get('foto')
             rol = int(request.POST.get('rol'))
-            estado = int(request.POST.get('Estado'))
 
             if foto is None:
                 foto = "Img_usuarios/default.png"
@@ -534,7 +535,6 @@ def guUsuariosCrear(request):
                 password=hash_password(password),
                 rol=rol,
                 cedula=cedula,
-                estado=estado,
                 foto=foto,
             )
 
@@ -566,7 +566,6 @@ def guUsuariosActualizar(request, id):
         # password = request.POST.get('password')
         cedula = request.POST.get('cedula')
         rol = request.POST.get('rol')
-        estado = request.POST.get('Estado')
         foto_nueva = request.FILES.get('foto_nueva')
 
         try:
@@ -599,7 +598,6 @@ def guUsuariosActualizar(request, id):
             q.fecha_nacimiento = fecha_nacimiento
             q.rol = rol
             q.cedula = cedula
-            q.estado = estado
             
             if foto_nueva:
                 q.foto = foto_nueva
@@ -839,7 +837,7 @@ def peInicio(request):
     logueo = request.session.get("logueo", False)
     user = Usuario.objects.get(pk=logueo["id"])
 
-    pedidos = Pedido.objects.all().order_by('-fecha')
+    pedidos = Pedido.objects.all().order_by('fecha')
 
     detalles_pedidos = []
     for pedido in pedidos:
@@ -1741,6 +1739,10 @@ def comprar_entradas(request, id):
     user = Usuario.objects.get(pk=logueo["id"])
     evento = Evento.objects.get(pk=id)
 
+    if user.estado == 2:
+        messages.append({'message_type': 'warning', 'message': 'Estás bloqueado, no puedes comprar entradas.'})
+        return JsonResponse({'messages': messages})
+
     if user.rol != 4:
         messages.append({'message_type': 'warning', 'message': 'Debes de ser un cliente para comprar entradas'})
         return JsonResponse({'messages': messages})
@@ -1846,6 +1848,10 @@ def reservar_mesa(request, id):
 
     user = Usuario.objects.get(pk=logueo["id"])
     evento = Evento.objects.get(pk=id)
+
+    if user.estado == 2:
+        messages.append({'message_type': 'warning', 'message': 'Estás bloqueado, no puedes reservar una mesa.'})
+        return JsonResponse({'messages': messages})
 
     if user.rol != 4:
         messages.append({'message_type': 'warning', 'message': 'Debes de ser un cliente para reservar una mesa'})
@@ -2849,6 +2855,10 @@ def crear_pedido_usuario(request, id):
             messages.error(request, "Inicia sesión ó registrate para realizar el pedido.")
             return redirect('pedidoUsuario', id=id)
 
+        if user.estado == 2:
+            messages.warning(request, 'Estás bloqueado, no puedes realizar pedidos.')
+            return redirect('pedidoUsuario', id=id)
+
         if user.rol != 4:
             messages.warning(request, 'Debes de ser un cliente para realizar el pedido.')
             return redirect('pedidoUsuario', id=id)
@@ -3375,6 +3385,49 @@ def verificar_recuperar(request):
 		correo = request.GET.get("correo")
 		contexto = {"correo":correo}
 		return render(request, "Oasis/login/verificar_recuperar.html", contexto)
+
+# Reporte_mesas
+def reporte_mesas(request):
+    logueo = request.session.get("logueo", False)
+    user = Usuario.objects.get(pk=logueo["id"]) if logueo else None
+
+    mesas_reporte = []
+
+    try:
+        mesas = Mesa.objects.all()
+
+        for mesa in mesas:
+            # Filtrar pedidos y ventas de la mesa y sumar el total
+            total_ganancia = HistorialPedido.objects.filter(mesa=mesa).aggregate(total=Sum('total'))['total'] or 0
+            mesas_reporte.append({
+                'mesa': mesa,
+                'total_ganancia': total_ganancia
+            })
+
+        context = {
+            'mesas_reporte': mesas_reporte,
+            'user': user,
+            'url': "reporte_mesas"
+        }
+        return render(request, 'Oasis/mesas/reporte_mesas.html', context)
+    except Exception as e:
+        messages.error(request, f'Error: {e}')
+        return redirect('Mesas')
+
+
+# limpiar ganancia
+def limpiar_ganancias(request, mesa_id):
+    try:
+        mesa = Mesa.objects.get(id=mesa_id)
+        print(f'Antes: {mesa.total_ganancia}')  # Verifica el valor antes de cambiarlo
+        mesa.total_ganancia = 0  # Cambia esto por el campo correcto que almacena las ganancias
+        mesa.save()
+        print(f'Despues: {mesa.total_ganancia}')  # Verifica el valor después de cambiarlo
+        messages.success(request, f'Las ganancias de la mesa {mesa.nombre} han sido limpiadas.')
+    except Mesa.DoesNotExist:
+        messages.error(request, 'Mesa no encontrada.')
+    
+    return redirect('reporte_mesas')
 
 
 # -------------------------------------------------------------------------------------------

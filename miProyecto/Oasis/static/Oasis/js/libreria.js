@@ -4,6 +4,7 @@ function eliminar(url){
     }
 }
 
+
 function remove_producto(url){
     location.href = url;
 }

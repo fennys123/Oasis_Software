@@ -4,7 +4,6 @@ from rest_framework.authtoken import views as especial
 
 from . import views
 
-
 # Routers provide an easy way of automatically determining the URL conf.
 router = DefaultRouter()
 router.register(r'usuario', views.UsuarioViewSet)
@@ -146,7 +145,8 @@ urlpatterns = [
     path('Eliminar_Mesa/<int:id>', views.eliminarMesa, name='eliminarMesa'),
 
     path('reservasMesa/<int:id>', views.reservasMesa, name='reservasMesa'),
-
+    path('reporte-mesas/', views.reporte_mesas, name='reporte_mesas'),
+    path('limpiar_ganancias/<int:mesa_id>/', views.limpiar_ganancias, name='limpiar_ganancias'),
 
 
 #   CRUD EVENTOS
@@ -155,7 +155,7 @@ urlpatterns = [
     path('Eliminar_Evento/<int:id>', views.eliminarEvento, name='eliminarEvento'),
     path('Actualizar_Evento/<int:id>', views.actualizarEvento, name='actualizarEvento'),
     path('Reservas/<int:id>', views.eveReserva, name='eveReserva'),
-    path('ReservasLLegada/<str:codigo_qr>/<int:id>', views.eveReservaLlegada, name='eveReservaLlegada'),
+    path('ReservasLLegada/<str:codigo_qr>', views.eveReservaLlegada, name='eveReservaLlegada'),
     path('Evento_Entradas/<int:id>', views.eveEntradas, name='eveEntradas'),
     path('Eliminar_Entrada/<int:id>', views.eliminarEntrada, name='eliminarEntrada'),
 

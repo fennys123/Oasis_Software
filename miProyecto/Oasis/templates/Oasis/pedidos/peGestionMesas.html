@@ -34,39 +34,43 @@
 
   
   <h1>Gestión de Mesas</h1>
-  <div class="Contenido">
-    <div class="conteos">
-      <p>Todas (<span>{{ mesas|length }}</span>)</p>
-      <p class="divider">|</p>
-      <p>Activas (<span>{{ mesas_activas }}</span>)</p>
-      <p class="divider">|</p>
-      <p>Disponibles (<span>{{ mesas_disponibles }}</span>)</p>
+  {% if user.estado == 2 %}
+    <p>Eres un usuario bloqueado, no puedes ver los pedidos</p>
+  {% else %}
+    <div class="Contenido">
+      <div class="conteos">
+        <p>Todas (<span>{{ mesas|length }}</span>)</p>
+        <p class="divider">|</p>
+        <p>Activas (<span>{{ mesas_activas }}</span>)</p>
+        <p class="divider">|</p>
+        <p>Disponibles (<span>{{ mesas_disponibles }}</span>)</p>
+      </div>
     </div>
-  </div>
-  <div class="mesas">
-    {% for m in mesas %}
-      {% if m.estado == "Disponible" %}
-        <div class="tarjetaDisponible">
-          <section class="mesaDisponible">
-            <h4>{{ m.nombre }}</h4>
-            <p>{{ m.estado }}</p>
-            <a type="button" class="btn btn-success" href="{% url 'pedidoEmpleado' m.id %}">Activar</a>
-          </section>
-        </div>
-      {% else %}
-        <div class="tarjetaActiva">
-          <section class="mesaActiva">
-            <h4>{{ m.nombre }}</h4>
-            {% if m.usuario.rol == 3 %}
-              <p>💁‍♂️ {{ m.usuario.nombre }}</p>
-            {% else %}
-              <p>{{ m.usuario.nombre }}</p>
-            {% endif %}
-            <a type="button" class="btn btn-primary" href="{% url 'ver_pedidos_mesa' m.id %}">Ver</a>
-          </section>
-        </div>
-      {% endif %}
-    {% endfor %}
+    <div class="mesas">
+      {% for m in mesas %}
+        {% if m.estado == "Disponible" %}
+          <div class="tarjetaDisponible">
+            <section class="mesaDisponible">
+              <h4>{{ m.nombre }}</h4>
+              <p>{{ m.estado }}</p>
+              <a type="button" class="btn btn-success" href="{% url 'pedidoEmpleado' m.id %}">Activar</a>
+            </section>
+          </div>
+        {% else %}
+          <div class="tarjetaActiva">
+            <section class="mesaActiva">
+              <h4>{{ m.nombre }}</h4>
+              {% if m.usuario.rol == 3 %}
+                <p>💁‍♂️ {{ m.usuario.nombre }}</p>
+              {% else %}
+                <p>{{ m.usuario.nombre }}</p>
+              {% endif %}
+              <a type="button" class="btn btn-primary" href="{% url 'ver_pedidos_mesa' m.id %}">Ver</a>
+            </section>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
   </div>
 {% endblock %}
 

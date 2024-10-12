@@ -52,8 +52,12 @@
                 {% else %}
                     <div class="row mx-0 justify-content-center text-center pb-5 pt-3">
                         <div class="col-lg-6">
-                            <p>No has comprado entradas</p>
-                            <a type="button" class="btn btn-secondary" href="{% url 'front_eventos' %}">Ver eventos</a>
+                            {% if user.estado == 1 %}
+                                <p>No has comprado entradas</p>
+                                <a type="button" class="btn btn-secondary" href="{% url 'front_eventos' %}">Ver eventos</a>
+                            {% else %}
+                                <p>Eres un usuario bloqueado, no has comprado entradas</p>
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}
