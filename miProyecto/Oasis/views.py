@@ -2953,6 +2953,10 @@ def pagar_pedido(request, id, rol):
             total=total_pedido
         )
 
+        # Actualizar el total de ganancia de la mesa
+        mesa.total_ganancia += total_pedido
+        mesa.save()
+
         # Agrupar productos por ID y sumar las cantidades, excluyendo los productos eliminados
         productos_agrupados = defaultdict(lambda: {'cantidad': 0, 'precio': 0})
         for pedido in pedidos:
@@ -3395,9 +3399,7 @@ def reporte_mesas(request):
 
     try:
         mesas = Mesa.objects.all()
-
         for mesa in mesas:
-            # Filtrar pedidos y ventas de la mesa y sumar el total
             total_ganancia = HistorialPedido.objects.filter(mesa=mesa).aggregate(total=Sum('total'))['total'] or 0
             mesas_reporte.append({
                 'mesa': mesa,
@@ -3414,21 +3416,19 @@ def reporte_mesas(request):
         messages.error(request, f'Error: {e}')
         return redirect('Mesas')
 
-
 # limpiar ganancia
 def limpiar_ganancias(request, mesa_id):
     try:
         mesa = Mesa.objects.get(id=mesa_id)
-        print(f'Antes: {mesa.total_ganancia}')  # Verifica el valor antes de cambiarlo
-        mesa.total_ganancia = 0  # Cambia esto por el campo correcto que almacena las ganancias
+        HistorialPedido.objects.filter(mesa=mesa).update(total=0)
+        mesa.total_ganancia = 0  # Actualizar el total de ganancia de la mesa
         mesa.save()
-        print(f'Despues: {mesa.total_ganancia}')  # Verifica el valor después de cambiarlo
         messages.success(request, f'Las ganancias de la mesa {mesa.nombre} han sido limpiadas.')
     except Mesa.DoesNotExist:
         messages.error(request, 'Mesa no encontrada.')
-    
+    except Exception as e:
+        messages.error(request, f'Ocurrió un error: {e}')
     return redirect('reporte_mesas')
-
 
 # -------------------------------------------------------------------------------------------
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
