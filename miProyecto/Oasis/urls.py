@@ -147,7 +147,7 @@ urlpatterns = [
     path('reservasMesa/<int:id>', views.reservasMesa, name='reservasMesa'),
     path('reporte-mesas/', views.reporte_mesas, name='reporte_mesas'),
     path('limpiar_ganancias/<int:mesa_id>/', views.limpiar_ganancias, name='limpiar_ganancias'),
-
+    path('limpiar-todas-ganancias/', views.limpiar_todas_ganancias, name='limpiar_todas_ganancias'),
 
 #   CRUD EVENTOS
     path('Gestion_Eventos/', views.eveInicio, name='Eventos'),

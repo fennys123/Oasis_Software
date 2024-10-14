@@ -20,7 +20,21 @@
     </label>
   </div>
   <h1>Reporte de Ganancias por Mesa</h1>
+  <div class="Contenido">
+    <div class="conteos">
+      <p>Todos (<span> {{ mesas_reporte|length }} </span>)</p>
+    </div>
+</div>
+<br>
 
+  <div class="LimpiarTodo">
+    <form action="{% url 'limpiar_todas_ganancias' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger" onclick="confirmarLimpiarTodasGanancias(event)">Limpiar todas las ganancias</button>
+    </form>
+  </div> 
+  <br><br>
+  
   <div id="contenedorTabla">
     <table class="table" id="table">
       <thead class="thead-light">
@@ -46,16 +60,22 @@
       </tbody>
     </table>
   </div>
+
   <script>
     function confirmarLimpiarGanancias(event) {
-    event.preventDefault(); // Evita que el formulario se envíe inmediatamente
+      event.preventDefault(); // Evita que el formulario se envíe inmediatamente
       const confirmar = confirm("¿Estás seguro de que deseas limpiar las ganancias de esta mesa?");
       if (confirmar) {
-      event.target.closest("form").submit(); // Envía el formulario si el usuario confirma
+        event.target.closest("form").submit(); // Envía el formulario si el usuario confirma
+      }
+    }
+
+    function confirmarLimpiarTodasGanancias(event) {
+      event.preventDefault(); // Evita que el formulario se envíe inmediatamente
+      const confirmar = confirm("¿Estás seguro de que deseas limpiar todas las ganancias de todas las mesas?");
+      if (confirmar) {
+        event.target.closest("form").submit(); // Envía el formulario si el usuario confirma
       }
     }
   </script>
 {% endblock %}
-
-
-

@@ -3430,6 +3430,16 @@ def limpiar_ganancias(request, mesa_id):
         messages.error(request, f'Ocurrió un error: {e}')
     return redirect('reporte_mesas')
 
+#limpiar toda la mesa
+def limpiar_todas_ganancias(request):
+    mesas = Mesa.objects.all()
+    for mesa in mesas:
+        mesa.total_ganancia = 0
+        mesa.save()
+        HistorialPedido.objects.filter(mesa=mesa).update(total=0)
+    messages.success(request, 'Todas las ganancias han sido limpiadas.')
+    return redirect('reporte_mesas')
+
 # -------------------------------------------------------------------------------------------
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
