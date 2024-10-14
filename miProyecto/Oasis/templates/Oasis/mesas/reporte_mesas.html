@@ -30,7 +30,7 @@
   <div class="LimpiarTodo">
     <form action="{% url 'limpiar_todas_ganancias' %}" method="post">
       {% csrf_token %}
-      <button type="submit" class="btn btn-danger" onclick="confirmarLimpiarTodasGanancias(event)">Limpiar todas las ganancias</button>
+      <button type="submit" class="btn btn-warning" onclick="confirmarLimpiarTodasGanancias(event)">Eliminar todas las ganancias</button>
     </form>
   </div> 
   <br><br>
@@ -49,7 +49,7 @@
           <tr>
             <td>{{ reporte.mesa.nombre }}</td>
             <td>${{ reporte.total_ganancia|intcomma }}</td>
-            <td>
+            <td class="text-center">
               <form action="{% url 'limpiar_ganancias' reporte.mesa.id %}" method="post"> <!-- Aquí se define el método -->
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger" onclick="confirmarLimpiarGanancias(event)"><i class="bi bi-backspace-reverse-fill"></i></button>
@@ -64,7 +64,7 @@
   <script>
     function confirmarLimpiarGanancias(event) {
       event.preventDefault(); // Evita que el formulario se envíe inmediatamente
-      const confirmar = confirm("¿Estás seguro de que deseas limpiar las ganancias de esta mesa?");
+      const confirmar = confirm("¿Estás seguro de que deseas eliminar las ganancias de esta mesa?");
       if (confirmar) {
         event.target.closest("form").submit(); // Envía el formulario si el usuario confirma
       }
@@ -72,7 +72,7 @@
 
     function confirmarLimpiarTodasGanancias(event) {
       event.preventDefault(); // Evita que el formulario se envíe inmediatamente
-      const confirmar = confirm("¿Estás seguro de que deseas limpiar todas las ganancias de todas las mesas?");
+      const confirmar = confirm("¿Estás seguro de que deseas eliminar todas las ganancias de todas las mesas? (ESTO ELIMINARA TODAS LAS GANANCIAS DE TODAS LAS MESAS PERMANENTEMENTE Y LOS PONDRA EN 0)");
       if (confirmar) {
         event.target.closest("form").submit(); // Envía el formulario si el usuario confirma
       }
