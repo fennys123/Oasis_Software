@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Ganancias por Mesa</title>
+</head>
+<body>
+    <h1>Reporte de Ganancias por Mesa - {{ fecha_actual }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mesa</th>
+                <th>Subtotal</th>
+                <th>Total Ganancia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mesa in mesas %}
+                <tr>
+                    <td>{{ mesa.nombre }}</td>
+                    <td>${{ mesa.total_ganancia|intcomma }}</td>
+                    <td>${{ mesa.total_ganancia|intcomma }}</td> <!-- Assuming total_ganancia is the total -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

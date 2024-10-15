@@ -186,6 +186,12 @@ class Mesa(models.Model):
 
         
         super().save(*args, **kwargs)
+    def ganancias_anuales(self):
+        # Calcular las ganancias anuales
+        ganancias = 0
+        for pago in Pago.objects.filter(mesa=self, mostrar_en_reporte=True):
+            ganancias += pago.total_pagado
+        return ganancias
 
 class Reserva(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, default=None)
@@ -365,12 +371,13 @@ class DetalleVenta(models.Model):
 class Pago(models.Model):
     mesa = models.ForeignKey(Mesa, on_delete=models.CASCADE)
     total_pagado = models.DecimalField(max_digits=10, decimal_places=0,default=0)
-    fecha_pago = models.DateTimeField(auto_now=True)
+    fecha_pago = models.DateTimeField()
     mostrar_en_reporte = models.BooleanField(default=True)
 
     def __str__(self):
         return f'Pago de {self.mesa.nombre} - {self.total_pagado}'
-    
+
+
 """
 # ---------------------------------------------------------------------------------
 from django.conf import settings

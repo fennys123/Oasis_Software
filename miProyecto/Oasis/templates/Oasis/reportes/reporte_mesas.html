@@ -1,82 +1,115 @@
 {% extends 'Oasis/barNav.html' %}
 {% load static %}
 {% load humanize %}
-
-{% block titulo %}Reporte de Mesas{% endblock %}
-
+{% block titulo %} Reporte de Mesas {% endblock %}
 {% block contenedor %}
 <div class="radio-inputs many">
-  <label class="radio">
-    <a href="{% url 'ver_perfil' %}">
-      <input type="radio" name="radio" />
-      <span class="name">Inicio</span> 
-    </a>
-  </label>
-  <label class="radio">
-      <a href="{% url 'ver_ventas' %}">
-      <input type="radio" name="radio"/>
-      <span class="name">Historial de Ventas</span>
-      </a>
-  </label>
-  <label class="radio">
-      <a href="{% url 'ver_mesas_a_cargo' %}">
-      <input type="radio" name="radio"/>
-      <span class="name">Mesas a cargo</span>
-      </a>
-  </label>
-      <label class="radio">
-          <a href="{% url 'ganancia_total' %}">
-          <input type="radio" name="radio" />
-          <span class="name">Ganancias Eventos</span>
-          </a>
-      </label>
-      <label class="radio">
-        <a href="{% url 'reporte_mesas' %}">
-          <input type="radio" name="radio" checked=""/>
-          <span class="name">Reporte de Mesas</span>
+    <label class="radio">
+        <a href="{% url 'ver_perfil' %}">
+            <input type="radio" name="radio" />
+            <span class="name">Inicio</span>
         </a>
-      </label>
+    </label>
+    <label class="radio">
+        <a href="{% url 'ver_ventas' %}">
+            <input type="radio" name="radio"/>
+            <span class="name">Historial de Ventas</span>
+        </a>
+    </label>
+    <label class="radio">
+        <a href="{% url 'ver_mesas_a_cargo' %}">
+            <input type="radio" name="radio"/>
+            <span class="name">Mesas a cargo</span>
+        </a>
+    </label>
+    <label class="radio">
+        <a href="{% url 'ganancia_total' %}">
+            <input type="radio" name="radio"/>
+            <span class="name">Ganancias Eventos</span>
+        </a>
+    </label>
+    <label class="radio">
+        <a href="{% url 'reporte_mesas' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Reporte de Mesas</span>
+        </a>
+    </label>
 </div>
-  <h1>Reporte de Pagos por Mesa</h1>
-  <p>Todos ({{ total_mesas }})</p>
 
-  <div class="LimpiarTodo">
-    <form action="{% url 'limpiar_reporte_mesas' %}" method="post">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-warning" onclick="confirmarLimpiarTodasGanancias(event)">Eliminar todas las mesas del reporte</button>
-    </form>
-  </div> 
-  <br><br>
-  
-  <div id="contenedorTabla">
-    <table class="table" id="table">
-      <thead class="thead-light">
-        <tr>
-          <th>Mesa</th>
-          <th>Total Pagado</th>
-          <th>Fecha de Pago</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for reporte in mesas_reporte %}
-          <tr>
-            <td>{{ reporte.mesa }}</td>
-            <td>${{ reporte.total_pagado|intcomma }}</td>
-            <td>{{ reporte.fecha_pago }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  
+<h1>Reporte de Mesas</h1>
+{% if mesas|length == 0 %}
+    <p>No hay mesas reportadas</p>
+{% else %}
+    <div class="Contenido">
+        <div class="conteos">
+            <p>Todos (<span>{{ mesas|length }}</span>)</p>
+        </div>
+    </div>
+    <div id="contenedorTabla">
+        <table class="table" id="table">
+            <thead class="thead-light">
+                <tr>
+                    <th>Mesa</th>
+                    <th>Reserva</th>
+                    <th>Total Ganancias</th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in mesas %}
+                    <tr>
+                        <td data-label="Mesa">{{ m.nombre }}</td>
+                        <td data-label="Reserva">${{ m.precio|intcomma }}</td>
+                        <td data-label="Total Ganancias">$ {{ m.total_ganancia|intcomma }}</td>
+                        <td>
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#detalleMesa{{ m.id }}"><i class="bi bi-info-circle"></i> Más info</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-end">
+        <a href="{% url 'reset_mesas' %}" class="btn btn-danger">Borrar Todo</a>
+    </div>
+{% endif %}
 
-  <script>
-    function confirmarLimpiarTodasGanancias(event) {
-      event.preventDefault();
-      const confirmar = confirm("¿Estás seguro de que deseas eliminar todas las mesas del reporte?");
-      if (confirmar) {
-        event.target.closest("form").submit();
-      }
+{% for m in mesas %}
+    <div class="modal fade" id="detalleMesa{{ m.id }}" tabindex="-1" role="dialog" aria-labelledby="detalleMesaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Detalles Mesa</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body d-flex flex-column align-items-center justify-content-center">
+                        <h5 class="fw-bold mt-2">{{ m.nombre }}</h5>
+                        <p class="d-inline-block text-primary bg-light fw-semibold py-1 px-2" style="font-size: 12px">{{ m.nombre }}</p>
+                        <table class="table" style="font-size: 14px">
+                            <tbody>
+                                <tr>
+                                    <td data-label="Ganancia Total" class="fw-bold">Ganancia Total</td>
+                                    <td data-label="Total" class="fw-bold">${{ m.total_ganancia|intcomma }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex mt-4 gap-3">
+                            <button type="button" class="btn btn-success" onclick="descargarPDF({{ m.id }})"><i class="bi bi-printer"></i> Descargar PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<script>
+    function descargarPDF(mesaid) {
+        const url = `/descargar_pdf_mesas/${mesaid}/`;
+        window.location.href = url;
     }
-  </script>
+</script>
 {% endblock %}

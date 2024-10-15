@@ -145,9 +145,10 @@ urlpatterns = [
     path('reservasMesa/<int:id>', views.reservasMesa, name='reservasMesa'),
 
     # Ruta para el reporte de mesas
-    path('reportes-mesas/', views.reporte_mesas, name='reporte_mesas'), 
-    path('reportes/mesas/limpiar/', views.limpiar_reporte_mesas, name='limpiar_reporte_mesas'),  
-    path('reportes/mesas/registrar_pago/<int:mesa_id>/', views.registrar_pago, name='registrar_pago'),  
+    path('reporte_mesas/', views.reporte_mesas, name='reporte_mesas'),
+    path('descargar_pdf_mesas/<int:id>', views.descargar_pdf_mesas, name='descargar_pdf_mesas'),
+    path('reset_mesas/', views.reset_mesas, name='reset_mesas'),
+
 
 
 

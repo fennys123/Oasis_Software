@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.template.loader import get_template
 from django.db.models import Q
 
 #Para sacar totales de eventos.
@@ -2935,9 +2935,8 @@ def pagar_pedido(request, id, rol):
 
     try:
         mesa = Mesa.objects.get(pk=id)
-        # Filtrar pedidos excluyendo los cancelados
+        # Filter orders excluding canceled ones
         pedidos = Pedido.objects.filter(mesa=mesa).exclude(estado='Cancelado')
-        pedidos_eliminados = Pedido.objects.filter(mesa=mesa).filter(estado='Cancelado')
 
         if not pedidos.exists():
             if rol == 'usuario':
@@ -2956,13 +2955,13 @@ def pagar_pedido(request, id, rol):
                 messages.warning(request, "No se pueden pagar pedidos en preparación.")
                 return redirect('ver_pedidos_mesa', mesa_id=id)
 
-        # Calcular el total del pedido excluyendo los productos eliminados
+        # Calculate total excluding deleted products
         total_pedido = sum(
             sum(detalle.cantidad * detalle.precio for detalle in pedido.detallepedido_set.filter(estado='Activo'))
             for pedido in pedidos
         )
 
-        # Crear el historial de pedido
+        # Create order history
         historial_pedido = HistorialPedido.objects.create(
             mesa=mesa,
             fecha=timezone.now(),
@@ -2970,11 +2969,11 @@ def pagar_pedido(request, id, rol):
             total=total_pedido
         )
 
-        # Actualizar el total de ganancia de la mesa
+        # Update total earnings of the table
         mesa.total_ganancia += total_pedido
         mesa.save()
 
-        # Agrupar productos por ID y sumar las cantidades, excluyendo los productos eliminados
+        # Group products by ID and sum quantities, excluding deleted products
         productos_agrupados = defaultdict(lambda: {'cantidad': 0, 'precio': 0})
         for pedido in pedidos:
             for detalle in pedido.detallepedido_set.filter(estado='Activo'):
@@ -2982,7 +2981,7 @@ def pagar_pedido(request, id, rol):
                 productos_agrupados[producto_id]['cantidad'] += detalle.cantidad
                 productos_agrupados[producto_id]['precio'] = detalle.precio
 
-        # Crear objetos en la tabla de historial de detalles con los productos agrupados
+        # Create records in the detail history table with grouped products
         for producto_id, datos in productos_agrupados.items():
             producto = Producto.objects.get(pk=producto_id)
             HistorialDetallePedido.objects.create(
@@ -2991,7 +2990,8 @@ def pagar_pedido(request, id, rol):
                 cantidad=datos['cantidad'],
                 precio=datos['precio']
             )
-        # Registrar el pago
+
+        # Register the payment
         Pago.objects.create(
             mesa=mesa,
             total_pagado=total_pedido,
@@ -2999,12 +2999,11 @@ def pagar_pedido(request, id, rol):
             mostrar_en_reporte=True
         )
 
-        # Eliminar pedidos y detalles originales
-        pedidos.delete()
-        pedidos_eliminados.delete()
+        # Delete original orders and details
+        pedidos.filter(estado='Activo').delete()
 
-        # Actualizar el estado de la mesa
-        mesa.estado = mesa.DISPONIBLE
+        # Update the state of the table to available and clear user assignment
+        mesa.estado = Mesa.DISPONIBLE
         mesa.usuario = None
         mesa.save()
 
@@ -3372,65 +3371,35 @@ def descargar_pdf_ganancias(request, id):
     
     return response
 
-# Reporte_mesas
 def reporte_mesas(request):
     logueo = request.session.get("logueo", False)
-    user = Usuario.objects.get(pk=logueo["id"]) if logueo else None
-
-    # Obtener el parámetro de ordenación de la URL
-    order_by = request.GET.get('order_by', '-fecha_pago')  # Por defecto, ordena por fecha descendente
-
-    # Validar el parámetro de ordenación
-    valid_order_fields = ['fecha_pago', '-fecha_pago']
-    if order_by not in valid_order_fields:
-        order_by = '-fecha_pago'
-
-    # Obtener los pagos y ordenarlos según el parámetro
-    pagos = Pago.objects.filter(mostrar_en_reporte=True).order_by(order_by)
-    
-    mesas_reporte = []
-
-    for pago in pagos:
-        mesas_reporte.append({
-            'mesa': pago.mesa.nombre,
-            'total_pagado': pago.total_pagado,
-            'fecha_pago': pago.fecha_pago.strftime('%Y-%m-%d %H:%M:%S'),
-        })
-
+    user = Usuario.objects.get(pk=logueo["id"])
+    mesas = Mesa.objects.all()
     context = {
         'user': user,
-        'mesas_reporte': mesas_reporte,
-        'url': "reporte_mesas",
-        'total_mesas': len(mesas_reporte),
-        'current_order': order_by
+        'mesas': mesas,
+        'fecha_actual': datetime.now().strftime('%d de %B de %Y')
     }
-
     return render(request, 'Oasis/reportes/reporte_mesas.html', context)
 
-def limpiar_reporte_mesas(request):
-    Pago.objects.all().update(mostrar_en_reporte=False)
-    messages.success(request, 'Todas las mesas han sido eliminadas del reporte.')
-    return redirect('reporte_mesas')
+def descargar_pdf_mesas(request, id):
+    mesa = Mesa.objects.get(id=id)
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+    fecha_actual = datetime.now().strftime('%d de %B de %Y')
+    html_string = render_to_string('Oasis/pdf/reporte_mesa_pdf.html', {'mesa': mesa, 'request': request,'fecha_actual': fecha_actual})
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="mesa_{mesa.nombre}.pdf"'
+    pisa_status = pisa.CreatePDF(html_string, dest=response)
+    if pisa_status.err:
+        return HttpResponse('Error al generar el PDF', status=500)
+    return response
 
-def registrar_pago(request, mesa_id):
-    logueo = request.session.get("logueo", False)
-    user = Usuario.objects.get(pk=logueo["id"])
-    try:
-        mesa = Mesa.objects.get(id=mesa_id)
-        total_pagado = mesa.total_ganancia  # o el monto que se desea pagar
-        Pago.objects.create(mesa=mesa, total_pagado=total_pagado, fecha_pago=timezone.now(), mostrar_en_reporte=True)
-        
-        # Actualizar la ganancia total de la mesa si es necesario
-        mesa.total_ganancia = 0  # O dejar que continúe acumulando si no quieres resetearla
+def reset_mesas(request):
+    mesas = Mesa.objects.all()
+    for mesa in mesas:
+        mesa.total_ganancia = 0
         mesa.save()
-
-        messages.success(request, f'El pago de la mesa {mesa.nombre} se ha registrado correctamente.')
-    except Mesa.DoesNotExist:
-        messages.error(request, 'Mesa no encontrada.')
-    except Exception as e:
-        messages.error(request, f'Ocurrió un error: {e}')
-
-    return redirect('reporte_mesas')
+    return render(request,'reporte_mesas')
 
 #mas_info
 def mas_info(request):
