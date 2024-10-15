@@ -361,6 +361,15 @@ class DetalleVenta(models.Model):
 
 	def __str__(self):
 		return f"{self.id} - {self.venta}"
+
+class Pago(models.Model):
+    mesa = models.ForeignKey(Mesa, on_delete=models.CASCADE)
+    total_pagado = models.DecimalField(max_digits=10, decimal_places=0,default=0)
+    fecha_pago = models.DateTimeField(auto_now=True)
+    mostrar_en_reporte = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'Pago de {self.mesa.nombre} - {self.total_pagado}'
     
 """
 # ---------------------------------------------------------------------------------

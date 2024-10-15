@@ -1,0 +1,82 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Reporte de Mesas{% endblock %}
+
+{% block contenedor %}
+<div class="radio-inputs many">
+  <label class="radio">
+    <a href="{% url 'ver_perfil' %}">
+      <input type="radio" name="radio" />
+      <span class="name">Inicio</span> 
+    </a>
+  </label>
+  <label class="radio">
+      <a href="{% url 'ver_ventas' %}">
+      <input type="radio" name="radio"/>
+      <span class="name">Historial de Ventas</span>
+      </a>
+  </label>
+  <label class="radio">
+      <a href="{% url 'ver_mesas_a_cargo' %}">
+      <input type="radio" name="radio"/>
+      <span class="name">Mesas a cargo</span>
+      </a>
+  </label>
+      <label class="radio">
+          <a href="{% url 'ganancia_total' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Ganancias Eventos</span>
+          </a>
+      </label>
+      <label class="radio">
+        <a href="{% url 'reporte_mesas' %}">
+          <input type="radio" name="radio" checked=""/>
+          <span class="name">Reporte de Mesas</span>
+        </a>
+      </label>
+</div>
+  <h1>Reporte de Pagos por Mesa</h1>
+  <p>Todos ({{ total_mesas }})</p>
+
+  <div class="LimpiarTodo">
+    <form action="{% url 'limpiar_reporte_mesas' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-warning" onclick="confirmarLimpiarTodasGanancias(event)">Eliminar todas las mesas del reporte</button>
+    </form>
+  </div> 
+  <br><br>
+  
+  <div id="contenedorTabla">
+    <table class="table" id="table">
+      <thead class="thead-light">
+        <tr>
+          <th>Mesa</th>
+          <th>Total Pagado</th>
+          <th>Fecha de Pago</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reporte in mesas_reporte %}
+          <tr>
+            <td>{{ reporte.mesa }}</td>
+            <td>${{ reporte.total_pagado|intcomma }}</td>
+            <td>{{ reporte.fecha_pago }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+
+  <script>
+    function confirmarLimpiarTodasGanancias(event) {
+      event.preventDefault();
+      const confirmar = confirm("¿Estás seguro de que deseas eliminar todas las mesas del reporte?");
+      if (confirmar) {
+        event.target.closest("form").submit();
+      }
+    }
+  </script>
+{% endblock %}

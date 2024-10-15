@@ -144,9 +144,10 @@ urlpatterns = [
 
     path('reservasMesa/<int:id>', views.reservasMesa, name='reservasMesa'),
 
-    path('reporte-mesas/', views.reporte_mesas, name='reporte_mesas'),
-    path('limpiar_ganancias/<int:mesa_id>/', views.limpiar_ganancias, name='limpiar_ganancias'),
-    path('limpiar-todas-ganancias/', views.limpiar_todas_ganancias, name='limpiar_todas_ganancias'),
+    # Ruta para el reporte de mesas
+    path('reportes-mesas/', views.reporte_mesas, name='reporte_mesas'), 
+    path('reportes/mesas/limpiar/', views.limpiar_reporte_mesas, name='limpiar_reporte_mesas'),  
+    path('reportes/mesas/registrar_pago/<int:mesa_id>/', views.registrar_pago, name='registrar_pago'),  
 
 
 

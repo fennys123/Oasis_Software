@@ -2991,6 +2991,13 @@ def pagar_pedido(request, id, rol):
                 cantidad=datos['cantidad'],
                 precio=datos['precio']
             )
+        # Registrar el pago
+        Pago.objects.create(
+            mesa=mesa,
+            total_pagado=total_pedido,
+            fecha_pago=timezone.now(),
+            mostrar_en_reporte=True
+        )
 
         # Eliminar pedidos y detalles originales
         pedidos.delete()
@@ -3370,49 +3377,59 @@ def reporte_mesas(request):
     logueo = request.session.get("logueo", False)
     user = Usuario.objects.get(pk=logueo["id"]) if logueo else None
 
+    # Obtener el parámetro de ordenación de la URL
+    order_by = request.GET.get('order_by', '-fecha_pago')  # Por defecto, ordena por fecha descendente
+
+    # Validar el parámetro de ordenación
+    valid_order_fields = ['fecha_pago', '-fecha_pago']
+    if order_by not in valid_order_fields:
+        order_by = '-fecha_pago'
+
+    # Obtener los pagos y ordenarlos según el parámetro
+    pagos = Pago.objects.filter(mostrar_en_reporte=True).order_by(order_by)
+    
     mesas_reporte = []
 
-    try:
-        mesas = Mesa.objects.all()
-        for mesa in mesas:
-            total_ganancia = HistorialPedido.objects.filter(mesa=mesa).aggregate(total=Sum('total'))['total'] or 0
-            mesas_reporte.append({
-                'mesa': mesa,
-                'total_ganancia': total_ganancia
-            })
+    for pago in pagos:
+        mesas_reporte.append({
+            'mesa': pago.mesa.nombre,
+            'total_pagado': pago.total_pagado,
+            'fecha_pago': pago.fecha_pago.strftime('%Y-%m-%d %H:%M:%S'),
+        })
 
-        context = {
-            'mesas_reporte': mesas_reporte,
-            'user': user,
-            'url': "reporte_mesas"
-        }
-        return render(request, 'Oasis/mesas/reporte_mesas.html', context)
-    except Exception as e:
-        messages.error(request, f'Error: {e}')
-        return redirect('Mesas')
+    context = {
+        'user': user,
+        'mesas_reporte': mesas_reporte,
+        'url': "reporte_mesas",
+        'total_mesas': len(mesas_reporte),
+        'current_order': order_by
+    }
 
-# limpiar ganancia
-def limpiar_ganancias(request, mesa_id):
+    return render(request, 'Oasis/reportes/reporte_mesas.html', context)
+
+def limpiar_reporte_mesas(request):
+    Pago.objects.all().update(mostrar_en_reporte=False)
+    messages.success(request, 'Todas las mesas han sido eliminadas del reporte.')
+    return redirect('reporte_mesas')
+
+def registrar_pago(request, mesa_id):
+    logueo = request.session.get("logueo", False)
+    user = Usuario.objects.get(pk=logueo["id"])
     try:
         mesa = Mesa.objects.get(id=mesa_id)
-        HistorialPedido.objects.filter(mesa=mesa).update(total=0)
-        mesa.total_ganancia = 0  # Actualizar el total de ganancia de la mesa
+        total_pagado = mesa.total_ganancia  # o el monto que se desea pagar
+        Pago.objects.create(mesa=mesa, total_pagado=total_pagado, fecha_pago=timezone.now(), mostrar_en_reporte=True)
+        
+        # Actualizar la ganancia total de la mesa si es necesario
+        mesa.total_ganancia = 0  # O dejar que continúe acumulando si no quieres resetearla
         mesa.save()
-        messages.success(request, f'Las ganancias de la mesa {mesa.nombre} han sido limpiadas.')
+
+        messages.success(request, f'El pago de la mesa {mesa.nombre} se ha registrado correctamente.')
     except Mesa.DoesNotExist:
         messages.error(request, 'Mesa no encontrada.')
     except Exception as e:
         messages.error(request, f'Ocurrió un error: {e}')
-    return redirect('reporte_mesas')
 
-#limpiar toda la mesa
-def limpiar_todas_ganancias(request):
-    mesas = Mesa.objects.all()
-    for mesa in mesas:
-        mesa.total_ganancia = 0
-        mesa.save()
-        HistorialPedido.objects.filter(mesa=mesa).update(total=0)
-    messages.success(request, 'Todas las ganancias han sido limpiadas.')
     return redirect('reporte_mesas')
 
 #mas_info
