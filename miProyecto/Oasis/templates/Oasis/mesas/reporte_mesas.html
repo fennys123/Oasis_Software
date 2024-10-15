@@ -5,20 +5,38 @@
 {% block titulo %}Reporte de Mesas{% endblock %}
 
 {% block contenedor %}
-  <div class="radio-inputs">
-    <label class="radio">
-      <a href="{% url 'Mesas' %}">
-        <input type="radio" name="radio" />
-        <span class="name">Inicio</span>
+<div class="radio-inputs many">
+  <label class="radio">
+    <a href="{% url 'ver_perfil' %}">
+      <input type="radio" name="radio" />
+      <span class="name">Inicio</span> 
+    </a>
+  </label>
+  <label class="radio">
+      <a href="{% url 'ver_ventas' %}">
+      <input type="radio" name="radio"/>
+      <span class="name">Historial de Ventas</span>
       </a>
-    </label>
-    <label class="radio">
-      <a href="{% url 'reporte_mesas' %}">
-        <input type="radio" name="radio" checked="" />
-        <span class="name">Reporte de Mesas</span>
+  </label>
+  <label class="radio">
+      <a href="{% url 'ver_mesas_a_cargo' %}">
+      <input type="radio" name="radio"/>
+      <span class="name">Mesas a cargo</span>
       </a>
-    </label>
-  </div>
+  </label>
+      <label class="radio">
+          <a href="{% url 'ganancia_total' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Ganancias Eventos</span>
+          </a>
+      </label>
+      <label class="radio">
+        <a href="{% url 'reporte_mesas' %}">
+          <input type="radio" name="radio" checked=""/>
+          <span class="name">Reporte de Mesas</span>
+        </a>
+      </label>
+</div>
   <h1>Reporte de Ganancias por Mesa</h1>
   <div class="Contenido">
     <div class="conteos">

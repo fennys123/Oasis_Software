@@ -10,6 +10,13 @@ from django.urls import reverse
 from urllib.parse import urlencode
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.db.models import Q
+
+#Para sacar totales de eventos.
+from django.db.models import Sum
+from django.shortcuts import render
+import locale
+
 
 
 from django.db.models import F
@@ -52,8 +59,6 @@ from rest_framework import viewsets
 from .serializers import *
 from rest_framework import viewsets
 
-#suma
-from django.db.models import Sum 
 
 #Importar el crypt
 from .crypt import *
@@ -1280,6 +1285,8 @@ def eliminarEntrada(request, id):
         if cantidad_entradas_evento == 0:
             evento.entradas = False
 
+        evento.ganancia_entradas -= entrada.total
+        evento.ganancia_total -= entrada.total
         evento.save()
 
         total_entradas = entrada.entrada_general + entrada.entrada_vip
@@ -1762,7 +1769,7 @@ def comprar_entradas(request, id):
                 evento=evento,
                 entrada_general=cantidad_general,
                 entrada_vip=cantidad_vip,
-                total=total
+                total=total,
             )
 
             evento.entradas_disponibles -= cantidad_general + cantidad_vip
@@ -1770,6 +1777,8 @@ def comprar_entradas(request, id):
             if not evento.entradas:
                 evento.entradas = True
 
+            evento.ganancia_entradas += total
+            evento.ganancia_total += total
             evento.save()
 
             if cantidad_general > 0:
@@ -1873,7 +1882,9 @@ def reservar_mesa(request, id):
 
             if not evento.reservas:
                 evento.reservas = True
-
+                
+            evento.ganancia_reservas += total
+            evento.ganancia_total += total
             evento.save()
             mesa.estado_reserva = 'Reservada'
             mesa.save()
@@ -1918,7 +1929,9 @@ def eliminar_reserva(request, id):
         cantidad_reservas_evento = Reserva.objects.filter(evento=reserva.evento).count()
         if cantidad_reservas_evento == 0:
             reserva.evento.reservas = False
-
+            
+        reserva.evento.ganancia_reservas -= reserva.total
+        reserva.evento.ganancia_total -= reserva.total
         reserva.evento.save()
 
         mesa = Mesa.objects.get(pk=reserva.mesa.id)
@@ -2265,6 +2278,8 @@ class comprar_entradas_movil(APIView):
                 if not evento.entradas:
                     evento.entradas = True
 
+                evento.ganancia_entradas += total
+                evento.ganancia_total += total
                 evento.save()
 
                 if cantidad_general > 0:
@@ -2417,6 +2432,8 @@ class reservar_mesa_movil(APIView):
                 if not evento.reservas:
                     evento.reservas = True
 
+                evento.ganancia_reservas += total
+                evento.ganancia_total += total
                 evento.save()
                 mesa.estado_reserva = 'Reservada'
                 mesa.save()
@@ -3313,82 +3330,40 @@ def ver_detalles_usuario(request):
     return render(request, ruta, contexto)
 
 
-#mas_info
-def mas_info(request):
-    return render(request, 'Oasis/mas_info.html')
+def ganancia_total(request):   
+    logueo = request.session.get("logueo", False)
+    user = Usuario.objects.get(pk = logueo["id"])
+    
+    eventos = Evento.objects.filter(Q(reservas=True) | Q(entradas=True))
 
-#RECUPERAR CONTRASEÑA.
-def recuperar_clave(request):
-	if request.method == "POST":
-		correo = request.POST.get("correo")
-		try:
-			q = Usuario.objects.get(email=correo)
-			from random import randint
-			import base64
-			token = base64.b64encode(str(randint(100000, 999999)).encode("ascii")).decode("ascii")
-			print(token)
-			q.token_recuperar = token
-			q.save()
-			# enviar correo de recuperación
-			destinatario = correo
-			mensaje = f"""
-					<h1 style='color:blue;'>OASIS</h1>
-					<p>Usted ha solicitado recuperar su contraseña, haga clic en el link y digite el token.</p>
-					<p>Token: <strong>{token}</strong></p>
-					<a href='http://127.0.0.1:8000/verificar_recuperar/?correo={correo}'>Recuperar...</a>
-					"""
-			try:
-				msg = EmailMessage("Oasis", mensaje, settings.EMAIL_HOST_USER, [destinatario])
-				msg.content_subtype = "html"  # Habilitar contenido html
-				msg.send()
-				messages.success(request, "Correo enviado!!")
-			except HeaderError:
-				messages.error(request, "Encabezado no válido")
-			except Exception as e:
-				messages.error(request, f"Error: {e}")
-			# fin -
-		except Usuario.DoesNotExist:
-			messages.error(request, "No existe el usuario....")
-		return redirect("recuperar_clave")
-	else:
-		return render(request, "Oasis/login/recuperar_clave.html")
+    context = {
+        'user':user,
+        'eventos': eventos    
+    }
+    
+    return render(request, 'Oasis/reportes/reportes_eventos.html', context)
 
 
-def verificar_recuperar(request):
-	if request.method == "POST":
-		if request.POST.get("check"):
-			# caso en el que el token es correcto
-			correo = request.POST.get("correo")
-			q = Usuario.objects.get(email=correo)
+def descargar_pdf_ganancias(request, id):
+    evento = Evento.objects.get(id=id)
+    
+    # Establecer el locale en español
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
-			c1 = request.POST.get("nueva1")
-			c2 = request.POST.get("nueva2")
+    # Obtener la fecha actual en el formato "1 de febrero de 2023"
+    fecha_actual = datetime.now().strftime('%d de %B de %Y')
+    
+    html_string = render_to_string('Oasis/pdf/ganancia_evento_pdf_template.html', {'evento': evento, 'request': request, 'fecha_actual':fecha_actual})
 
-			if c1 == c2:
-				# cambiar clave en DB
-				q.password = hash_password(c1)
-				q.token_recuperar = ""
-				q.save()
-				messages.success(request, "Contraseña guardada correctamente!!")
-				return redirect("index")
-			else:
-				messages.info(request, "Las contraseñas nuevas no coinciden...")
-				return redirect("verificar_recuperar")+"/?correo="+correo
-		else:
-			# caso en el que se hace clic en el correo-e para digitar token
-			correo = request.POST.get("correo")
-			token = request.POST.get("token")
-			q = Usuario.objects.get(email=correo)
-			if (q.token_recuperar == token) and q.token_recuperar != "":
-				contexto = {"check": "ok", "correo":correo}
-				return render(request, "Oasis/login/verificar_recuperar.html", contexto)
-			else:
-				messages.error(request, "Token incorrecto")
-				return redirect("verificar_recuperar")  #falta agregar correo como parametro url
-	else:
-		correo = request.GET.get("correo")
-		contexto = {"correo":correo}
-		return render(request, "Oasis/login/verificar_recuperar.html", contexto)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="ganancias_{evento.nombre}.pdf"'
+    
+    pisa_status = pisa.CreatePDF(html_string, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('Error al generar el PDF', status=500)
+    
+    return response
 
 # Reporte_mesas
 def reporte_mesas(request):
@@ -3439,6 +3414,10 @@ def limpiar_todas_ganancias(request):
         HistorialPedido.objects.filter(mesa=mesa).update(total=0)
     messages.success(request, 'Todas las ganancias han sido limpiadas.')
     return redirect('reporte_mesas')
+
+#mas_info
+def mas_info(request):
+    return render(request, 'Oasis/mas_info.html')
 
 # -------------------------------------------------------------------------------------------
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -3494,9 +3473,6 @@ class PedidoMesaViewSet(viewsets.ModelViewSet):
     queryset = DetallePedido.objects.all()
     serializer_class = DetallePedidoSerializer
 
-"""class InventarioViewSet(viewsets.ModelViewSet):
-    queryset = Inventario.objects.all()
-    serializer_class = InventarioSerializer """
 
 class GaleriaViewSet(viewsets.ModelViewSet):
     queryset = Galeria.objects.all()

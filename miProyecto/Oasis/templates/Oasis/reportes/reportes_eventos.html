@@ -1,0 +1,147 @@
+{% extends 'Oasis/barNav.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %} Ganancias Evento {% endblock %}
+
+
+
+
+{% block contenedor %}
+  <div class="radio-inputs many">
+    <label class="radio">
+      <a href="{% url 'ver_perfil' %}">
+        <input type="radio" name="radio" />
+        <span class="name">Inicio</span> 
+      </a>
+    </label>
+    <label class="radio">
+        <a href="{% url 'ver_ventas' %}">
+        <input type="radio" name="radio"/>
+        <span class="name">Historial de Ventas</span>
+        </a>
+    </label>
+    <label class="radio">
+        <a href="{% url 'ver_mesas_a_cargo' %}">
+        <input type="radio" name="radio"/>
+        <span class="name">Mesas a cargo</span>
+        </a>
+    </label>
+        <label class="radio">
+            <a href="{% url 'ganancia_total' %}">
+            <input type="radio" name="radio" checked=""/>
+            <span class="name">Ganancias Eventos</span>
+            </a>
+        </label>
+        <label class="radio">
+            <a href="{% url 'reporte_mesas' %}">
+              <input type="radio" name="radio" />
+              <span class="name">Reporte de Mesas</span>
+            </a>
+          </label>
+  </div>
+
+
+
+    <h1>Ganacias de eventos</h1>
+
+    {% if eventos|length == 0 %}
+        <p>No hay eventos con ganancias</p>
+    {% else %}
+      <div class="Contenido">
+        <div class="conteos">
+            <p>Todos (<span>{{ eventos|length }}</span>)</p>
+        </div>
+      </div>
+      <div id="contenedorTabla">
+        <table class="table" id="table">
+          <thead class="thead-light">
+            <tr>
+              <th>Evento</th>
+              <th>Ganancia Entradas</th>
+              <th>Ganancia Reservas</th>
+              <th>Ganancia Total</th>
+              <th>Detalles</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in eventos %}
+              <tr>
+                {% if e.estado %}
+                    <td data-label="Evento">{{ e.nombre }}</td>
+                {% else %}
+                    <td data-label="Evento">{{ e.nombre }}<strong> - CANCELADO</strong></td>
+                {% endif %}
+                <td data-label="Evento">${{ e.ganancia_entradas|intcomma }}</td>
+                <td data-label="Evento">${{ e.ganancia_reservas|intcomma }}</td>
+                <td data-label="Ganancia Total">$ {{ e.ganancia_total|intcomma }}</td>
+                <td>
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#detalleGanancia{{ e.id }}"><i class="bi bi-info-circle"></i></button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+    {% endif %}
+
+
+
+    {% for e in eventos %}
+        <div class="modal fade" id="detalleGanancia{{ e.id }}" tabindex="-1" role="dialog" aria-labelledby="detalleGananciaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <p class="tituloFormulario">Detalles Ganancia</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body d-flex flex-column align-items-center justify-content-center">
+                        <img  src="{{ e.foto.url }}" alt="{{ e.nombre }}" class="img-fluid" style="height: 150px; width: 70%; border-radius: 5px">
+                        {% if e.estado %}
+                            <h5 class="fw-bold mt-2">{{ e.nombre }}</h5>
+                        {% else %}
+                            <h5 class="fw-bold mt-2">{{ e.nombre }} - CANCELADO</h5>
+                        {% endif %}
+                        <p class="d-inline-block text-primary bg-light fw-semibold py-1 px-2" style="font-size: 12px">{{ e.fecha }}</p>
+                        <table class="table" style="font-size: 14px"> 
+                            <tbody>
+                                <tr>
+                                    <td data-label="Ganancia Entradas">Ganancia Entradas</td>
+                                    <td data-label="Total">${{ e.ganancia_entradas|intcomma }}</td>
+                                </tr>
+                                <tr>
+                                    <td data-label="Ganancia Reservas">Ganancia Reservas</td>
+                                    <td data-label="Total">${{ e.ganancia_reservas|intcomma }}</td>
+                                </tr>
+                                <tr>
+                                    <td data-label="Ganancia Total" class="fw-bold">Ganancia Total</td>
+                                    <td data-label="Total" class="fw-bold">${{ e.ganancia_total|intcomma }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex mt-4 gap-3">
+                            {% if e.reservas %}
+                                <a href="{% url 'eveReserva' e.id%}" type="button" class="btn btn-primary">Ver reservas</a>
+                            {% endif %}
+                            {% if e.entradas %}
+                                <a href="{% url 'eveEntradas' e.id %}" type="button" class="btn btn-primary">Ver entradas</a>
+                            {% endif %}
+                            <button type="button" class="btn btn-success" onclick="descargarPDF({{ e.id }})"><i class="bi bi-printer"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <script>
+        function descargarPDF(eventoId) {
+            const url = `/descargar_pdf_ganancias/${eventoId}/`;
+            window.location.href = url;
+        }
+    </script>
+{% endblock %}

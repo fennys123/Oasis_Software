@@ -1,0 +1,143 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gracias</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Contenedor principal */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Encabezado */
+        .header {
+            text-align: center;
+            background-color: #f3eaf7;
+            padding: 0;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .header img {
+            width: 100%;
+            max-width: 600px;
+            height: 200px;
+        }
+
+        /* Estilos de la tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table thead {
+            background-color: #5a2c7d;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f3eaf7;
+        }
+
+        table tbody tr:hover {
+            background-color: #ddd;
+        }
+
+        table td {
+            font-size: 14px;
+        }
+
+        table th {
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            color: black;
+        }
+
+        table tbody tr:last-child td {
+            font-weight: bold;
+        }
+
+        /* Otros estilos */
+        h1 {
+            font-size: 18px;
+            text-align: left;
+            color: #5a2c7d;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Encabezado -->
+        <div class="header">
+            <img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/title_ganancia_evento.png" alt="Ganancia Evento">
+        </div>
+
+        <div style="padding: 0; color: #333;">
+            <h1>Evento: {{ evento.nombre }}</h1>
+            <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
+            <p><strong>Fecha del evento:</strong> {{ evento.fecha }}</p>
+        </div>
+
+        <!-- Tabla de ganancias -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Concepto</th>
+                    <th>Ganancia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ganancia Entradas</td>
+                    <td>${{ evento.ganancia_entradas|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Ganancia Reservas</td>
+                    <td>${{ evento.ganancia_reservas|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Ganancia Total</strong></td>
+                    <td><strong>${{ evento.ganancia_total|intcomma }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="text-align: right; font-size: 12px; color: #555; margin-top: 30px; margin-bottom:50px;">
+            Fecha de descarga: {{ fecha_actual }}
+        </p>
+        <div style="text-align: center; padding: 0; color: #5a2c7d; font-weight: bold; margin-top:50px">
+            <img src="{{ request.scheme }}://{{ request.get_host }}/static/Oasis/img/logoOasisNegro.png" alt="Logo_Oasis" width="290px" height="50px">
+        </div>
+    </div>
+</body>
+</html>

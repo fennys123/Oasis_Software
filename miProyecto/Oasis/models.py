@@ -70,6 +70,10 @@ class Evento(models.Model):
     entradas = models.BooleanField(default=False)
     foto = models.ImageField(upload_to="Img_eventos/", default="Img_eventos/default.png")
     estado = models.BooleanField(default=True)
+    ganancia_entradas = models.IntegerField(default=0)
+    ganancia_reservas = models.IntegerField(default=0)
+    ganancia_total = models.IntegerField(default=0)
+    
 
     def __str__(self):
         return self.nombre
@@ -349,7 +353,6 @@ class Venta(models.Model):
         return f"{self.id} - {self.usuario}"
 
 
-
 class DetalleVenta(models.Model):
 	venta = models.ForeignKey(Venta, on_delete=models.DO_NOTHING)
 	producto = models.ForeignKey(Producto, on_delete=models.DO_NOTHING)
@@ -358,7 +361,7 @@ class DetalleVenta(models.Model):
 
 	def __str__(self):
 		return f"{self.id} - {self.venta}"
-
+    
 """
 # ---------------------------------------------------------------------------------
 from django.conf import settings

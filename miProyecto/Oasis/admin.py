@@ -18,13 +18,13 @@ class UsuarioAdmin(admin.ModelAdmin):
 class BloqueoAdmin(admin.ModelAdmin):
     list_display = ['id','usuario', 'motivo', 'fecha_bloqueo', 'realizado_por']
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+               
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):
-    list_display = ['id','nombre', 'nombre_plural', 'fecha', 'hora_incio', 'descripcion', 'aforo', 'entradas_disponibles', 'precio_entrada', 'precio_vip' , 'reservas', 'entradas','foto', 'estado']
+    list_display = ['id','nombre', 'nombre_plural', 'fecha', 'hora_incio', 'descripcion', 'aforo', 'entradas_disponibles', 'precio_entrada', 'precio_vip' , 'reservas', 'entradas','foto', 'estado', 'ganancia_entradas', 'ganancia_reservas', 'ganancia_total']
     search_fields = ['id','nombre','fecha','hora_incio']
     list_filter = ['fecha']
-    list_editable = ['nombre','fecha','hora_incio', 'reservas', 'entradas', 'entradas_disponibles']
+    list_editable = ['nombre','fecha','hora_incio', 'reservas', 'entradas', 'entradas_disponibles', 'ganancia_entradas', 'ganancia_reservas']
 
     def ver_foto(self, obj):
         return mark_safe(f"<a href='{obj.foto.url}'><img src='{obj.foto.url}' width='10%'></a>")
@@ -45,10 +45,10 @@ class entradasQRAdmin(admin.ModelAdmin):
 
 @admin.register(Mesa)
 class MesaAdmin(admin.ModelAdmin):
-    list_display = ['id','nombre', 'capacidad', 'precio','estado','estado_reserva','codigo_qr', 'qr_imagen','usuario']
+    list_display = ['id','nombre', 'capacidad', 'precio','estado','estado_reserva','codigo_qr', 'qr_imagen','usuario','total_ganancia']
     search_fields = ['id','estado', 'capacidad','estado_reserva']
     list_filter = ['estado', 'capacidad','estado_reserva']
-    list_editable = ['estado', 'capacidad', 'estado_reserva', 'precio']
+    list_editable = ['estado', 'capacidad', 'estado_reserva', 'precio','total_ganancia']
 
 @admin.register(Reserva)
 class ReservaAdmin(admin.ModelAdmin):
@@ -119,7 +119,7 @@ class FotosAdmin(admin.ModelAdmin):
 @admin.register(Venta)
 class VentaAdmin(admin.ModelAdmin):
     #Agregar 'usuario' cuando funcione
-    list_display = ['id', 'usuario','fecha_venta']
+    list_display = ['id', 'usuario','fecha_venta', 'total_ganancia']
 
 @admin.register(DetalleVenta)
 class DetalleVentaAdmin(admin.ModelAdmin):

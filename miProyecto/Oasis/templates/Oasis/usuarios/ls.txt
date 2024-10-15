@@ -59,3 +59,7 @@ def ver_detalles_usuario(request):
         'url': 'ver_detalles_pedido_usuario'
     }
     return render(request, 'Oasis/usuario/detalles_pedido_usuario.html', contexto)
+
+
+
+

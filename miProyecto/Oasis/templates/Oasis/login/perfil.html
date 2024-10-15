@@ -25,6 +25,22 @@
         </a>
       </label>
     {% endif %}
+    {% if user.rol == 1 %}
+      <label class="radio">
+        <a href="{% url 'ganancia_total' %}">
+          <input type="radio" name="radio" />
+          <span class="name">Ganancias Eventos</span>
+        </a>
+      </label>
+    {% endif %}
+    {% if user.rol == 1 %}
+    <label class="radio">
+      <a href="{% url 'reporte_mesas' %}">
+        <input type="radio" name="radio" />
+        <span class="name">Reporte de Mesas</span>
+      </a>
+    </label>
+    {% endif %}
   </div>
     <div class="card mb-3 mt-5 w-100 ml-0 mr-0 mx-auto" style="max-width: 700px; margin-top: 2.5em;">
     <div class="row g-0">

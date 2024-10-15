@@ -4,6 +4,7 @@ from rest_framework.authtoken import views as especial
 
 from . import views
 
+
 # Routers provide an easy way of automatically determining the URL conf.
 router = DefaultRouter()
 router.register(r'usuario', views.UsuarioViewSet)
@@ -23,6 +24,7 @@ router.register(r'detalle_venta', views.DetalleVentaViewSet)
 
 
 urlpatterns = [
+    
     path('api/1.0/', include(router.urls)),
     path('api/1.0/token-auth/', views.CustomAuthToken.as_view()),
 	path('api/1.0/api-auth/', include('rest_framework.urls')),
@@ -85,10 +87,6 @@ urlpatterns = [
 
     #CAMBIAR CONTRASEÑA
     path('cambiar_clave/', views.cambiar_clave, name="cambiar_clave"),
-    
-    #RECUPERAR CONTRASEÑA
-    path('recuperar_clave/', views.recuperar_clave, name="recuperar_clave"),
-    path('verificar_recuperar/', views.verificar_recuperar, name="verificar_recuperar"),
 
 
     #USUARIOS
@@ -145,9 +143,12 @@ urlpatterns = [
     path('Eliminar_Mesa/<int:id>', views.eliminarMesa, name='eliminarMesa'),
 
     path('reservasMesa/<int:id>', views.reservasMesa, name='reservasMesa'),
+
     path('reporte-mesas/', views.reporte_mesas, name='reporte_mesas'),
     path('limpiar_ganancias/<int:mesa_id>/', views.limpiar_ganancias, name='limpiar_ganancias'),
     path('limpiar-todas-ganancias/', views.limpiar_todas_ganancias, name='limpiar_todas_ganancias'),
+
+
 
 #   CRUD EVENTOS
     path('Gestion_Eventos/', views.eveInicio, name='Eventos'),
@@ -245,6 +246,9 @@ urlpatterns = [
     path("reservar_mesa/<int:id>/", views.reservar_mesa, name="reservar_mesa"),
     path("eliminar_reserva/<int:id>/", views.eliminar_reserva, name="eliminar_reserva"),
 
+#MOSTRAR TOTAL DE GANANCIAS
+    path("ganancia_total/", views.ganancia_total, name="ganancia_total"),
+    path('descargar_pdf_ganancias/<int:id>/', views.descargar_pdf_ganancias, name='descargar_pdf_ganancias'),
 
 #mas_info
     path("mas_info/", views.mas_info, name="mas_info"),
